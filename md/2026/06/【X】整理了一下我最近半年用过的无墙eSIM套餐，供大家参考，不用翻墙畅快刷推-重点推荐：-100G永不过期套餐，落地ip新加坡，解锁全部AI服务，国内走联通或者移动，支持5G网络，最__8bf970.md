@@ -2,9 +2,9 @@
 title: 【X】整理了一下我最近半年用过的无墙eSIM套餐，供大家参考，不用翻墙畅快刷推 重点推荐： 100G永不过期套餐，落地ip新加坡，解锁全部AI服务，国内走联通或者移动，支持5G网络，最高速度能达到500兆，100G流量使用CN20OFF折扣码后价格329块钱。 购买：https://t.co/YGkiL6xLoL 折扣码：CN20OFF https://t.co/yMHbnVHy93
 source: https://x.com/HiFrey/status/2022565962738737369
 source_host: x.com
-clip_date: 2026-06-08T18:50:06+08:00
-trace_id: d937c377-4801-4d0e-84c4-a260bb287e3f
-content_hash: bec807df0d47c0d5cafa157da0a68ad862be462d6d884b604089152672e462f2
+clip_date: 2026-06-08T20:12:11+08:00
+trace_id: 250d5611-14af-4616-9f44-dc06f603a077
+content_hash: 10cb10e0ccccd65d747488e1985ab6d5c8233facc556fe843f9c1fa4da90be03
 status: imaged
 tags:
   - X
