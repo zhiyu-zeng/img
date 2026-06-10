@@ -2,8 +2,8 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-10T10:01:37+08:00
-trace_id: 82510c8d-10ab-4b41-af1c-bb0b8234cb8a
+clip_date: 2026-06-10T11:28:31+08:00
+trace_id: 7325e8ba-f492-4d32-b841-e8aade1bb333
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
 status: imaged
 tags:
@@ -12,8 +12,8 @@ series: null
 ai_summary: null
 ai_summary_style: null
 images_status:
-  total: 1
-  succeeded: 1
+  total: 15
+  succeeded: 15
   failed_urls: []
 notion_page_id: null
 ---
@@ -29,13 +29,44 @@ Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融
 传统请求的示例代码为：
 
 ```
-import com.google.android.gms.tasks.Task; ...// Receive the nonce from the secure server.String nonce = ...// Create an instance of a manager.IntegrityManager integrityManager =    IntegrityManagerFactory.create(getApplicationContext());// Request the integrity token by providing a nonce.Task<IntegrityTokenResponse> integrityTokenResponse =    integrityManager        .requestIntegrityToken(            IntegrityTokenRequest.builder().setNonce(nonce).build());
+import com.google.android.gms.tasks.Task; ...
+
+// Receive the nonce from the secure server.
+String nonce = ...
+
+// Create an instance of a manager.
+IntegrityManager integrityManager =
+    IntegrityManagerFactory.create(getApplicationContext());
+
+// Request the integrity token by providing a nonce.
+Task<IntegrityTokenResponse> integrityTokenResponse =
+    integrityManager
+        .requestIntegrityToken(
+            IntegrityTokenRequest.builder().setNonce(nonce).build());
 ```
 
 标准请求的示例代码为：
 
 ```
-import com.google.android.gms.tasks.Task;// Create an instance of a manager.StandardIntegrityManager standardIntegrityManager =    IntegrityManagerFactory.createStandard(applicationContext);StandardIntegrityTokenProvider integrityTokenProvider;long cloudProjectNumber = ...;// Prepare integrity token. Can be called once in a while to keep internal// state fresh.standardIntegrityManager.prepareIntegrityToken(    PrepareIntegrityTokenRequest.builder()        .setCloudProjectNumber(cloudProjectNumber)        .build())    .addOnSuccessListener(tokenProvider -> {        integrityTokenProvider = tokenProvider;    })    .addOnFailureListener(exception -> handleError(exception));
+import com.google.android.gms.tasks.Task;
+
+// Create an instance of a manager.
+StandardIntegrityManager standardIntegrityManager =
+    IntegrityManagerFactory.createStandard(applicationContext);
+
+StandardIntegrityTokenProvider integrityTokenProvider;
+long cloudProjectNumber = ...;
+
+// Prepare integrity token. Can be called once in a while to keep internal
+// state fresh.
+standardIntegrityManager.prepareIntegrityToken(
+    PrepareIntegrityTokenRequest.builder()
+        .setCloudProjectNumber(cloudProjectNumber)
+        .build())
+    .addOnSuccessListener(tokenProvider -> {
+        integrityTokenProvider = tokenProvider;
+    })
+    .addOnFailureListener(exception -> handleError(exception));
 ```
 
 这两种请求方式的区别仅仅是标准请求使用了缓存，高频调用的响应速度更快。从业务安全的角度来说是完全一致的。因此，我们以传统请求 API 为例，来分析完整的生成过程。
@@ -94,7 +125,126 @@ import com.google.android.gms.tasks.Task;// Create an instance of a manager.Stan
     
 
 ```
-Request Body：{  "type": "IntegrityRequestParameters",  "deviceIntegritySignals": {    "type": "DeviceIntegritySignals",    "droidguardTokenByteString": {      "type": "ByteString",      "size": 39032,      "sha256": "bd5a30d9d722df7e36397b918861aa9084ef9eb54ae31255926e7552e84e4104",      "asciiPreview": "..'..i........O.].....[.....s.......D.Q..M.w+.t..o...@..{HD..~-..U'....V.Y..z......._.}......DL.",      "hexPreview": "0a06270ae369a80012c1b0020a064c06f22f2f1e1e68ae3126dba9ac7ae367a7488b1cc40d81ff230e19a6c55d75537e7d3",      "base64Preview": "CgYnCuNpqAASwbACCgZPrF2VyZrSEFsAAOOyvHOlh8C+TYZbQWkeIyFfTKs5JIvjXQqUIFrFi1qWSY0nXJZIXfHo0tpmUUwpdGWPHySiA"    },    "flowName": "pia_attest_e1",    "keyAttestationMetadata": {      "type": "bmyq",      "raw": "# bmyq@5eb8d24",      "field_b": "2",      "field_d": "null",      "field_e": "# bmyn@7c344",      "field_f": "null",      "certificateChain": [        {          "type": "ByteString",          "size": 678,          "sha256": "984470b2b5ceafcdcd705c1a6285bc93ffe420fea2d25d373dcdc3949ac85fda",          "asciiPreview": "0...0..H........0...*.H.=...091.0...U....TEE1)0'..U... 22317fdd8510cac935893090d9b6e2a00...70010",          "hexPreview": "308202a230820248a003020102020101300a060828648ce3d020106082a8648ce3d0301070342000413a0b0fdc54e9e1861e41bdc30",          "base64Preview": "MIICojCCAkigAwIBAgIBATAKBggqhkjOPQQDAjA5MQwwC30Oo4IBWTCCAVUwDgYDVR0PAQH/BAQDAgeAMIIBQQYKKwYBBAHWeQIBEQSCATEw"        },        {          "type": "ByteString",          "size": 503,          "sha256": "5e6af0046b0b9faf744df21648abe4e049c1c7e5c0de06b830e6b784187d7e8d",          "asciiPreview": "0...0..y........&..Y...O.B....M0...*.H.=...091.0...U....TEE1)0'..U... d492ff615155c8a4a60926ded6",          "hexPreview": "308201f330820179a00302010202101c26a48a5902c1a64f97429fadfbe538393330393064396236653261",          "base64Preview": "MIIB8zCCAXmgAwIBAgIQHCakilkCwaZPl0KfrfvhTTAKBggqhkjOCWgwDTmGjYzBh"        },        {          "type": "ByteString",          "size": 920,          "sha256": "2812ef63dd35e8d8c7cbc6453dbd7961ec5f1e3645d4eae0584dbd383f0ae7ec",          "asciiPreview": "0...0..|...................G..w.0...*.H........0.1.0...U....f92009e853b6b0450...240202225757Z..3",          "hexPreview": "308203943082017ca003020102021100941cbcc1e8a41de02e17e847c3b877db300d06092a052b810400220362000408",          "base64Preview": "MIIDlDCCAXygAwIBAgIRAJQcvMHopB3gLhfoR8O4d9swDQYJKoZIhvcNAQELBQAwGzEZMBcGABGuj"        },        {          "type": "ByteString",          "size": 1312,          "sha256": "cedb1cb6dc896ae5ec797348bce9286753c2b38ee71ce0fbe34a9a1248800dfc",          "asciiPreview": "0...0.............r.....0...*.H........0.1.0...U....f92009e853b6b0450...220320180748Z..420315180",          "hexPreview": "3082051c30820304a0030201041663abef982f32c77f7531030c9752",          "base64Preview": "MIIFHDCCAwSgAwIBAgIJAPHBcqaZ6vUdM+T+W8a9nsNL/ggj"        }      ],      "certificateChainCount": 4    },    "buildFingerprintMetadata": {      "type": "bmyh",      "fingerprint": "Lenovo/TB320FC_PRC/TB320FC:15/AQ3A.240812.002/ZUXOS_1.1.350_250418_PRC:user/release-keys",      "raw": "# bmyh@8f6a54a8"    }  },  "packageName": "gr.nikolasspyr.integritycheck",  "versionCode": 22,  "nonce": "4X4a4MUeHGybbu9GQF9vYBbqYTg==",  "certificateSha256Digests": [    "F5UrXPhnBbreh3Q_WjMe_kyYK_tNoNL9XXC_wjXPeeM"  ],  "timestampAtRequest": "2026-04-18T13:45:51.190Z",  "cloudProjectNumber": null,  "playCoreVersion": {    "type": "bmyu",    "major": 1,    "minor": 4,    "patch": 0,    "versionString": "1.4.0"  },  "playProtectDetails": {    "type": "bmyv",    "raw": "# bmyv@7bcd9",    "fields": {      "b": "1",      "c": "2"    }  },  "appAccessRiskDetailsResponse": {    "type": "abfk",    "raw": "AppAccessRiskDetailsResponse{installedAppsSignalData={2=[com.motorola.mobiledesktop, com.zui.pp, com.zui.wifip2p, com.lenovo.penservice, com.lenovo.ue.device, com.lenovo.levoice.trigger, com.zui.safecenter, com.qualcomm.qti.services.systemhelper, com.zui.cores, com.dolby.dolbyvisionservice, vendor.qti.qesdk.sysservice, com.qualcomm.qti.uceShimService, com.qualcomm.qti.dynamicddsservice, com.qti.dpmserviceapp, com.motorola.android.providers.settings], 6=[bin.mt.plus]}, accessibilityAbuseSignalData={}, displayListenerMetadata=DisplayListenerMetadata{isActiveDisplayPresent=false, displayListenerInitialisationTimeDelta=Optional.empty, lastDisplayAddedTimeDelta=Optional[PT-0.001S], displayListenerUsed=2}, signalGenerationLatency=PT0.002342813S, signalGenerationBreakdownTelemetry=SignalGenerationBreakdownTelemetry{requestParametersLatency=RequestParametersLatencyBreakdown{installedPackages=PT0.040158698S, runningAppProcesses=PT0.002319791S, runningServices=PT0.001184271S, activeDisplays=PT0.001730833S, enabledAccessibilityServices=PT0.004136928S, mediaProjectionDebugDump=PT0.001912032S, runningApps=PT0.000196459S, installedPackagesIsRecognized=PT0.000449375S, appOpsToOpEntry=PT0.00093677S, manifestPermissionToPackages=PT0.067272969S, activeDisplayInfo=PT0.000058125S, accessibilityServiceData=PT0.000021302S, runningMediaProjectionTypeServicePackages=PT0.000812031S}, installedAppsSignalLatency=PT0.000189688S, screenCaptureSignalLatency=PT0.00091099S, accessibilityAbuseSignalLatency=PT0.000031927S, screenOverlaySignalLatency=PT0.000257761S, displayListenerMetadataLatency=PT0.001320938S}}"  }, "installSourceMetadata": {        "type": "bmyk",        "formatted": "1:1,2:1,3:0,4:1,5:[],6:0",        "raw": {          "c": "31",          "d": "1",          "e": "1",          "f": "0",          "g": "1",          "i": "0"        }      },      "locationTrustMetadata": null,      "deviceIdentifier": {        "type": "ByteString",        "size": 64,        "sha256": "e47aa4c751f9079c06367ff3814e9bb441c754242e2154929de5067a680a3b4e",        "ascii": "894ce4844f1b477fa99a4f515de4acaa80121998b19efe3e7faffae6497be163",        "hex": "383934636534383434663162343737669376265313633",        "base64": "ODk0Y2U0ODQ0ZjFiNDc3ZmE5="      }    }}Response Body:{  "token": "eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0.ullChctbyhVID6nmtbgtcMqN3fxb2tsNIeLD9baKL6YnkFjbfjGcWSyADMZLeaK1XbmSYMO3OegfoX0CwEQkSDSa3bfwfM9Bo_NTD3b8i_hXCkpdAuPpahcLy_VLh5tvcqwSx7KAFEyg5IxkPPGeIIVehPwi22xBPcq3V5Pe7NOF705Av4nXv1-GgP9t5IPnf3moFbo4lqMJBANi8.35KbgY4kp8sL9jJyRNjE5w",  "statusCode": "0",  "extra": "null",}
+Request Body：
+{
+  "type": "IntegrityRequestParameters",
+  "deviceIntegritySignals": {
+    "type": "DeviceIntegritySignals",
+    "droidguardTokenByteString": {
+      "type": "ByteString",
+      "size": 39032,
+      "sha256": "bd5a30d9d722df7e36397b918861aa9084ef9eb54ae31255926e7552e84e4104",
+      "asciiPreview": "..'..i........O.].....[.....s.......D.Q..M.w+.t..o...@..{HD..~-..U'....V.Y..z......._.}......DL.",
+      "hexPreview": "0a06270ae369a80012c1b0020a064c06f22f2f1e1e68ae3126dba9ac7ae367a7488b1cc40d81ff230e19a6c55d75537e7d3",
+      "base64Preview": "CgYnCuNpqAASwbACCgZPrF2VyZrSEFsAAOOyvHOlh8C+TYZbQWkeIyFfTKs5JIvjXQqUIFrFi1qWSY0nXJZIXfHo0tpmUUwpdGWPHySiA"
+    },
+    "flowName": "pia_attest_e1",
+    "keyAttestationMetadata": {
+      "type": "bmyq",
+      "raw": "# bmyq@5eb8d24",
+      "field_b": "2",
+      "field_d": "null",
+      "field_e": "# bmyn@7c344",
+      "field_f": "null",
+      "certificateChain": [
+        {
+          "type": "ByteString",
+          "size": 678,
+          "sha256": "984470b2b5ceafcdcd705c1a6285bc93ffe420fea2d25d373dcdc3949ac85fda",
+          "asciiPreview": "0...0..H........0...*.H.=...091.0...U....TEE1)0'..U... 22317fdd8510cac935893090d9b6e2a00...70010",
+          "hexPreview": "308202a230820248a003020102020101300a060828648ce3d020106082a8648ce3d0301070342000413a0b0fdc54e9e1861e41bdc30",
+          "base64Preview": "MIICojCCAkigAwIBAgIBATAKBggqhkjOPQQDAjA5MQwwC30Oo4IBWTCCAVUwDgYDVR0PAQH/BAQDAgeAMIIBQQYKKwYBBAHWeQIBEQSCATEw"
+        },
+        {
+          "type": "ByteString",
+          "size": 503,
+          "sha256": "5e6af0046b0b9faf744df21648abe4e049c1c7e5c0de06b830e6b784187d7e8d",
+          "asciiPreview": "0...0..y........&..Y...O.B....M0...*.H.=...091.0...U....TEE1)0'..U... d492ff615155c8a4a60926ded6",
+          "hexPreview": "308201f330820179a00302010202101c26a48a5902c1a64f97429fadfbe538393330393064396236653261",
+          "base64Preview": "MIIB8zCCAXmgAwIBAgIQHCakilkCwaZPl0KfrfvhTTAKBggqhkjOCWgwDTmGjYzBh"
+        },
+        {
+          "type": "ByteString",
+          "size": 920,
+          "sha256": "2812ef63dd35e8d8c7cbc6453dbd7961ec5f1e3645d4eae0584dbd383f0ae7ec",
+          "asciiPreview": "0...0..|...................G..w.0...*.H........0.1.0...U....f92009e853b6b0450...240202225757Z..3",
+          "hexPreview": "308203943082017ca003020102021100941cbcc1e8a41de02e17e847c3b877db300d06092a052b810400220362000408",
+          "base64Preview": "MIIDlDCCAXygAwIBAgIRAJQcvMHopB3gLhfoR8O4d9swDQYJKoZIhvcNAQELBQAwGzEZMBcGABGuj"
+        },
+        {
+          "type": "ByteString",
+          "size": 1312,
+          "sha256": "cedb1cb6dc896ae5ec797348bce9286753c2b38ee71ce0fbe34a9a1248800dfc",
+          "asciiPreview": "0...0.............r.....0...*.H........0.1.0...U....f92009e853b6b0450...220320180748Z..420315180",
+          "hexPreview": "3082051c30820304a0030201041663abef982f32c77f7531030c9752",
+          "base64Preview": "MIIFHDCCAwSgAwIBAgIJAPHBcqaZ6vUdM+T+W8a9nsNL/ggj"
+        }
+      ],
+      "certificateChainCount": 4
+    },
+    "buildFingerprintMetadata": {
+      "type": "bmyh",
+      "fingerprint": "Lenovo/TB320FC_PRC/TB320FC:15/AQ3A.240812.002/ZUXOS_1.1.350_250418_PRC:user/release-keys",
+      "raw": "# bmyh@8f6a54a8"
+    }
+  },
+  "packageName": "gr.nikolasspyr.integritycheck",
+  "versionCode": 22,
+  "nonce": "4X4a4MUeHGybbu9GQF9vYBbqYTg==",
+  "certificateSha256Digests": [
+    "F5UrXPhnBbreh3Q_WjMe_kyYK_tNoNL9XXC_wjXPeeM"
+  ],
+  "timestampAtRequest": "2026-04-18T13:45:51.190Z",
+  "cloudProjectNumber": null,
+  "playCoreVersion": {
+    "type": "bmyu",
+    "major": 1,
+    "minor": 4,
+    "patch": 0,
+    "versionString": "1.4.0"
+  },
+  "playProtectDetails": {
+    "type": "bmyv",
+    "raw": "# bmyv@7bcd9",
+    "fields": {
+      "b": "1",
+      "c": "2"
+    }
+  },
+  "appAccessRiskDetailsResponse": {
+    "type": "abfk",
+    "raw": "AppAccessRiskDetailsResponse{installedAppsSignalData={2=[com.motorola.mobiledesktop, com.zui.pp, com.zui.wifip2p, com.lenovo.penservice, com.lenovo.ue.device, com.lenovo.levoice.trigger, com.zui.safecenter, com.qualcomm.qti.services.systemhelper, com.zui.cores, com.dolby.dolbyvisionservice, vendor.qti.qesdk.sysservice, com.qualcomm.qti.uceShimService, com.qualcomm.qti.dynamicddsservice, com.qti.dpmserviceapp, com.motorola.android.providers.settings], 6=[bin.mt.plus]}, accessibilityAbuseSignalData={}, displayListenerMetadata=DisplayListenerMetadata{isActiveDisplayPresent=false, displayListenerInitialisationTimeDelta=Optional.empty, lastDisplayAddedTimeDelta=Optional[PT-0.001S], displayListenerUsed=2}, signalGenerationLatency=PT0.002342813S, signalGenerationBreakdownTelemetry=SignalGenerationBreakdownTelemetry{requestParametersLatency=RequestParametersLatencyBreakdown{installedPackages=PT0.040158698S, runningAppProcesses=PT0.002319791S, runningServices=PT0.001184271S, activeDisplays=PT0.001730833S, enabledAccessibilityServices=PT0.004136928S, mediaProjectionDebugDump=PT0.001912032S, runningApps=PT0.000196459S, installedPackagesIsRecognized=PT0.000449375S, appOpsToOpEntry=PT0.00093677S, manifestPermissionToPackages=PT0.067272969S, activeDisplayInfo=PT0.000058125S, accessibilityServiceData=PT0.000021302S, runningMediaProjectionTypeServicePackages=PT0.000812031S}, installedAppsSignalLatency=PT0.000189688S, screenCaptureSignalLatency=PT0.00091099S, accessibilityAbuseSignalLatency=PT0.000031927S, screenOverlaySignalLatency=PT0.000257761S, displayListenerMetadataLatency=PT0.001320938S}}"
+  },
+ "installSourceMetadata": {
+        "type": "bmyk",
+        "formatted": "1:1,2:1,3:0,4:1,5:[],6:0",
+        "raw": {
+          "c": "31",
+          "d": "1",
+          "e": "1",
+          "f": "0",
+          "g": "1",
+          "i": "0"
+        }
+      },
+      "locationTrustMetadata": null,
+      "deviceIdentifier": {
+        "type": "ByteString",
+        "size": 64,
+        "sha256": "e47aa4c751f9079c06367ff3814e9bb441c754242e2154929de5067a680a3b4e",
+        "ascii": "894ce4844f1b477fa99a4f515de4acaa80121998b19efe3e7faffae6497be163",
+        "hex": "383934636534383434663162343737669376265313633",
+        "base64": "ODk0Y2U0ODQ0ZjFiNDc3ZmE5="
+      }
+    }
+}
+
+Response Body:
+{
+  "token": "eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0.ullChctbyhVID6nmtbgtcMqN3fxb2tsNIeLD9baKL6YnkFjbfjGcWSyADMZLeaK1XbmSYMO3OegfoX0CwEQkSDSa3bfwfM9Bo_NTD3b8i_hXCkpdAuPpahcLy_VLh5tvcqwSx7KAFEyg5IxkPPGeIIVehPwi22xBPcq3V5Pe7NOF705Av4nXv1-GgP9t5IPnf3moFbo4lqMJBANi8.35KbgY4kp8sL9jJyRNjE5w",
+  "statusCode": "0",
+  "extra": "null",
+}
 ```
 
 在收集的所有信息中，最为人津津乐道的便是 Tee 签名的证书链。这是由绝对安全的硬件空间生成的设备描述信息，按理说是绝对可信的。因为，一旦你更改了返回的证书链，你没办法重签。不重签后端就不认这个证书链，直接判定为伪造。你想要重签，就必须拿到私钥，可是私钥放到 Tee 中，不可导出不可读取。因此，形成了完美闭环。
@@ -148,7 +298,37 @@ Google Play 发起 Key Attestation 的代码为：
     
 
 ```
-def ecdsa_verify(message, r, s, Q):    # 1. 检查签名范围    if r <= 0 or r >= n:        return False    if s <= 0 or s >= n:        return False    # 2. 计算消息哈希    e = sha256(message)    # 3. 求 s 的模逆    w = inverse_mod(s, n)    # 4. 计算两个系数    u1 = (e * w) % n    u2 = (r * w) % n    # 5. 椭圆曲线点运算    P = point_add(            scalar_mult(u1, G),            scalar_mult(u2, Q)        )    if P is INF:        return False    # 6. 验证    x = P.x % n    return x == r
+def ecdsa_verify(message, r, s, Q):
+    # 1. 检查签名范围
+    if r <= 0 or r >= n:
+        return False
+
+    if s <= 0 or s >= n:
+        return False
+
+    # 2. 计算消息哈希
+    e = sha256(message)
+
+    # 3. 求 s 的模逆
+    w = inverse_mod(s, n)
+
+    # 4. 计算两个系数
+    u1 = (e * w) % n
+    u2 = (r * w) % n
+
+    # 5. 椭圆曲线点运算
+    P = point_add(
+            scalar_mult(u1, G),
+            scalar_mult(u2, Q)
+        )
+
+    if P is INF:
+        return False
+
+    # 6. 验证
+    x = P.x % n
+
+    return x == r
 ```
 
 当校验到 Root Certificate 时，由于没有上级证书。这时拿 Root Certificate 去数据库匹配，如果这张 Root Certificate 是由厂商提交过备案的，则证明整条链条可信。接下来再继续校验 AttestationApplicationId、RootOfTrust 等信息。其中 RootOfTrust 是获得 MEETS\_DEVICE\_INTEGRITY 也就是二绿的关键。这里面携带了设备是否解锁的标识：deviceLocked。并且整个 RootOfTrust 状态是由 Tee 维护的，因此不具备伪造性。
@@ -176,13 +356,49 @@ Google Play 版本均保持一致（过 AttestationApplicationId 签名校验）
 我们使用如下 Frida 脚本启动 Pixel 的 Google Play：
 
 ```
-// 伪代码：let cache_certificate_chain = []function sendToY700(challenge) {    // connect server    // send challenge    return certificate_chain}function hook() {    Java.perform(function () {        const KeyPairGeneratorSpec = Java.use('android.security.keystore.KeyGenParameterSpec$Builder');        KeyPairGeneratorSpec.setAttestationChallenge.overload('[B').implementation = function (challenge) {            cache_certificate_chain = sendToY700(challenge)            return this.setAttestationChallenge(challenge);        };        const SecLevel = Java.use('android.security.keystore2.IKeystoreSecurityLevel$Stub$Proxy');        SecLevel.getCertificateChain.implementation = function () {            return cache_certificate_chain        };    });}setImmediate(hook)
+// 伪代码：
+let cache_certificate_chain = []
+
+function sendToY700(challenge) {
+    // connect server
+    // send challenge
+    return certificate_chain
+}
+
+function hook() {
+    Java.perform(function () {
+        const KeyPairGeneratorSpec = Java.use('android.security.keystore.KeyGenParameterSpec$Builder');
+        KeyPairGeneratorSpec.setAttestationChallenge.overload('[B').implementation = function (challenge) {
+            cache_certificate_chain = sendToY700(challenge)
+            return this.setAttestationChallenge(challenge);
+        };
+
+
+        const SecLevel = Java.use('android.security.keystore2.IKeystoreSecurityLevel$Stub$Proxy');
+        SecLevel.getCertificateChain.implementation = function () {
+            return cache_certificate_chain
+        };
+
+    });
+}
+
+setImmediate(hook)
 ```
 
 如下脚本启动 Y700 的 Google Play：
 
 ```
-// 伪代码：function receiveFormPixel6(challenge) {    let KeyGenParameterSpec keyGenParameterSpecBuild = new KeyGenParameterSpec.Builder("integrity.api.key.alias", 4).setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1")).setDigests("SHA-512").setAttestationChallenge(challenge).setDevicePropertiesAttestationIncluded(false).build();    let KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "AndroidKeyStore");    keyPairGenerator.initialize(keyGenParameterSpecBuild);    if (keyPairGenerator.generateKeyPair() == null) {        throw new IllegalStateException("Failed to create the key pair.");    }    let String keystoreAlias = keyGenParameterSpecBuild.getKeystoreAlias();    return keyStore.getCertificateChain(keystoreAlias);}
+// 伪代码：
+function receiveFormPixel6(challenge) {
+    let KeyGenParameterSpec keyGenParameterSpecBuild = new KeyGenParameterSpec.Builder("integrity.api.key.alias", 4).setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1")).setDigests("SHA-512").setAttestationChallenge(challenge).setDevicePropertiesAttestationIncluded(false).build();
+    let KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "AndroidKeyStore");
+    keyPairGenerator.initialize(keyGenParameterSpecBuild);
+    if (keyPairGenerator.generateKeyPair() == null) {
+        throw new IllegalStateException("Failed to create the key pair.");
+    }
+    let String keystoreAlias = keyGenParameterSpecBuild.getKeystoreAlias();
+    return keyStore.getCertificateChain(keystoreAlias);
+}
 ```
 
 然后惊奇的发现：
