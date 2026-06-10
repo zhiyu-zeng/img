@@ -2,8 +2,8 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-10T18:48:30+08:00
-trace_id: 1da2949e-526c-4dbf-a3b6-afd409b7af24
+clip_date: 2026-06-10T18:56:54+08:00
+trace_id: e3882727-ddf9-4529-b3e3-21f2e45804e5
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
 status: imaged
 tags:
@@ -19,6 +19,8 @@ notion_page_id: null
 ---
 
 李豪 *2026年6月9日 19:16*
+
+**小李的闲言碎语** *2026年6月9日 19:16*
 
 Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融类APP都高度依赖 Integrity 服务来验证客户端的请求是否可信。但它真的完全可靠吗？怀揣着这个疑问，我深度分析了 Integrity Token 的生成过程与 Key Attestation 的原理。得出的结论是不可靠。
 
