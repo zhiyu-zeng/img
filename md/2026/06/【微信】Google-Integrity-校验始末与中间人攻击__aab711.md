@@ -2,8 +2,8 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-10T18:56:54+08:00
-trace_id: e3882727-ddf9-4529-b3e3-21f2e45804e5
+clip_date: 2026-06-10T19:07:39+08:00
+trace_id: a5fef08f-67e7-444b-9b6b-192f5587c545
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
 status: imaged
 tags:
@@ -18,8 +18,6 @@ images_status:
 notion_page_id: null
 ---
 
-李豪 *2026年6月9日 19:16*
-
 **小李的闲言碎语** *2026年6月9日 19:16*
 
 Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融类APP都高度依赖 Integrity 服务来验证客户端的请求是否可信。但它真的完全可靠吗？怀揣着这个疑问，我深度分析了 Integrity Token 的生成过程与 Key Attestation 的原理。得出的结论是不可靠。
@@ -30,7 +28,7 @@ Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融
 
 传统请求的示例代码为：
 
-```
+```java
 import com.google.android.gms.tasks.Task; ...
 
 // Receive the nonce from the secure server.
@@ -49,7 +47,7 @@ Task<IntegrityTokenResponse> integrityTokenResponse =
 
 标准请求的示例代码为：
 
-```
+```java
 import com.google.android.gms.tasks.Task;
 
 // Create an instance of a manager.
@@ -136,7 +134,7 @@ standardIntegrityManager.prepareIntegrityToken(
 -   • 后端返回 Integrity Token 回调客户端
     
 
-```
+```css
 Request Body：
 {
   "type": "IntegrityRequestParameters",
@@ -315,7 +313,7 @@ Google Play 发起 Key Attestation 的代码为：
 -   ecdsa\_verify(Attestation.TBSCertificate, r, s, Root Public Key)
     
 
-```
+```python
 def ecdsa_verify(message, r, s, Q):
     # 1. 检查签名范围
     if r <= 0 or r >= n:
@@ -373,7 +371,7 @@ Google Play 版本均保持一致（过 AttestationApplicationId 签名校验）
 
 我们使用如下 Frida 脚本启动 Pixel 的 Google Play：
 
-```
+```javascript
 // 伪代码：
 let cache_certificate_chain = []
 
@@ -405,7 +403,7 @@ setImmediate(hook)
 
 如下脚本启动 Y700 的 Google Play：
 
-```
+```javascript
 // 伪代码：
 function receiveFormPixel6(challenge) {
     let KeyGenParameterSpec keyGenParameterSpecBuild = new KeyGenParameterSpec.Builder("integrity.api.key.alias", 4).setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1")).setDigests("SHA-512").setAttestationChallenge(challenge).setDevicePropertiesAttestationIncluded(false).build();
