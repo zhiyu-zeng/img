@@ -2,9 +2,9 @@
 title: 【X】@app_sail 美国手机号 RedPocket 办理激活续费全流程，比 Ultra PayGo 紫卡、Tello，还要划算
 source: https://x.com/app_sail/status/2037437653071835440
 source_host: x.com
-clip_date: 2026-06-10T18:09:50+08:00
-trace_id: 055de0e8-ea2a-4ffc-ba62-2407b6ce0286
-content_hash: ca3de240ea94d314f5a5e3d6a45495d4a575d6a24a172d8eb0f64ba7ee6255e9
+clip_date: 2026-06-10T18:14:41+08:00
+trace_id: 86ce6bb5-b877-4209-a29a-b3e150ff4a15
+content_hash: 550e8f8083e34c43e2cc486b9121b8d8ae99588e21016cfcf715f15c0a3ac921
 status: imaged
 tags:
   - X
@@ -12,8 +12,8 @@ series: null
 ai_summary: null
 ai_summary_style: null
 images_status:
-  total: 14
-  succeeded: 14
+  total: 12
+  succeeded: 12
   failed_urls: []
 notion_page_id: null
 ---
@@ -172,30 +172,6 @@ Asa
 ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/8faa6a6e4a9c603e.jpg)
 
 ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/554f6dbc6ed2d427.jpg)
-
-Quote
-
-Asa
-
-@app\_sail
-
-Mar 27
-
-美国手机号 RedPocket 办理激活续费全流程，比 Ultra PayGo 紫卡、Tello，还要划算
-
-Giffgaff 英国卡近期已被淘宝、京东、咸鱼等各大平台相继下架，购买渠道大幅收窄。如果你正在寻找替代方案，RedPocket 是目前性价比最高的选择之一，超越了 Ultra PayGo 紫卡 和 Tello。 RedPocket Mobile...
-
-[Paid partnership](https://help.x.com/rules-and-policies/paid-partnerships-policy)
-
-Want to publish your own Article?
-
--   
-
-    
-
-    Click to Follow app\_sail
-
-    [tutti.so](https://t.co/rbjrSGAYL7) 合伙人，品牌宣发合作请私信 X BoostClub 500w+ 社区  合伙人    Discord：[discord.gg/hn3SZZJxEt](https://t.co/WORiSVot55) ![🏂](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/083777ca11f9fc6b.bin) ![🏄](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/843b73c7432e5167.bin) ![🛹](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/3c76412fbdf16dc3.bin) Lover of boards & freedom
 
 ❤️ 786 · 🔁 150
 
@@ -375,7 +351,7 @@ Want to publish your own Article?
 > **@imocone**
 > _Sat Mar 28 07:38:17 +0000 2026_
 > @app_sail 我激活出现这个 是不是买错了。 https://t.co/tysPXyuq3g
-> ![Image](https://pbs.twimg.com/media/HEe1BXIWwAANn-7.jpg)
+> ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/38d9c0ffb507ea75.jpg)
 > ❤️ 2
 
 > **@app_sail**
