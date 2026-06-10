@@ -2,8 +2,8 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-10T11:37:40+08:00
-trace_id: 7944903e-36f0-4c88-8ef5-d2117a65dcf9
+clip_date: 2026-06-10T18:48:30+08:00
+trace_id: 1da2949e-526c-4dbf-a3b6-afd409b7af24
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
 status: imaged
 tags:
@@ -81,6 +81,8 @@ standardIntegrityManager.prepareIntegrityToken(
 
 进入到 this.a.c 函数：
 
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/1fc442eb138e8c58.png)
+
 -   • 将 nonce 解码为 byte\[\]
     
 -   • 初始化 TaskCompletionSource 回调类
@@ -92,11 +94,19 @@ standardIntegrityManager.prepareIntegrityToken(
 
 组装 Binder 跨进程调用参数：
 
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/0e36ec2c0ceb35e2.png)
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/2c6ac142b3cd1d53.png)
+
 发起调用：
 
 最终由 IIntegrityService 作为服务端处理来自客户端的请求，至此我们正式进入 Google Play 源码分析。
 
 #### 服务端分析
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/8f35e2c813dc9e62.png)
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/940daa6d206f97b7.png)
 
 -   • 经由 dispatchTransaction 转发到 c 函数
     
@@ -255,6 +265,8 @@ Response Body:
 
 Google Play 发起 Key Attestation 的代码为：
 
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/8d1eacf1776caee8.png)
+
 -   • 首先指定别名、密钥生成算法、挑战值（防重放）等信息构建一个 KeyGenParameterSpec
     
 -   • 通过 KeyPairGenerator 指定 AndroidKeyStore 为具体的处理服务
@@ -267,6 +279,8 @@ Google Play 发起 Key Attestation 的代码为：
     
 
 这些调用的背后实际上发生了什么呢？generateKeyPair 具体的流程如下：
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/00448537a7d42954.png)
 
 这一步调用完以后 ，Tee 返回一个 X.509 证书链。这个证书链就是 Key Attestation 验证的核心。一般情况下至少包含三个证书：
 
@@ -285,6 +299,8 @@ Google Play 发起 Key Attestation 的代码为：
     
 
 拿到证书链之后，便组包发给了 Google 后端进行校验。那么在后端是如何校验的呢？依赖的便是在上文中指定的签名算法：EC（secp256r1），实际上使用的算法是：ECDSA（椭圆曲线数字签名算法）secp256r1为指定的椭圆曲线参数。算法具体的签名与验证过程：
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/abfe17abafa8aff9.png)
 
 根据图中的验证过程可知：私钥只签名不参与验证，公钥只验证不参与签名。签名值与公钥分别附加在证书的 Certificate.signatureValue Certificate.TBSCertificate.subjectPublicKeyInfo 中。因为每张证书都由上张证书签名，所以 Google 拿到三张证书依次进行校验：
 
@@ -403,7 +419,11 @@ function receiveFormPixel6(challenge) {
 
 然后惊奇的发现：
 
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/cfeb3f1dd8eb7c0f.png)
+
 继续滑动看下一个
+
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/b1667f51c3e9eeb6.png)
 
 小李的闲言碎语
 
