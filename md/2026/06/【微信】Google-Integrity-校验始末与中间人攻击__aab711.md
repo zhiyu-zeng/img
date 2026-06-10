@@ -2,8 +2,8 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-10T11:32:46+08:00
-trace_id: 74b1d249-6f7f-4f5e-82cf-f6b4cdcadb90
+clip_date: 2026-06-10T11:34:13+08:00
+trace_id: 5fee5f98-99c9-4642-a0fd-6d56b8a8fb8e
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
 status: imaged
 tags:
