@@ -2,9 +2,9 @@
 title: 【X】美国手机号 RedPocket 办理激活续费全流程，比 Ultra PayGo 紫卡、Tello，还要划算
 source: https://x.com/app_sail/status/2037437653071835440
 source_host: x.com
-clip_date: 2026-06-10T18:30:05+08:00
-trace_id: 5c760b1b-c16a-4e09-aab2-8f6f4ac1425b
-content_hash: 550e8f8083e34c43e2cc486b9121b8d8ae99588e21016cfcf715f15c0a3ac921
+clip_date: 2026-06-11T11:53:53+08:00
+trace_id: be10acfb-e5ca-4501-9ab0-d1318673d062
+content_hash: 295b3db073bf6e59ff1e1ce0ab7c6c294c9c5d628be1b4f6d6834908971b443f
 status: imaged
 tags:
   - X
@@ -173,7 +173,7 @@ Asa
 
 ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/554f6dbc6ed2d427.jpg)
 
-❤️ 786 · 🔁 150
+❤️ 790 · 🔁 150
 
 ---
 
