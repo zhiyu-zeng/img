@@ -2,21 +2,31 @@
 title: 【微信】Google Integrity 校验始末与中间人攻击
 source: https://mp.weixin.qq.com/s/u_YfVbY4pXwJe1bcGByUKg
 source_host: mp.weixin.qq.com
-clip_date: 2026-06-11T12:09:36+08:00
-trace_id: 1ef491a8-c3b3-4b72-8c57-8ae0207c30fa
+clip_date: 2026-06-11T15:10:43+08:00
+trace_id: dd8233b4-5b80-48fe-bb49-e37610d5db8d
 content_hash: abab7ca90405e41b8adc0829f0c4a9c0f1b2b9aa96dee91d17d75d375f524189
-status: imaged
+status: summarized
 tags:
   - 微信
 series: null
-ai_summary: null
-ai_summary_style: null
+ai_summary: Google Integrity 校验并非绝对可靠，可通过中间人攻击利用已 Root 但未解锁 Bootloader 设备的证书链绕过验证。
+ai_summary_style: key-points
 images_status:
-  total: 15
-  succeeded: 15
+  total: 12
+  succeeded: 12
   failed_urls: []
-notion_page_id: null
+notion_page_id: 37c75244-d011-819a-a431-eee51eca64ed
 ---
+
+> 💡 **AI 总结（key-points）**
+>
+> Google Integrity 校验并非绝对可靠，可通过中间人攻击利用已 Root 但未解锁 Bootloader 设备的证书链绕过验证。
+> 
+> - **Key Attestation 原理**：依赖 TEE 生成的证书链，使用 ECDSA 算法（secp256r1）验证，私钥安全但泄露后可伪造证书链。
+> - **中间人攻击条件**：设备需具备 Root 权限且 Bootloader 未解锁，以导出可信证书链用于攻击。
+> - **攻击实现方式**：通过 Frida 脚本 hook 密钥生成和证书链获取函数，将挑战值发送到另一台可信设备获取证书链并注入。
+> - **实验结果验证**：在 Y700（Root、三绿）和 Pixel6（Root、一绿）设备上测试，攻击后成功使 Pixel6 通过 Integrity 校验。
+> - **安全影响**：暴露了 Integrity 依赖 TEE 私钥的缺陷，攻击可绕过金融等应用的客户端验证。
 
 **小李的闲言碎语** *2026年6月9日 19:16*
 
