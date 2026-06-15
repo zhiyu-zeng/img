@@ -2,30 +2,31 @@
 title: 【看雪】[原创]Google Integrity 校验始末与中间人攻击
 source: https://bbs.kanxue.com/thread-291541.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-15T16:42:47+08:00
-trace_id: a1a166ab-869a-4a9d-a6d8-c3dcd16cf6c2
-content_hash: 14a5633888f441b12c65f44ce2b44da6bdac36121410227aede96b6457cf8154
+clip_date: 2026-06-15T17:00:12+08:00
+trace_id: b81ed9ae-c800-4734-8f1e-2f377a10a346
+content_hash: 54662984cf18f6e6c368f03850e3e852a83ec4cc1e5ab01a5a3cb62e5d412cb8
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: Google Integrity 服务虽被广泛信任，但其安全模型存在漏洞，在特定条件下可通过中间人攻击被绕过，表明其并非绝对可靠。
+ai_summary: Google Integrity 校验并非绝对安全，通过中间人攻击利用 Root 权限和未解锁 Bootloader 的设备可绕过其验证机制。
 ai_summary_style: key-points
 images_status:
   total: 10
   succeeded: 10
   failed_urls: []
-notion_page_id: 38075244-d011-815a-9e0c-cf3bcfd839c1
+notion_page_id: 38075244-d011-81fc-8fe4-da1b7b2763d1
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> Google Integrity 服务虽被广泛信任，但其安全模型存在漏洞，在特定条件下可通过中间人攻击被绕过，表明其并非绝对可靠。
+> Google Integrity 校验并非绝对安全，通过中间人攻击利用 Root 权限和未解锁 Bootloader 的设备可绕过其验证机制。
 > 
-> - **Token 生成与校验流程：** 客户端请求Integrity Token时，服务端会收集设备信息、应用签名、TEE证书链等数据并发送至Google后端验证，其中TEE证书链的完整性与真实性是校验核心。
-> - **安全基石与潜在弱点：** Key Attestation依赖于存储在TEE中的私钥对证书链进行签名，理论上无法伪造。然而，若TEE私钥泄露（如通过Root权限导出），整个信任链条将失效。
-> - **关键攻击前提：** 成功实施中间人攻击需同时满足两个条件：目标设备拥有Root权限以导出有效的证书链，且设备的Bootloader未被解锁以确保证书链能通过基础完整性检查。
-> - **攻击原理与验证：** 攻击可利用Root权限，通过Frida等工具Hook相关API，将高信誉设备生成的有效证书链替换到低信誉设备（如已解锁Bootloader的设备）的Integrity校验请求中，从而欺骗后端验证。文中实验成功演示了这一过程。
+> - **校验机制：** Integrity Token 生成依赖客户端收集设备信息、包名等，服务端发起 Key Attestation 获取 TEE 证书链，并使用 ECDSA 算法验证签名以确保设备完整性。
+> - **Key Attestation 原理：** TEE 生成包含 Root、Attestation 和 Leaf 证书的链条，后端通过公钥验证签名链，并校验 RootOfTrust 等信息来判断设备状态。
+> - **攻击前提条件：** 当设备拥有 Root 权限且 Bootloader 未解锁时，既能通过 Integrity 验证，又能导出 Key Attestation 证书链，从而具备中间人攻击基础。
+> - **攻击方法：** 使用 Frida 脚本 hook API 调用，将未通过验证设备的证书链请求转发到已通过验证的设备，获取有效证书链以绕过校验。
+> - **实验验证：** 在 Pixel 6（未通过验证）和 Y700（通过验证）上实施攻击，成功绕过 Integrity 校验，证明其脆弱性。
 
 Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融类APP都高度依赖 Integrity 服务来验证客户端的请求是否可信。但它真的完全可靠吗？怀揣着这个疑问，我深度分析了 Integrity Token 的生成过程与 Key Attestation 的原理。得出的结论是不可靠。
 
@@ -83,9 +84,7 @@ standardIntegrityManager.prepareIntegrityToken(
 #### 客户端分析
 
 首先我们通过 Maven 拿到 Integrity 的 jar 包。然后使用 Jadx 打开定位到 requestIntegrityToken 函数：  
-
 ![图片描述](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/3c498dfe259f6068.webp)
-![图片描述](https://bbs.kanxue.com/upload/attach/202606/1012164_B69EBUDPH8GVH9R.webp)
 
 发起请求时携带了一个 IntegrityTokenRequest 参数，里面主要包含了获取 Token 的必要参数：nonce、cloudProjectNumber。
 
