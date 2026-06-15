@@ -2,31 +2,31 @@
 title: 【看雪】[原创]Google Integrity 校验始末与中间人攻击
 source: https://bbs.kanxue.com/thread-291541.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-15T17:00:12+08:00
-trace_id: b81ed9ae-c800-4734-8f1e-2f377a10a346
-content_hash: 54662984cf18f6e6c368f03850e3e852a83ec4cc1e5ab01a5a3cb62e5d412cb8
+clip_date: 2026-06-15T17:21:26+08:00
+trace_id: 58d460fd-d94d-47a8-ae89-088a55647f3f
+content_hash: 41c2b71d8dfd98e58899ae3e40c14744440a0e85891c02c38735e57c05ece95a
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: Google Integrity 校验并非绝对安全，通过中间人攻击利用 Root 权限和未解锁 Bootloader 的设备可绕过其验证机制。
+ai_summary: Google Integrity服务并非完全可靠，通过中间人攻击可绕过其验证机制，利用Root权限和未解锁Bootloader设备实现漏洞利用。
 ai_summary_style: key-points
 images_status:
-  total: 10
-  succeeded: 10
+  total: 11
+  succeeded: 11
   failed_urls: []
-notion_page_id: 38075244-d011-81fc-8fe4-da1b7b2763d1
+notion_page_id: 38075244-d011-81d7-9e60-c16933cf6145
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> Google Integrity 校验并非绝对安全，通过中间人攻击利用 Root 权限和未解锁 Bootloader 的设备可绕过其验证机制。
+> Google Integrity服务并非完全可靠，通过中间人攻击可绕过其验证机制，利用Root权限和未解锁Bootloader设备实现漏洞利用。
 > 
-> - **校验机制：** Integrity Token 生成依赖客户端收集设备信息、包名等，服务端发起 Key Attestation 获取 TEE 证书链，并使用 ECDSA 算法验证签名以确保设备完整性。
-> - **Key Attestation 原理：** TEE 生成包含 Root、Attestation 和 Leaf 证书的链条，后端通过公钥验证签名链，并校验 RootOfTrust 等信息来判断设备状态。
-> - **攻击前提条件：** 当设备拥有 Root 权限且 Bootloader 未解锁时，既能通过 Integrity 验证，又能导出 Key Attestation 证书链，从而具备中间人攻击基础。
-> - **攻击方法：** 使用 Frida 脚本 hook API 调用，将未通过验证设备的证书链请求转发到已通过验证的设备，获取有效证书链以绕过校验。
-> - **实验验证：** 在 Pixel 6（未通过验证）和 Y700（通过验证）上实施攻击，成功绕过 Integrity 校验，证明其脆弱性。
+> - **证书链结构**：Key Attestation基于TEE生成的三级证书链（根证书、中间证书、叶子证书），用于证明设备完整性，根证书需由厂商提交Google备案。
+> - **验证过程**：后端使用ECDSA算法验证证书链签名，并检查根证书是否可信，同时验证设备是否解锁（RootOfTrust）和APP签名（AttestationApplicationId）。
+> - **攻击条件**：设备需同时具备Root权限和未解锁Bootloader，以便导出证书链并绕过设备完整性检查。
+> - **实验方法**：使用Frida脚本将Pixel 6的Key Attestation挑战转发至已通过验证的Y700设备，获取有效证书链后替换返回。
+> - **攻击结果**：成功使Pixel 6获得Integrity Token（三绿状态），证明Google Integrity验证可被中间人攻击绕过，存在安全缺陷。
 
 Google Integrity 一直以绝对可信闻名，基于此大量的银行、金融类APP都高度依赖 Integrity 服务来验证客户端的请求是否可信。但它真的完全可靠吗？怀揣着这个疑问，我深度分析了 Integrity Token 的生成过程与 Key Attestation 的原理。得出的结论是不可靠。
 
@@ -456,7 +456,7 @@ function receiveFormPixel6(challenge) {
 
 > **温泉划水鱼 · 13 楼**
 > 
-> ![](https://bbs.kanxue.com/view/img/face/067.gif)
+> ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/d2bc46e49bc609b4.png)
 
 > **mb\_elqwyvnm · 14 楼**
 > 
