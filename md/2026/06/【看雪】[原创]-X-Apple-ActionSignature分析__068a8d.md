@@ -2,31 +2,30 @@
 title: 【看雪】[原创] X-Apple-ActionSignature分析
 source: https://bbs.kanxue.com/thread-291582.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-15T16:44:17+08:00
-trace_id: 675ab68e-d3aa-4e01-a5bc-faeefc337856
-content_hash: 365f6a83fb69dd15700ecc869337c32accc1d948ce6eec2564cc968ca8085a04
+clip_date: 2026-06-15T17:04:07+08:00
+trace_id: b697c191-6f2f-47b9-877d-5bc6b48d3f2c
+content_hash: 7e731f78c19733a02b145f2b577b6a037f9912d89c0e22d244da1753166a4203
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: 分析Apple Music Android端的X-Apple-ActionSignature生成算法，需通过动态trace与反混淆工具辅助，才能有效逆向其高度复杂的加密逻辑。
+ai_summary: X-Apple-ActionSignature加密算法采用BR跳转混淆和MT19937算法，通过trace分析和idapython脚本去混淆可实现高效逆向。
 ai_summary_style: key-points
 images_status:
   total: 10
   succeeded: 10
   failed_urls: []
-notion_page_id: 38075244-d011-812b-8954-f0779a8f323e
+notion_page_id: 38075244-d011-814a-9be9-d3de9cfc2b9f
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 分析Apple Music Android端的X-Apple-ActionSignature生成算法，需通过动态trace与反混淆工具辅助，才能有效逆向其高度复杂的加密逻辑。
+> X-Apple-ActionSignature加密算法采用BR跳转混淆和MT19937算法，通过trace分析和idapython脚本去混淆可实现高效逆向。
 > 
-> - **算法复杂性：** 签名生成算法采用BR间接跳转、MBA及平坦化混淆，并深度结合白盒加密和梅森旋转算法（MT19937），每次迭代更新624轮，静态分析几乎无法进行。
-> - **分析环境与工具：** 在Pixel 6 (Android 15)上使用Frida 17.8.2，并借助GumTrace进行真机指令跟踪，配合IDAPython脚本处理trace日志以去混淆，大幅提升效率。
-> - **去混淆方法：** 通过trace提取BR地址及其目标，对单一目标地址直接patch为B指令；对双目标地址，根据上下文判断patch为条件跳转；对多目标地址则构建跳板块进行分支。
-> - **加密数据构成：** 最终501字节的签名由固定字节、text段计算数据、请求body、证书交换数据等按特定结构拼接而成，其中涉及多个从SO的text段动态计算得出的密钥片段。
-> - **复杂加密运算：** 最终16字节的加密结果是将body明文与已有数据SHA1签名后，与前序密钥进行白盒加密运算，并结合证书交换生成的初始表进行多轮查表计算得出，作者采用unidbg进行模拟调用。
+> - **算法复杂性：** 涉及BR间接跳转混淆、MBA混淆及平坦化，堆栈内存加密；使用白盒加密基于查表，并频繁应用梅森旋转算法（MT19937），MT表迭代624轮、初始化128次。
+> - **分析工具与方法：** 利用GumTrace和trace-ui进行真机trace，配合idapython脚本去混淆；针对BR跳转，处理目标地址等于1、等于2（条件跳转）和大于2（使用跳板）的情况。
+> - **加密数据构成：** 数据包括固定字节、头部魔数（如00 00 01 D0指示数据大小）、从libCoreFP.so的text段计算出的32字节（前后16字节）、证书交换数据，以及0x100数据由v4300内存运算生成。
+> - **初始化与实现：** 初始化通过arc4random()和gettimeofday()生成随机数，用于MT19937算法生成随机表；最终使用unidbg模拟调用生成签名，避免纯算实现耗时。
 
 分析对象: apple music  
 Android端
@@ -39,9 +38,9 @@ Android端
 
 这里我用的是trace再配合idapyhton去混淆就可以很好的分析了，在效率是有很大提升。
 
-[GumTrace](https://bbs.kanxue.com/elink@7ceK9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6D9K9h3c8G2L8X3N6&6L8$3!0G2i4K6u0r3c8%4g2E0g2s2u0S2j5$3g2Q4x3X3g2Y4K9i4b7%60.): 真机trace工具
+[GumTrace](https://bbs.kanxue.com/elink@256K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6D9K9h3c8G2L8X3N6&6L8$3!0G2i4K6u0r3c8%4g2E0g2s2u0S2j5$3g2Q4x3X3g2Y4K9i4b7%60.): 真机trace工具
 
-[trace-ui](https://bbs.kanxue.com/elink@810K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6A6L8h3Z5H3x3i4W2Q4x3V1k6@1M7X3q4U0k6g2\)9J5k6s2g2A6i4K6u0W2k6$3W2@1): trace日志分析工具
+[trace-ui](https://bbs.kanxue.com/elink@ef4K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6A6L8h3Z5H3x3i4W2Q4x3V1k6@1M7X3q4U0k6g2\)9J5k6s2g2A6i4K6u0W2k6$3W2@1): trace日志分析工具
 
 这两个工具对于算法分析,大大提升了分析效率,很棒!感谢两位大佬的无私奉献！具体使用就去Github上查看。
 
@@ -91,9 +90,7 @@ def patch_br(datas):
 以0x3069a8这个地址为例,有两个目标地址\[0x319740,0x3069ac\]
 
 为真时跳转到0x319740，为假时跳转到0x3069ac  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/de417aaf633d9271.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_93HZ8A4G9E5X5WK.png)
 
 > CINC W20, W6, EQ
 
@@ -167,15 +164,11 @@ patch_ins(0x5B3A28+4*4,'b 0x5b3afc')
 
 ### 加密数据构成分析
 
-![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/30f0581603f0ae22.png)
-
-![](https://bbs.kanxue.com/upload/attach/202606/947335_36D3KJHTC8KA83B.png)  
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/30f0581603f0ae22.png)  
 这是登录的时候抓包数据。
 
 整体数据大小有501个字节。  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/b341663efc3e7def.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_QPS9YZ395CVJ5EP.png)
 
 > 02
 
@@ -272,9 +265,7 @@ patch_ins(0x5B3A28+4*4,'b 0x5b3afc')
 上面说到从text段里获取的数据,从哪个地方获取,text基址模板都是在初始化就决定好了的。
 
 看看里面做了什么  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/005bca28935b9a30.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_R89WUJR8YZ2FQGE.png)
 
 首先会调用arc4random()生成一个4字节随机数,用作MT19973算法的种子初始化,这里MT表里的624个4字节数据就初始化完成了。
 
@@ -321,14 +312,10 @@ uint32_t generate_four(uint32_t w0) {
 ```
 
 下面就是开始做旋转操作  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/a082c9443171ba40.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_CWCPCVSSVGQXSE7.png)
 
 dword\_7D1074就是MT表，不断更新里面的数据  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/8d5a08421c49ede9.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_WHXQGH3QZPWXCK3.png)
 
 因为伪代码较长,这是我还原后的代码。
 
@@ -342,9 +329,7 @@ qword\_7D1A78：text段大小
 
 ### 从text段获取字节
 
-![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/a88312295e0cd407.png)
-
-![](https://bbs.kanxue.com/upload/attach/202606/947335_R8CFGKMQA4PMW94.png)  
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/a88312295e0cd407.png)  
 v35和v36就是从代码段里获取两个相邻的字节再经过后面的运算得到最终的16字节
 
 > F5 74 3E 5E 32 A1 91 79 93 76 B1 A0 25 EC F0 3F
@@ -462,19 +447,13 @@ for (int i = 921166456;; ++i) {
 这里大概说下,首先把 **0x1d0的数据** 和 **body明文** 拼接进行 **sha1** 签名,然后把这个结果与前16字节 `F5 74 3E 5E 32 A1 91 79 93 76 B1 A0 25 EC F0 3F` 进行运算更新,并注入白盒加密运算，此外还有有前面证书交换的操作,会生成一张576字节的表,这个作为初始表,后面会生成n多张表都是基于这张表计算得来的,然后再从这些表里进行查表操作再逐步运算得到最终的16字节加密结果。最后拼接上前面所有的运算即可得到最终的X-Apple-ActionSignature,没整理将就看=-=
 
 证书交换的网络请求可以看文章 [破解iTunes 登陆 PC授权 设备授权 购买安装协议](https://bbs.kanxue.com/thread-203641-1.htm)  
-
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/9b509c626964c018.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_7QMWY72WRGNQ27X.png)
 
 * * *
 
 纯算实现的话,因为前面证书交换那里还得需要花费更多时间,所以这里就用unidbg实现了。  
-
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/01ebfaa45f64ac3f.png)  
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/b2f75033d9cb7544.png)
-
-![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/01ebfaa45f64ac3f.png)
-![](https://bbs.kanxue.com/upload/attach/202606/947335_X2B4K559PJJQPKV.png)  
-![](https://bbs.kanxue.com/upload/attach/202606/947335_BH7CFW42CWPRFGR.png)
 
 这个东西研究下还是能学到很多东西的,和DroidGuard在很多方面都有相似处,短时间的还原还是推荐unidbg的模拟调用,不然纯算可太耗时间了。
 
