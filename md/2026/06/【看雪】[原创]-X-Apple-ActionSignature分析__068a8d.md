@@ -2,30 +2,31 @@
 title: 【看雪】[原创] X-Apple-ActionSignature分析
 source: https://bbs.kanxue.com/thread-291582.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-15T17:04:07+08:00
-trace_id: b697c191-6f2f-47b9-877d-5bc6b48d3f2c
-content_hash: 7e731f78c19733a02b145f2b577b6a037f9912d89c0e22d244da1753166a4203
+clip_date: 2026-06-15T17:09:13+08:00
+trace_id: 9ae6d1d3-1698-406a-be59-ebcb7b60aab2
+content_hash: 113074e8f8a786a64a4ef0d3eaaf038b59ca63778bbb6034b0617448f53e2df7
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: X-Apple-ActionSignature加密算法采用BR跳转混淆和MT19937算法，通过trace分析和idapython脚本去混淆可实现高效逆向。
+ai_summary: 作者通过trace工具和IDA脚本去除了苹果音乐签名算法中的BR间接跳转等复杂混淆，揭示了其使用MT19937白盒加密和代码段数据提取的多层结构。
 ai_summary_style: key-points
 images_status:
-  total: 10
-  succeeded: 10
+  total: 13
+  succeeded: 13
   failed_urls: []
-notion_page_id: 38075244-d011-814a-9be9-d3de9cfc2b9f
+notion_page_id: 38075244-d011-813f-a374-c90fa08b98b0
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> X-Apple-ActionSignature加密算法采用BR跳转混淆和MT19937算法，通过trace分析和idapython脚本去混淆可实现高效逆向。
+> 作者通过trace工具和IDA脚本去除了苹果音乐签名算法中的BR间接跳转等复杂混淆，揭示了其使用MT19937白盒加密和代码段数据提取的多层结构。
 > 
-> - **算法复杂性：** 涉及BR间接跳转混淆、MBA混淆及平坦化，堆栈内存加密；使用白盒加密基于查表，并频繁应用梅森旋转算法（MT19937），MT表迭代624轮、初始化128次。
-> - **分析工具与方法：** 利用GumTrace和trace-ui进行真机trace，配合idapython脚本去混淆；针对BR跳转，处理目标地址等于1、等于2（条件跳转）和大于2（使用跳板）的情况。
-> - **加密数据构成：** 数据包括固定字节、头部魔数（如00 00 01 D0指示数据大小）、从libCoreFP.so的text段计算出的32字节（前后16字节）、证书交换数据，以及0x100数据由v4300内存运算生成。
-> - **初始化与实现：** 初始化通过arc4random()和gettimeofday()生成随机数，用于MT19937算法生成随机表；最终使用unidbg模拟调用生成签名，避免纯算实现耗时。
+> - **分析方法：** 使用GumTrace进行真机trace，配合IDA Python脚本自动化去除BR间接跳转混淆，根据目标地址数量（单个直接跳转、两个条件跳转、多个跳板跳转）采用不同patch策略，显著提升逆向效率。
+> - **混淆特点：** 算法采用了BR间接跳转、MBA混淆、平坦化及堆栈内存地址加密，其中MT19937算法的MT表初始化和每次切页操作都需迭代624轮，直接trace分析耗时巨大。
+> - **算法核心：** 核心加密流程基于MT19937伪随机数生成器，生成随机表后用于从代码段（text段）提取字节，并经过多轮旋转和运算生成加密数据。
+> - **数据构成：** 签名数据包含固定字节、头部魔数、从代码段计算的32字节（前16字节固定，后16字节与请求相关）、由固定公式生成的256字节、以及长度可变的加密数据块。
+> - **复杂加密：** 最终16字节加密结果的生成最为复杂，结合了0x1D0数据与请求体的SHA1签名、前16字节代码段数据、白盒加密查表以及证书交换阶段生成的576字节基表。
 
 分析对象: apple music  
 Android端
@@ -38,9 +39,9 @@ Android端
 
 这里我用的是trace再配合idapyhton去混淆就可以很好的分析了，在效率是有很大提升。
 
-[GumTrace](https://bbs.kanxue.com/elink@256K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6D9K9h3c8G2L8X3N6&6L8$3!0G2i4K6u0r3c8%4g2E0g2s2u0S2j5$3g2Q4x3X3g2Y4K9i4b7%60.): 真机trace工具
+[GumTrace](https://bbs.kanxue.com/elink@232K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6D9K9h3c8G2L8X3N6&6L8$3!0G2i4K6u0r3c8%4g2E0g2s2u0S2j5$3g2Q4x3X3g2Y4K9i4b7%60.): 真机trace工具
 
-[trace-ui](https://bbs.kanxue.com/elink@ef4K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6A6L8h3Z5H3x3i4W2Q4x3V1k6@1M7X3q4U0k6g2\)9J5k6s2g2A6i4K6u0W2k6$3W2@1): trace日志分析工具
+[trace-ui](https://bbs.kanxue.com/elink@694K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6Y4K9i4c8Z5N6h3u0Q4x3X3g2U0L8$3#2Q4x3V1k6A6L8h3Z5H3x3i4W2Q4x3V1k6@1M7X3q4U0k6g2\)9J5k6s2g2A6i4K6u0W2k6$3W2@1): trace日志分析工具
 
 这两个工具对于算法分析,大大提升了分析效率,很棒!感谢两位大佬的无私奉献！具体使用就去Github上查看。
 
@@ -104,7 +105,7 @@ def patch_br(datas):
 
 以0x308b4c这个地址为例,有两个目标地址\[0x3110c4,0x308904\]
 
-为真时跳转到0x3110c4，假时跳转到0x308904 ![](https://bbs.kanxue.com/upload/attach/202606/947335_MNW4JBMVR33EM35.png)
+为真时跳转到0x3110c4，假时跳转到0x308904 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/d5d84dfb0f28e25b.png)
 
 这里可以看到br的下一条指令地址是 0x308B50,这个时候就不在br的目标地址里了，前面也是说到了br到cinc指令之前的所有指令操作都有用到,我们不能随意patch，那这里应该怎么做呢?细看0x308B50这个地址的指令,它其实是个垃圾指令,在整个程序里并不会被执行到。所以我们可以在
 
@@ -481,11 +482,11 @@ for (int i = 921166456;; ++i) {
 
 > **大魔头 · 6 楼**
 > 
-> ![](https://bbs.kanxue.com/view/img/face/005.gif)
+> ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/2edefc03a0b5df03.png)
 
 > **小调调 · 7 楼**
 > 
-> 我尝试过直接模拟还原出一个释放算法，跑了20分钟直接把Token烧没了，还没跑完 ![](https://bbs.kanxue.com/view/img/face/031.gif)
+> 我尝试过直接模拟还原出一个释放算法，跑了20分钟直接把Token烧没了，还没跑完 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/aa51a5bd67c7f06b.png)
 
 > **xingbing · 8 楼**
 > 
