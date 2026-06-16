@@ -2,30 +2,34 @@
 title: 【看雪】完整还原dex2c某数字壳加固代码为原始代码
 source: https://bbs.kanxue.com/thread-291632.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-16T17:52:56+08:00
-trace_id: b9870a59-a9b5-402f-847e-d76ed6e3ce36
-content_hash: ad30bb406fa2d06d1f85175ecb8b9f1772adb99a778e67fa3cfd764788dc4bda
+clip_date: 2026-06-16T17:53:52+08:00
+trace_id: c83727c3-8708-4876-9ae8-a82e1263d70f
+content_hash: 8eb771df09009b6f576f018539d6bbdc2f90fac41fee61a1e9f8530ba1e18a15
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: 利用AI助手和逆向工具自动化还原被dex2c数字壳加固的APK代码至原始状态。
+ai_summary: |-
+  通过AI辅助和逆向工具，可自动化还原dex2c数字壳加固的APK代码为原始状态。  
+  - **工具准备：** 需安装Claude VSCode插件、IDA反汇编器、Jadx反编译器，并下载目标APK。  
+  - **AI指令：** 以PUA风格命令AI执行全流程逆向工程，包括资料搜索、工具下载、动态跟踪、hook、模拟执行、混淆脚本编写和分析。  
+  - **核心目标：** 完整还原APK中所有加固代码至原始代码，强调自主解决所有技术难题。  
+  - **实践风格：** 文章采用幽默的“模仿领导PUA”方式，推动AI完成逆向任务。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 38175244-d011-818a-a591-c0282b4655dc
+notion_page_id: 38175244-d011-8138-a301-ebd304f6a8bf
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 利用AI助手和逆向工具自动化还原被dex2c数字壳加固的APK代码至原始状态。
-> 
-> - **工具准备**：需安装Claude VS Code插件、IDA反汇编工具和Jadx反编译器，并下载目标APK文件。
-> - **自动化过程**：通过AI指令设置定时循环任务，自动执行资料搜索、工具下载、代码跟踪、动态钩子、模拟执行及编写脚本等逆向步骤。
-> - **核心目标**：针对APK中所有被加固的代码进行还原，实现从加密状态到原始APK的完整转换。
-> - **辅助参考**：可借鉴看雪论坛的基础理论和逆向分析板块相关资源以支持分析工作。
+> 通过AI辅助和逆向工具，可自动化还原dex2c数字壳加固的APK代码为原始状态。  
+> - **工具准备：** 需安装Claude VSCode插件、IDA反汇编器、Jadx反编译器，并下载目标APK。  
+> - **AI指令：** 以PUA风格命令AI执行全流程逆向工程，包括资料搜索、工具下载、动态跟踪、hook、模拟执行、混淆脚本编写和分析。  
+> - **核心目标：** 完整还原APK中所有加固代码至原始代码，强调自主解决所有技术难题。  
+> - **实践风格：** 文章采用幽默的“模仿领导PUA”方式，推动AI完成逆向任务。
 
 第一节 万祖归宗
 
@@ -48,3 +52,11 @@ notion_page_id: 38175244-d011-818a-a591-c0282b4655dc
 第四节 get
 
 [#基础理论](https://bbs.kanxue.com/forum-161-1-117.htm) [#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm)
+
+* * *
+
+## 评论
+
+> **wx\_阿伦\_109 · 2 楼**
+> 
+> ps: 用中转站的菜鸡不配回复
