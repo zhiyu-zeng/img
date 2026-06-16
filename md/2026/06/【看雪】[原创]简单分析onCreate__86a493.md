@@ -2,31 +2,36 @@
 title: 【看雪】[原创]简单分析onCreate
 source: https://bbs.kanxue.com/thread-291584.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-15T21:30:15+08:00
-trace_id: 10b8e30e-f829-4736-80a9-88547d70c6e6
-content_hash: 7c95f59e5c4b96fb2be56925257b810e6dc0027430cd1daf3e531ff51cebaff8
+clip_date: 2026-06-16T09:33:41+08:00
+trace_id: 742b0875-94ea-42ec-b247-2d7d0f01f433
+content_hash: a6c782c6a86711583f0eab70afca850270aab072ad4bad779e55e0259f6b51ec
 status: summarized
 tags:
   - 看雪
 series: null
-ai_summary: 通过动态调试逆向分析了百度加固对onCreate方法的DEX虚拟化保护，还原了其VMP解释器的指令执行流程。
+ai_summary: |-
+  本文详细分析了一个Android应用中onCreate方法被VMP（虚拟机保护）加固后的逆向过程，揭示了其VMP解释器的基本执行流程和字节码与Dalvik指令的映射关系。  
+  - **VMP入口与JNI调用：** Java层的`onCreate`方法被`A.V((int) 0xab000000, this, new Object[]{bundle})`代理，该native方法通过索引`0xab000000`获取VMP状态（`vmState`），并分配虚拟寄存器，最终调用核心解释函数`sub_4CC20`。  
+  - **虚拟寄存器与字节码执行：** 解释器通过`x26`寄存器（PC指针）读取2字节的虚拟字节码，根据高8位操作码跳转到对应的处理函数（共256个），并利用`x14`作为基地址的虚拟寄存器数组（如`v0`-`v6`）存取中间值。  
+  - **Dalvik指令映射分析：** 作者通过trace还原了多条虚拟指令的原始Dalvik操作，例如`0xf9`对应`const-string`，`0x6e`对应`invoke-super`，`0x73`对应`move-result-object`，证明VMP字节码与原始指令结构相似。  
+  - **JNI功能实现：** VMP通过JNI函数（如`NewStringUTF`、`GetMethodID`、`CallNonvirtualVoidMethodA`）实现具体的Java层操作，并在解释器中拼接方法签名、处理对象类型转换（`check-cast`）和数组操作（`array-length`、`aget-object`）。  
+  - **分析方法与工具：** 作者使用脚本定位native函数、Frida hook辅助确认参数、IDA反编译结合trace日志逐步跟踪寄存器值变化，从而理解VMP的执行逻辑。
 ai_summary_style: key-points
 images_status:
   total: 14
   succeeded: 14
   failed_urls: []
-notion_page_id: 38075244-d011-818d-9341-c026b831c763
+notion_page_id: 38175244-d011-811f-adac-c115deb5f146
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过动态调试逆向分析了百度加固对onCreate方法的DEX虚拟化保护，还原了其VMP解释器的指令执行流程。
-> 
-> - **VMP入口伪装：** 原始onCreate方法调用native函数`A.V(0xab000000, this, args)`，该函数通过索引找到对应的虚拟机状态(vmState)，并跳转至解释器主循环。
-> - **虚拟机初始化：** 解释器根据方法信息分配虚拟寄存器空间，并通过内存清零完成初始化，其数量与目标方法使用的真实寄存器数一致（本例为7个）。
-> - **字节码解释执行：** 解释器通过`x26`寄存器作为程序计数器(PC)，从vmState中读取虚拟字节码，并根据指令码分派到对应的处理函数（约256个），模拟Dalvik指令。
-> - **指令功能映射：** 通过动态trace成功映射了部分虚拟指令，例如操作码`0xf9`对应`const-string`，`0x6e`对应`invoke-super`，`0x73`对应`move-result-object`。
-> - **分析方法总结：** 该分析通过Hook JNI函数、结合静态反编译与动态trace，逐步还原了VMP加载常量、调用方法、类型转换等核心操作的实现机制。
+> 本文详细分析了一个Android应用中onCreate方法被VMP（虚拟机保护）加固后的逆向过程，揭示了其VMP解释器的基本执行流程和字节码与Dalvik指令的映射关系。  
+> - **VMP入口与JNI调用：** Java层的`onCreate`方法被`A.V((int) 0xab000000, this, new Object[]{bundle})`代理，该native方法通过索引`0xab000000`获取VMP状态（`vmState`），并分配虚拟寄存器，最终调用核心解释函数`sub_4CC20`。  
+> - **虚拟寄存器与字节码执行：** 解释器通过`x26`寄存器（PC指针）读取2字节的虚拟字节码，根据高8位操作码跳转到对应的处理函数（共256个），并利用`x14`作为基地址的虚拟寄存器数组（如`v0`-`v6`）存取中间值。  
+> - **Dalvik指令映射分析：** 作者通过trace还原了多条虚拟指令的原始Dalvik操作，例如`0xf9`对应`const-string`，`0x6e`对应`invoke-super`，`0x73`对应`move-result-object`，证明VMP字节码与原始指令结构相似。  
+> - **JNI功能实现：** VMP通过JNI函数（如`NewStringUTF`、`GetMethodID`、`CallNonvirtualVoidMethodA`）实现具体的Java层操作，并在解释器中拼接方法签名、处理对象类型转换（`check-cast`）和数组操作（`array-length`、`aget-object`）。  
+> - **分析方法与工具：** 作者使用脚本定位native函数、Frida hook辅助确认参数、IDA反编译结合trace日志逐步跟踪寄存器值变化，从而理解VMP的执行逻辑。
 
 dex vmp简单分析onCreate
 
