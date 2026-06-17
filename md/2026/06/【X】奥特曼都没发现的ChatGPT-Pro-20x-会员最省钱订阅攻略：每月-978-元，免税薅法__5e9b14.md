@@ -1,0 +1,377 @@
+---
+title: 【X】奥特曼都没发现的ChatGPT Pro 20x 会员最省钱订阅攻略：每月 978 元，免税薅法
+source: https://x.com/qi9098/status/2062279411052036537
+source_host: x.com
+clip_date: 2026-06-17T17:15:50+08:00
+trace_id: 5c779c75-fd7b-4bf0-9ecb-9e301531fd14
+content_hash: de274347d668343dd8a07d29f5480bc580b0003f55f418ecb9a1b1bd1cadebf3
+status: summarized
+tags:
+  - X
+series: null
+ai_summary: 通过利用菲律宾区定价和美国免税州地址策略，ChatGPT Pro 20x 会员月费可从约 1400 元人民币降至 978 元。
+ai_summary_style: key-points
+images_status:
+  total: 9
+  succeeded: 9
+  failed_urls: []
+notion_page_id: 38275244-d011-816e-bd82-cde1761240f5
+---
+
+> 💡 **AI 总结（key-points）**
+>
+> 通过利用菲律宾区定价和美国免税州地址策略，ChatGPT Pro 20x 会员月费可从约 1400 元人民币降至 978 元。
+> 
+> - **前提要求：** 账号需为无活跃订阅的免费状态，并准备一张支持外币支付的虚拟卡或双币卡。
+> - **核心操作：** 在 ChatGPT 官网使用浏览器控制台运行特定 JavaScript 代码，向支付接口提交将购买区域设定为菲律宾（PHP 货币）的订单。
+> - **关键避税步骤：** 在结账页面将账单地址国家设为美国，并填入一个免税州（如特拉华州）的具体地址，使增值税降为 0%。
+> - **支付与金额：** 确认最终金额为 8,919.64 菲律宾比索，按汇率折合人民币 978.04 元，使用外币卡完成支付即可。
+> - **额外优化提示：** 有用户反馈使用某些带有返现功能的虚拟支付卡（如 Plasma One），可在 978 元基础上再享受约 10% 折扣，实际成本可降至约 894 元。
+
+**@qi9098**
+_Wed Jun 03 21:05:01 +0000 2026_
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/def988fb370aeea0.jpg)
+
+6月4日
+
+点击 关注 qi9098
+
+5月31号 Codex 额度砍半 + GPT-5.2 下线，额度肉眼可见在烧。很多用户被迫需要从plus和5x pro升级到20x pro会员，200美金约1400人民币可不便宜，但是用这个方法，能以978人民币拿下，甚至比Apple 菲律宾区（约 1096 元/月）更便宜！
+
+全球各大区 App Store 价格对比供参考：
+
+[https://appstoreprice.org/en/apps/6448311069](https://appstoreprice.org/en/apps/6448311069)
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/12fd69d2e49ce38b.jpg)
+
+## 前提条件
+
+1\. 账号必须为免费状态：如果有活跃的 Plus 订阅，跑代码会报错。建议新开个干净账号。
+
+2\. 网络节点：使用能正常登入 ChatGPT 官网的任意节点即可。
+
+3\. 支付工具：准备一张任意支持外币支付的虚拟卡或双币卡（Visa / Mastercard / Revolut 等）。
+
+## 详细实操步骤
+
+第一步：打开浏览器控制台
+
+用电脑浏览器登录 ChatGPT 官网(
+
+[https://chatgpt.com](https://chatgpt.com)
+
+)。
+
+登录后，在当前页面按 \`F12\`（或右键 - 选择“检查”），切换到 Console 面板：
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/608c03d05584af36.jpg)
+
+第二步：运行接口请求代码
+
+在 Console控制台中复制并粘贴以下代码，按回车键运行：
+
+```text
+(async function() {
+    try {
+        const t = await (await fetch("/api/auth/session")).json();
+        if (!t.accessToken) {
+            alert("Please log in to ChatGPT first!");
+            return
+        }
+        const p = {
+            "entry_point": "all_plans_pricing_modal",
+            "plan_name": "chatgptpro",
+            "billing_details": {
+                "country": "PH",
+                "currency": "PHP"
+            },
+            "checkout_ui_mode": "custom"
+        };
+        const r = await fetch("https://chatgpt.com/backend-api/payments/checkout", {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + t.accessToken,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(p)
+        });
+        const d = await r.json();
+        d.checkout_session_id ? window.location.href = "https://chatgpt.com/checkout/openai_llc/" + d.checkout_session_id : alert("Extraction failed: " + (d.detail || JSON.stringify(d)))
+    } catch (e) {
+        alert("An error occurred: " + e)
+    }
+})();
+```
+
+(source：
+
+[https://pastes.io/u71MjBOF](https://pastes.io/u71MjBOF)
+
+)
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/74b640add05b6e8e.jpg)
+
+回车后脚本会提交订单请求，页面会在几秒内自动重定向到结账页面：
+
+第三步：填写避税地址
+
+进入结账页面后，默认总价是带增值税的 ₱9,990 比索。
+
+在左侧的 Billing address（账单地址） 里填入美国免税州的地址来免去增值税：
+
+1\. Country or region（国家） 选 United States（美国）。
+
+2\. 填入美国免税州的地址（可以使用
+
+[https://usaddressgen.com/tax-free-address](https://usaddressgen.com/tax-free-address)
+
+) 生成一个免税州地址填入）。
+
+这里以特拉华州（Delaware）为例填写：
+
+Address line 1: 49 North Street
+
+City: Newark
+
+State: Delaware
+
+ZIP code: 19711
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/5040f286e0c5fba0.jpg)
+
+第四步：确认价格并支付
+
+填入免税地址后，系统重新计算税率，\`Tax (0%)\` 变为 ₱0.00，应付总额降到了最底价：₱8,919.64。
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/c01d35a13273d61b.jpg)
+
+这个价格用计算器换算，折合人民币为 978.04元。确认账单无误后，使用准备好的外币卡付款即可订阅成功（左侧为汇率折算，右侧为付款成功记录）：
+
+![图像](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/1a044828e1eae2a1.jpg)
+
+至此，开通成功，快去试试吧～
+
+想发布自己的文章？
+
+-   
+
+    
+
+    点击 关注 qi9098
+
+    🎓
+
+    
+
+    | 记录 AI 时代普通人能用上的工具、价格和access route | Codex | Claude Code | DeepSeek | 闲鱼暗号
+
+❤️ 263 · 🔁 23
+
+---
+
+## 评论
+
+> **@t1anesy12**
+> _Thu Jun 11 15:28:52 +0000 2026_
+> @qi9098 请问可以用这个方法充菲律宾的plus吗
+
+> **@qi9098**
+> _Thu Jun 11 15:29:52 +0000 2026_
+> @t1anesy12 可以试试
+
+> **@t1anesy12**
+> _Thu Jun 11 15:35:02 +0000 2026_
+> @qi9098 我把代码里的pro改成plus  直接报错了
+
+> **@osguider**
+> _Thu Jun 11 01:59:43 +0000 2026_
+> @qi9098 感谢感谢，优秀！
+> ❤️ 1
+
+> **@Hellochinabody**
+> _Wed Jun 10 17:21:59 +0000 2026_
+> @qi9098 附上成功截图 https://t.co/iIPxI7X8w2
+> ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/a78b773239d610ad.jpg)
+> ❤️ 2
+
+> **@qi9098**
+> _Wed Jun 10 17:25:46 +0000 2026_
+> @Hellochinabody 恭喜啊哥们 这值爆了好吧
+
+> **@Hellochinabody**
+> _Wed Jun 10 17:21:18 +0000 2026_
+> @qi9098 nb跑通了！感谢分享，另外再提一个点，如果用币圈的U卡plasma one订阅的话还能再打9折（订阅ai返现10%）相当于894元开20倍的pro
+> ❤️ 2
+
+> **@qi9098**
+> _Wed Jun 10 17:26:56 +0000 2026_
+> @Hellochinabody nb哈哈哈哈哈再来点人开发有朝一日实现0元20倍😂
+
+> **@xxx_rubin**
+> _Wed Jun 10 09:16:10 +0000 2026_
+> @qi9098 大佬这个可以用google play绑定poke pay 虚拟卡的方式支付吗
+
+> **@qi9098**
+> _Wed Jun 10 12:00:17 +0000 2026_
+> @xxx_rubin https://t.co/fzQAp5F23S不知道诶但是这个哥们的你可以参考一下 我用的是外卡
+
+> **@qihong_fsd**
+> _Wed Jun 10 08:09:14 +0000 2026_
+> @qi9098 亲测有效
+
+> **@luoluo_dev**
+> _Wed Jun 10 07:14:17 +0000 2026_
+> @qi9098 大哥用的哪家的卡付款的，现在好多虚拟卡也不行了
+
+> **@wangzaijuan**
+> _Wed Jun 10 04:19:01 +0000 2026_
+> @qi9098 这个溜
+
+> **@meideMD5**
+> _Wed Jun 10 04:09:05 +0000 2026_
+> @qi9098 打个赌，我赌三天后，这个教程就会出现在linux do上
+
+> **@xiricth**
+> _Wed Jun 10 01:00:44 +0000 2026_
+> @qi9098 还能用吗
+
+> **@qi9098**
+> _Wed Jun 10 01:04:02 +0000 2026_
+> @xiricth 当然可以哈哈哈
+
+> **@xiricth**
+> _Wed Jun 10 01:05:35 +0000 2026_
+> @qi9098 你有售卖吗
+
+> **@xiaoniuds916**
+> _Mon Jun 08 02:54:56 +0000 2026_
+> @qi9098 价格出来了 但是港卡 招商的viso都不行
+
+> **@ailands19**
+> _Sat Jun 06 12:19:23 +0000 2026_
+> @qi9098 两个疑问哈：1、国内的Visa卡不行吧？2、菲区的帐号，还能用美国的免税州哇？
+
+> **@qi9098**
+> _Sat Jun 06 13:26:02 +0000 2026_
+> @ailands19 卡可以试试我用的UK卡，这个我不是专业的
+
+第二个问题，跟apple账号没关系，只要地址填免税区就行
+
+> **@t1anesy12**
+> _Fri Jun 05 22:09:41 +0000 2026_
+> @qi9098 老师请问一下  一张虚拟卡可以给两个gpt开pro20x吗
+
+> **@qi9098**
+> _Sat Jun 06 13:26:44 +0000 2026_
+> @t1anesy12 没试过，理论上应该可以吧，那些小企业很多买多个pro账号的
+
+> **@junqiangchen**
+> _Fri Jun 05 05:57:49 +0000 2026_
+> @qi9098 100刀的要多少钱？
+
+> **@simon_ping**
+> _Fri Jun 05 02:12:39 +0000 2026_
+> @qi9098 国内卡基本用不了
+
+> **@0Bhws**
+> _Fri Jun 05 01:44:20 +0000 2026_
+> @qi9098 666啊~~
+
+> **@lid2064954**
+> _Fri Jun 05 00:21:36 +0000 2026_
+> @qi9098 Open AI:漏洞已知，马上修复。顺便通知 https://t.co/AZQ9wbtNeX
+> ![Image](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/06/1032885c60b09a0d.jpg)
+> ❤️ 2
+
+> **@qi9098**
+> _Thu Jun 04 15:21:50 +0000 2026_
+> 已有兄弟跑通了
+https://t.co/PmxNTTh3oM
+> ❤️ 3
+
+> **@shimingyonghu**
+> _Thu Jun 04 14:02:11 +0000 2026_
+> @qi9098 欸，汇率又跌了啊。上次看还是1000出头
+
+> **@EdGao326**
+> _Thu Jun 04 12:17:10 +0000 2026_
+> @qi9098 Claude有类似的方法嘛
+
+> **@qi9098**
+> _Thu Jun 04 12:24:44 +0000 2026_
+> @EdGao326 暂时没发现，但是claude的Apple低价区20x的会员比gpt的便宜
+
+> **@EdGao326**
+> _Thu Jun 04 12:25:56 +0000 2026_
+> @qi9098 我在闲鱼上经常能发现三百多四百出头的ClaudeMax5x，不知道是什么原理，有用Googleplay冲的，难道是黑卡？
+
+> **@qi9098**
+> _Thu Jun 04 12:26:59 +0000 2026_
+> @EdGao326 我擦，有可能
+
+> **@EdGao326**
+> _Thu Jun 04 14:38:26 +0000 2026_
+> @qi9098 这个主要是没有外币卡啊，哪里有买这个卡的渠道吗
+
+> **@li_side666**
+> _Thu Jun 04 08:59:41 +0000 2026_
+> @qi9098 关键是支付方式啊，没卡啥都没有
+
+> **@TusiLu7565**
+> _Thu Jun 04 06:36:56 +0000 2026_
+> @qi9098 关键是没有卡，用LINK支付不成功,GOOGLEPAY 也不行
+
+> **@qi9098**
+> _Thu Jun 04 15:22:35 +0000 2026_
+> @TusiLu7565 有人跑通了
+
+> **@hamflx**
+> _Thu Jun 04 05:46:38 +0000 2026_
+> @qi9098 最近openai论坛刚好有一个举报这个方案的帖子
+
+> **@qi9098**
+> _Thu Jun 04 11:05:13 +0000 2026_
+> @hamflx 看能用多久吧
+感觉没上次那个严重，上次那个约等于批量白嫖，这个是真充钱
+说不准，能用一会是一会
+
+> **@CakeAI8**
+> _Thu Jun 04 05:46:04 +0000 2026_
+> @qi9098 基本上，所有卡都会被拒绝的。
+> ❤️ 3
+
+> **@vipmoshang**
+> _Thu Jun 04 05:02:00 +0000 2026_
+> @qi9098 哎，主要就是没能支付的卡
+> ❤️ 1
+
+> **@zzyalbert**
+> _Thu Jun 04 03:22:03 +0000 2026_
+> @qi9098 plus会比土区便宜吗
+
+> **@qi9098**
+> _Thu Jun 04 03:36:53 +0000 2026_
+> @zzyalbert 没试过，可以试试！
+
+> **@Congci911**
+> _Thu Jun 04 02:33:53 +0000 2026_
+> @qi9098 会不会被封号
+
+> **@qi9098**
+> _Thu Jun 04 03:15:49 +0000 2026_
+> @Congci911 反正我直接拿主号上了哈哈哈 我觉得我是忠实的老用户，给他捐了这么多钱，应该不会封我吧
+
+不过真正抵抗风险的是，反正用 Codex 的话，数据都在本地 这跟 ChatGPT 又不一样
+
+> **@qi9098**
+> _Thu Jun 04 03:16:27 +0000 2026_
+> @Congci911 而且这个你也算是实打实的付钱了，不至于吧，最多就是给你退钱？
+
+> **@victorfbma**
+> _Thu Jun 04 01:11:26 +0000 2026_
+> @qi9098 卧槽，我的方法怎么被你公布了。奥特曼马上拉闸
+
+> **@qi9098**
+> _Thu Jun 04 03:17:36 +0000 2026_
+> @victorfbma 哈哈哈哈菲律宾用户猛增一个亿
