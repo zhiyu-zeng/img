@@ -2,26 +2,31 @@
 title: 【看雪】字节 数美v4 慢慢买设备注册
 source: https://bbs.kanxue.com/thread-291807.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-29T10:39:31+08:00
-trace_id: 4ad59d73-e531-46de-80e9-11079941c4fa
-content_hash: f7db1895dc1bfa777f5bb9bfc784a9dd968fb4d6033261446510ac3bd8986fd7
+clip_date: 2026-06-29T10:45:56+08:00
+trace_id: aaba9801-bf74-4072-b08e-3fb904a814ff
+content_hash: 798f3b17c1a9597502d8203e4ec6f2ef39748288795e44f9c7bd8f7cc833243c
 status: summarized
 tags:
   - 看雪
 series: null
 feed_source: null
-ai_summary: 通过模拟设备指纹和加密通信，绕过慢慢买应用的字节、数美v4及自身设备注册风控，实现业务接口访问。
+ai_summary: 通过模拟字节、数美、慢慢买三重设备注册与签名，绕过慢慢买App的最新风控系统，以获取商品优惠券数据。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 38e75244-d011-81de-ab63-c5cca8ff59fc
+notion_page_id: 38e75244-d011-81fe-9ac4-da9e93efb808
 ioc:
   cves: []
   cwes: []
   hashes:
     - 3e41d1331f5ddafcd0a38fe2d52ff66f
+    - 3f1a9c47e0b2d85af6c319e74d20b8aa15ce6037f9b4c81d2e7a04f6b3589c1e
+    - 8b27e6f04a1c93d57e0286bf4d19a3cc62f085e1d7b3940a8c25e6f1b09d473a
+    - c50d9a31f8e2470b6da1c83057f9e24b3a6c108de7f5b29014ac836e5d1b079f
+    - d64c8c7b13610bd7a1d68d07074c05bcd086aae0c24fe9fc2fb43b91eae6ece6
+    - e4976abde986a4cff466c2e86bbcb381
   domains:
     - apapia-common.manmanbuy.com
     - apapia-history-weblogic.manmanbuy.com
@@ -36,15 +41,17 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过模拟设备指纹和加密通信，绕过慢慢买应用的字节、数美v4及自身设备注册风控，实现业务接口访问。
+> 通过模拟字节、数美、慢慢买三重设备注册与签名，绕过慢慢买App的最新风控系统，以获取商品优惠券数据。
 > 
-> - **风控演进过程**：对抗从早期业务接口参数随机过风控，升级到字节与慢慢买设备注册，再至字节、数美v4、慢慢买三重严格校验。
-> - **壳保护与检测**：应用采用爱加密壳，具备反frida和xposed功能，需先绕过检测并dump出真实so文件。
-> - **设备失效与复用**：注册设备易快速失效导致接口返回登录，因此每次业务请求都需新注册设备，理论上设备可复用两次。
-> - **算法实现核心**：代码提供数美设备ID生成、字节设备注册、业务设备注册等函数，使用AES、DES、MD5等加密技术构建请求。
-> - **关键函数示例**：如gen_sm_deviceid生成数美设备ID，MmbDevice类管理设备信息和业务调用流程。
+> - **对抗历程：** 作者持续对抗该App约一年，风控已从“业务接口参数随机”升级至“字节+数美v4+慢慢买设备注册”三条线严格校验。
+> - **难点突破：** App使用了爱加密壳，需先过反Frida和Xposed检测，才能dump出真实SO库以分析业务逻辑。
+> - **核心机制：** 爬虫需依次完成字节设备注册（获取`bd_did`）、数美设备注册（获取`sm_deviceid`）、慢慢买业务设备注册（获取`mmbDevId`）。
+> - **代码实现：** 提供的Python代码完整实现了设备信息伪造、关键参数生成、请求体加密（涉及DES、AES、RSA）及签名流程。
+> - **未解问题：** 注册的设备很快会失效并触发登录风控，作者目前通过每次业务请求前重新注册设备来规避。
 
-慢慢买最新版无登录设备注册风控，这app挺舍得定制sdk的，当然我不知道定制价格，前后跟这app持续对抗差不多一年了，从最开始的业务接口参数随机就能过风控请求，过渡到上字节+慢慢买自己业务的设备注册，再到字节+数美v4+慢慢买设备注册三条线严格校验，哦对了这玩意儿有个爱加密的壳，反frida和xposed，要搞业务so需要先过检测然后dump出真实so，这条线还有个风控点我没处理掉，注册下来的设备很快就会失效，接口会返回登录，所以目前我是每次请求业务接口都注册一套新设备，理论上一套设备复用个两次没啥问题，具体就大家自己去分析了吧；整个过程感谢各位大佬对我的思路提醒，这篇文章我只给算法，具体细节我就不想讲了，确实有太多点需要处理了，而且我也知道大多数人其实只想要个成品，希望对你的业务有所帮助~
+> 慢慢买最新版无登录设备注册风控，这app挺舍得定制sdk的，当然我不知道定制价格，前后跟这app持续对抗差不多一年了，从最开始的业务接口参数随机就能过风控请求，过渡到上字节+慢慢买自己业务的设备注册，再到字节+数美v4+慢慢买设备注册三条线严格校验，哦对了这玩意儿有个爱加密的壳，反frida和xposed，要搞业务so需要先过检测然后dump出真实so，这条线还有个风控点我没处理掉，注册下来的设备很快就会失效，接口会返回登录，所以目前我是每次请求业务接口都注册一套新设备，理论上一套设备复用个两次没啥问题，具体就大家自己去分析了吧；整个过程感谢各位大佬对我的思路提醒，这篇文章我只给算法，具体细节我就不想讲了，确实有太多点需要处理了，而且我也知道大多数人其实只想要个成品，希望对你的业务有所帮助~
+
+### test.py
 
 ```python
 # -*- coding: utf-8 -*-
@@ -434,6 +441,8 @@ if __name__ == "__main__":
     data = get_coupon("https://item.taobao.com/item.htm?id=995595406124")
 ```
 
+### mmb\_crypto.py
+
 ```python
 # -*- coding: utf-8 -*-
 import gzip, json, random, uuid, hashlib, base64, zlib, collections, string
@@ -650,6 +659,123 @@ def sm_random_fingerprint(template_json: str) -> str:
     return json.dumps(J, ensure_ascii=False, separators=(",", ":"))
 ```
 
-[回复或点赞可查看完整内容](#quick_reply_form)
+### device\_models.py
+
+```python
+# -*- coding: utf-8 -*-
+import random
+import json
+
+APP = dict(
+    app_version="5.1.41", version_code=2135, aid="237094", channel="小米",
+    sdk_version=6170090, sdk_version_code=16169689, sdk_version_name="6.17.0",
+    sig_hash="e4976abde986a4cff466c2e86bbcb381",
+)
+
+
+_PLATFORM = dict(
+    board="gold", hardware="mt6833", soc_abi="arm64-v8a",
+    radio="MOLY.NR15.R3.MP.V120.3.P62,MOLY.NR15.R3.MP.V120.3.P62",
+    scr_w=1080, scr_h=2176, dpi=440, cores=8, cpu_freq_khz=2400000,
+    os_version="14", os_api=34, build_id="UP1A.231005.007",
+    miui_name="V816", miui_code="816", vendor_dlkm="vnd_gold",
+    launcher_pkg="com.miui.home", launcher_ver="RELEASE-4.39.14.7723-03121923",
+    launcher_label="系统桌面", brd="mu",
+)
+
+
+def _m(**kw):
+    d = dict(_PLATFORM)
+    d.update(kw)
+
+    d.setdefault("incremental", "V816.0.11.0.UNQ" + d["region"])
+    d["fingerprint"] = "%s/%s/%s:%s/%s/%s:user/release-keys" % (
+        d["brand"], d["board"], d["board"], d["os_version"], d["build_id"], d["incremental"])
+    d["rom"] = "MIUI-" + d["incremental"]
+    d["rom_version"] = "miui_%s_%s" % (d["miui_name"], d["incremental"])
+    return d
+
+
+MODELS = [
+    _m(name="Redmi Note 13 Pro 5G (CN/8G)", model="2312DRAABC", brand="Redmi", manufacturer="Xiaomi",
+       region="CNXM", ram=7937007616, mcc_mnc="46011", carrier="中国电信",
+       vbmeta="d64c8c7b13610bd7a1d68d07074c05bcd086aae0c24fe9fc2fb43b91eae6ece6",
+       build_host="pangu-build-component-system-418716-plpdl-0dvbz-4zxp0"),
+    _m(name="Redmi Note 13 Pro 5G (Global/8G)", model="2312DRAABG", brand="Redmi", manufacturer="Xiaomi",
+       region="MIXM", ram=7937007616, mcc_mnc="46000", carrier="中国移动",
+       vbmeta="3f1a9c47e0b2d85af6c319e74d20b8aa15ce6037f9b4c81d2e7a04f6b3589c1e",
+       build_host="pangu-build-component-system-502771-kq2mn-7xv3z-9bcd1"),
+    _m(name="Redmi Note 13 Pro 5G (India/8G)", model="2312DRAABI", brand="Redmi", manufacturer="Xiaomi",
+       region="INXM", ram=7937007616, mcc_mnc="46001", carrier="中国联通",
+       vbmeta="8b27e6f04a1c93d57e0286bf4d19a3cc62f085e1d7b3940a8c25e6f1b09d473a",
+       build_host="pangu-build-component-system-471902-mt8pl-3kz0v-6dfa2"),
+    _m(name="Redmi Note 13 Pro 5G (CN/12G)", model="2312DRAABC", brand="Redmi", manufacturer="Xiaomi",
+       region="CNXM", ram=12348030976, mcc_mnc="46011", carrier="中国电信",
+       incremental="V816.0.13.0.UNQCNXM",
+       vbmeta="c50d9a31f8e2470b6da1c83057f9e24b3a6c108de7f5b29014ac836e5d1b079f",
+       build_host="pangu-build-component-system-439015-zl7qn-2vx8d-8acb3"),
+]
+
+
+def pick():
+    return random.choice(MODELS)
+
+
+def build_P(m):
+    P = dict(APP)
+    P.update(
+        device_model=m["model"], device_brand=m["brand"], manufacturer=m["manufacturer"],
+        os_version=m["os_version"], os_api=m["os_api"], rom=m["rom"], rom_version=m["rom_version"],
+        resolution="%dx%d" % (m["scr_h"] + 224, m["scr_w"]),
+        density_dpi=m["dpi"], carrier=m["carrier"], mcc_mnc=m["mcc_mnc"],
+    )
+    return P
+
+
+def build_uas(m):
+    wv = ("Mozilla/5.0 (Linux; Android %s; %s Build/%s; wv) "
+          "AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/120.0.6099.193 "
+          "Mobile Safari/537.36 - mmbWebBrowse - android" % (m["os_version"], m["model"], m["build_id"]))
+    dalvik = "Dalvik/2.1.0 (Linux; U; Android %s; %s Build/%s)" % (m["os_version"], m["model"], m["build_id"])
+    return wv, dalvik
+
+
+def apply_to_fp(fp: dict, m: dict) -> dict:
+    fp["a46"] = {"cpu_abi": m["soc_abi"], "fingerprint": m["fingerprint"], "radioVersion": m["radio"],
+                 "model": m["model"], "cpu_abi2": "", "brand": m["brand"], "board": m["board"],
+                 "manufacturer": m["manufacturer"]}
+    fp["a29"] = m["radio"]
+    fp["a36"] = "%d,%d,%d" % (m["scr_w"], m["scr_h"], m["dpi"])
+    fp["a92"] = "%d,%d" % (m["scr_w"], m["scr_h"])
+    fp["a34"] = m["cpu_freq_khz"]
+    fp["a32"] = m["cores"]
+    fp["a48"] = m["ram"]
+    if isinstance(fp.get("a18"), dict):
+        fp["a18"]["ro.boot.hardware"] = m["hardware"]
+    if isinstance(fp.get("a154"), dict):
+        fp["a154"] = {"ver": m["launcher_ver"], "label": m["launcher_label"], "pkg": m["launcher_pkg"]}
+    # a16 内的系统属性字典 b13 / b57
+    if "a16" in fp:
+        b = json.loads(fp["a16"])
+        b13 = b.get("b13")
+        if isinstance(b13, dict):
+            b13.update({
+                "ro.build.display.id": m["build_id"], "ro.product.model": m["model"],
+                "ro.product.board": m["board"], "ro.product.brand": m["brand"],
+                "ro.product.name": m["board"], "ro.product.manufacturer": m["manufacturer"],
+                "ro.boot.hardware": m["hardware"], "ro.build.fingerprint": m["fingerprint"],
+                "ro.miui.ui.version.name": m["miui_name"], "ro.miui.ui.version.code": m["miui_code"],
+                "ro.boot.vbmeta.digest": m["vbmeta"], "ro.build.version.incremental": m["incremental"],
+                "ro.product.vendor.model": m["model"],
+            })
+        b57 = b.get("b57")
+        if isinstance(b57, dict):
+            b57.update({"ro_build_host": m["build_host"], "ro_product_vendor_dlkm_name": m["vendor_dlkm"],
+                        "ro_product_vendor_dlkm_brand": m["brand"], "ro_miui_ui_version_code": m["miui_code"]})
+        if isinstance(b.get("b32"), dict):
+            b["b32"]["brd"] = m["brd"]
+        fp["a16"] = json.dumps(b, ensure_ascii=False, separators=(",", ":"))
+    return fp
+```
 
 [#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm) [#协议分析](https://bbs.kanxue.com/forum-161-1-120.htm) [#脱壳反混淆](https://bbs.kanxue.com/forum-161-1-122.htm) [#源码框架](https://bbs.kanxue.com/forum-161-1-127.htm)
