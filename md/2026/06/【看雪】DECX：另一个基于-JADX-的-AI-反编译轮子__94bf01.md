@@ -2,21 +2,21 @@
 title: 【看雪】DECX：另一个基于 JADX 的 AI 反编译轮子
 source: https://bbs.kanxue.com/thread-291762.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-06-23T22:02:46+08:00
-trace_id: d11d0860-a566-450a-a718-701e385e0c55
-content_hash: e89e27be06bb8556d6474fdedb95610c4113ed7773d29d4dd05656e69efe78de
+clip_date: 2026-06-29T10:14:24+08:00
+trace_id: bbb23ce7-55b9-40b9-8706-1e215087622d
+content_hash: 6da568929e7236cbf6274207d362ae64df3dc889fedde1ab9090134c7ddf4de5
 status: summarized
 tags:
   - 看雪
 series: null
-feed_source: 看雪·Android安全
-ai_summary: DECX 是一个不依赖 JADX GUI 的 AI 反编译工具，通过独立核心模块实现灵活部署和漏洞分析，解决了 jadx-ai-mcp 架构限制。
+feed_source: null
+ai_summary: 解决了JADX反编译能力与GUI进程绑定的问题，实现了独立、可扩展的AI驱动代码分析与漏洞挖掘平台。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 38875244-d011-81fd-b442-c574a4d462f1
+notion_page_id: 38e75244-d011-815f-8912-f482902ac601
 ioc:
   cves: []
   cwes: []
@@ -30,13 +30,14 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> DECX 是一个不依赖 JADX GUI 的 AI 反编译工具，通过独立核心模块实现灵活部署和漏洞分析，解决了 jadx-ai-mcp 架构限制。
+> 解决了JADX反编译能力与GUI进程绑定的问题，实现了独立、可扩展的AI驱动代码分析与漏洞挖掘平台。
 > 
-> - **核心架构创新：** DECX 的 decx-core 模块将反编译引擎（JadxDecompiler）和 MCP server 集成，脱离 GUI 独立运行，提供与传输层无关的 API、服务和 29 个 MCP 工具。
-> - **部署方式灵活：** 支持三种方案：独立 fat jar（decx-server）、Jadx 插件和 TypeScript CLI（decx-cli），便于在远程服务器或本地使用。
-> - **独特采集能力：** `decx ard framework run` 命令自动从连接的 Android 设备采集厂商魔改的框架代码，并通过四步流水线进行整合分析。
-> - **漏洞挖掘流程：** 采用 subagent 委托和证据图流程，要求五种事实（如源码行证据）通过 `proves` 边连接才能确认漏洞，覆盖 30+ 种应用层场景。
-> - **严格证据门控：** 漏洞分析依赖 `decx code` 查询源码作为证据，避免仅凭方法名推理，并使用复合漏洞链边（如 enable、carry）评估风险。
+> - **架构创新：** 核心是decx-core模块，将反编译引擎JadxDecompiler、API、MCP工具等与UI完全解耦，使其能在独立进程或JADX插件中运行，摆脱了GUI依赖。
+> - **三种使用方式：** 提供独立服务器(fat jar)、JADX插件和TypeScript CLI三种接入方式，共用同一套核心逻辑。CLI还支持`decx ard framework run`命令，可自动从连接的Android设备采集并整合框架代码进行分析。
+> - **配套漏洞挖掘技能：** 提供五个配套的AI技能(Skill)，形成了“逆向->漏洞挖掘->报告->PoC”的闭环。其中`decx-app-vulnhunt`和`decx-framework-vulnhunt`采用subagent委托和证据图流程，要求严格的证据链来确认漏洞。
+> - **提升灵活性与自动化：** 通过架构改造，使得反编译分析能力可以脱离GUI，在服务器、命令行等多种环境下运行，更利于工程化、自动化部署和AI集成，适用于深度代码分析与漏洞研究。
+
+## 起因
 
 前段时间用 jadx-ai-mcp 分析 APK，跑了几个小时，体验确实不错。Claude 能自己调 tool 读反编译代码、看导出组件、跟调用链，省了不少手动翻代码的功夫。
 
@@ -46,35 +47,268 @@ ioc:
 
 这个念头改变了一切。如果 MCP server 能跟反编译引擎在同一个进程里跑，不经过 GUI，那整个工具链的形态就完全不同了。这就是 DECX 的起点。
 
+## 架构：把核心逻辑从 GUI 里拆出来
+
 jadx-ai-mcp 的架构是三层串联，这存在一个核心问题：MCP 协议层和反编译能力被 GUI 进程边界隔开了，MCP 离不开 GUI。
 
+```
+JADX GUI 进程
+  └── 插件（Java，内置 HTTP :8650）
+        ↑ HTTP
+  Python server
+        ↑ MCP
+  AI 客户端
+```
+
 DECX 的做法是把所有能力放进一个独立的 decx-core 模块里。这个模块不依赖任何 UI 组件，只需要一个 JadxDecompiler 对象就能提供完整的反编译能力。所有代码——API 接口、Service 实现、MCP Tool 定义——全在core中实现
+
+```
+┌─ decx-plugin (JADX GUI 内嵌)
+decx-core ──────────┤
+                    └─ decx-server (standalone fat jar)
+                         ↑ 被它管理
+                    decx-cli (TypeScript, 可选)
+```
 
 `decx-core` 是一切的根基。它提供了一套 **与传输层无关的 API/Services/MCP 实现** ，不管你是通过 JADX 插件、独立jar、还是 TypeScript CLI 来用，底下的逻辑完全相同。
 
 这层关系用 Kotlin 代码表达就是 `Decx` 的全局对象：
 
+```kotlin
+object Decx {
+    // 创建 API —— 同上，server/plugin/cli 都用这个
+    fun api(decompiler, cacheEnabled = true, uiService = null): DecxApi
+
+    // 创建 HTTP server —— plugin 和 standalone 都用
+    fun httpServer(api, port): DecxServer
+
+    // 创建 MCP server —— 同上，完全一样
+    fun mcpServer(api, port): DecxMcpServer
+
+    // 暴露 routes 和 tools —— 给外部做文档/检查用
+    val routeGroups: List<DecxRouteGroup>
+    val mcpTools: List<McpTool>
+}
+```
+
 同一个 **`Decx.mcpServer(api, port)`** ，在 JADX 插件里调用和在 standalone jar 里调用，返回的是同一个类、同一套 29 个工具、同一种 MCP 协议实现。
+
+```
+decx-core（独立模块，零 UI 依赖）
+  ├── DecxApi           反编译能力的统一接口
+  ├── DecxApiImpl       实现层，委派给各 Service
+  ├── DecxRoutes        HTTP 路由表（按 common/context/android/ui 分组）
+  ├── DecxServer        HTTP server（Javalin）
+  ├── McpHttpServer     MCP server（Kotlin SDK + Ktor CIO）
+  ├── McpToolRegistry   29 个 MCP tool 定义 + 参数校验
+  └── DecompileGuard    异常防护，反编译失败自动 skip
+
+         ↓ 三种接入方式，共用同一个 core
+
+  ┌─ decx-plugin（JADX GUI 插件）
+  ├─ decx-server（standalone fat jar）
+  └─ decx-cli（TypeScript，管理 server 生命周期）
+```
+
+### API 接口设计
+
+```kotlin
+interface DecxApi {
+    // Common Service
+    fun getClasses(filter: DecxFilter): DecxApiResult
+    fun searchGlobalKey(key: String, filter: DecxFilter): DecxApiResult
+    fun searchClassKey(cls: String, key: String, filter: DecxFilter): DecxApiResult
+    fun searchMethod(mth: String): DecxApiResult
+    fun getMethodSource(mth: String, smali: Boolean): DecxApiResult
+
+    // Context Service
+    fun getClassSource(cls: String, smali: Boolean, filter: DecxFilter): DecxApiResult
+    fun getClassContext(cls: String): DecxApiResult
+    fun getMethodContext(mth: String): DecxApiResult
+    fun getMethodCfg(mth: String): DecxApiResult
+    fun getMethodXref(mth: String): DecxApiResult
+    fun getFieldXref(fld: String): DecxApiResult
+    fun getClassXref(cls: String): DecxApiResult
+    fun getImplementOfInterface(iface: String): DecxApiResult
+    fun getSubclasses(cls: String): DecxApiResult
+
+    // Android Service
+    fun getAppManifest(): DecxApiResult
+    fun getExportedComponents(filter: DecxFilter): DecxApiResult
+    fun getDeepLinks(): DecxApiResult
+    // ... 等等
+
+    // UI Service（仅 GUI 模式可用）
+    fun getSelectedText(): DecxApiResult
+    fun getSelectedClass(): DecxApiResult
+}
+```
+
+### Route 和 Tool 的一对一映射
 
 DecxRoutes 定义 HTTP 路由，McpToolRegistry 定义 MCP tool。两者通过 routePath 一一对应：
 
+```kotlin
+// DecxRoutes.kt — HTTP 路由
+DecxRoute("/api/decx/get_classes", DecxKind.CLASSES) { api, params ->
+    api.getClasses(params.filter())
+}
+
+// McpToolRegistry.kt — MCP tool（同一个 routePath）
+routeTool(
+    name = "get_classes",
+    description = "Return class symbols from the current JADX project...",
+    routePath = "/api/decx/get_classes",    // ← 和上面一样
+    properties = filterProperties(),
+    toPayload = { args ->
+        linkedMapOf("filter" to filterPayload(args), "page" to pageArg(args))
+    }
+)
+```
+
+## How To Use
+
 由于核心架构和上层分离，我们能够直接使用 Decx 的独立 Jar，也可以使用 Jadx Plugin 的方式，为了方便使用，我也提供了几种方案。
+
+### Server
 
 `decx-server` 打成 fat jar 后，不需要 JADX GUI，不过建议还是使用 Cli / Plugin ，会更方便。
 
+```bash
+$ java -jar decx-server.jar --help
+DECX Server — Java Intelligence Analysis Platform
+
+Usage:
+  java -jar decx-server.jar <file> [options]
+
+Arguments:
+  <file>                   Path to APK, DEX, JAR, AAR, or class file
+
+DECX Options:
+  -p, --port <port>           HTTP server port (default: 25419)
+  --mcp                       Also start MCP Streamable HTTP server at http://127.0.0.1:<port+1>/mcp
+  --no-mcp                    Disable MCP server (default)
+
+JADX Options:
+  All standard jadx-cli options are supported. Common ones:
+  -j, --threads-count <n>     Processing threads count
+  --show-bad-code             Show inconsistent code
+  --no-imports                Disable use of import statements
+  --no-inline-anonymous       Disable anonymous classes inline
+  -r, --no-res                Do not decode resources
+  --no-debug-info             Disable debug info parsing
+  --deobf                     Activate deobfuscation
+  --escape-unicode            Escape non-ASCII characters in strings
+  --log-level <level>         Set log level (quiet, progress, error, warn, info, debug)
+
+  For full list of options, see: https://github.com/skylot/jadx
+
+Examples:
+  java -jar decx-server.jar app.apk
+  java -jar decx-server.jar classes.dex --port 9000
+  java -jar decx-server.jar app.apk --mcp
+  java -jar decx-server.jar library.jar -j 8 --no-res --show-bad-code
+  java -jar decx-server.jar app.apk --deobf --no-imports
+
+MCP:
+  Enable with --mcp. MCP listens on HTTP port + 1, e.g. --port 9000 exposes http://127.0.0.1:9001/mcp
+
+API Endpoints:
+  POST /api/decx/get_classes        Get classes (params: filter)
+  POST /api/decx/get_class_source       Get class source (params: cls, smali, filter.limit)
+  POST /api/decx/get_method_source      Get method source (params: mth, smali)
+  POST /api/decx/search_global_key      Search globally (params: key, search)
+  POST /api/decx/search_class_key       Grep one class (params: cls, key, grep)
+  POST /api/decx/search_method          Search methods (params: mth)
+  POST /api/decx/get_method_xref        Method cross-references (params: mth)
+  POST /api/decx/get_app_manifest       Get AndroidManifest.xml
+  POST /api/decx/get_exported_components  Get exported components
+  GET  /health                           Health check
+
+DECX version: 3.4.0
+JADX core:   (bundled)
+
+License: GNU General Public License v3.0
+Source:      https://github.com/jygzyc/decx
+
+CLI tool connects to this server using: decx -P <port>
+```
+
+### Jadx Plugin
+
 这是最简单的使用方法了，打开 Jadx ，在插件列表里找到 Decx，安装即可。
+
+### Cli
 
 `decx-cli` 是 TypeScript 写的，管理 standalone server 的生命周期。通过 `--help` 命令能够看到怎么使用，当然，也可以直接安装对应的 decx-cli skill 来使用。
 
+```bash
+$ decx --help
+Usage: decx [options] [command]
+
+DECX - Decompiler + X, CLI for deeper analysis of decompiled Java code, powered by JADX and custom
+extensions
+
+Options:
+  -V, --version   output the version number
+  -h, --help      display help for command
+
+Commands:
+  process         Start, inspect, list, and stop DECX analysis server sessions
+  code [options]  Query decompiled classes, methods, source, control flow, and cross references
+  ard [options]   Android app, framework, resource, permission, and device analysis commands
+  self            Install and update the bundled decx-server.jar and npm CLI package
+  help [command]  display help for command
+```
+
 这里稍微讲一下 `decx ard framework run` ，这是是 DECX 独有的能力——从连接的 Android 设备自动采集整个框架相关的代码并打包整合分析：
+
+```bash
+$ decx ard framework --help
+Usage: decx ard framework [options] [command]
+
+Build DECX-readable framework jars from connected devices or local framework file directories.
+
+Options:
+  -h, --help               display help for command
+
+Commands:
+  collect [options]        Pull framework files from a connected Android device
+  process [options] <oem>  Process local framework sources and pack framework_<brand>_<vendor>.jar
+  run [options]            Collect, process, pack, and optionally open a framework jar
+  open [options] [jar]     Open a generated or explicit framework jar in DECX
+  help [command]           display help for command
+```
 
 整个过程包括四步流水线：
 
+```
+[collect]
+  adb shell → 扫描 /system/framework + /apex + /system_ext
+  自动探测 OEM（ro.product.brand → xiaomi/huawei/samsung/...）
+  adb pull 文件到本地
+
+[process]
+  解压所有 APEX → 提取 apex_payload.img → 提取 DEX
+  处理 jar/apk 里的 classes.dex
+  失败文件跳过不中断
+
+[pack]
+  所有 DEX 打进 framework_xxx_xxx.jar（单一 fat jar）
+
+[open]
+  启动 standalone DECX session
+```
+
 这样，针对厂商魔改的框架代码，就能够去进行整合性分析，而这套流程的前提就是 `decx-core` 能脱离 GUI 独立运行。没有这个前提，CLI 没法自动启动 server；没有 server，framework jar 只能手动丢进 JADX GUI。
+
+## One More thing...
 
 既然已经做到这里了，那不如更近一步，做一些用来处理真实漏洞挖掘和分析的 skill 吧！
 
 这里必须要感谢 https://github.com/oritera/Cairn 给了我启发——能不能将漏洞挖掘的过程做成一整套skill，但是不局限于漏洞知识，而是发挥模型本身的能力。
+
+### decx-app-vulnhunt：APK 漏洞挖掘
 
 这可能是五个 skill 里最核心的一个。它做的不是"用 AI 搜一下有没有漏洞"这种笼统的事，而是一套严格的 **subagent 委托 + 证据图** 流程。
 
@@ -84,11 +318,69 @@ subagent 收到一个 intent goal（比如"收集攻击面：导出组件、deep
 
 证据门要求 **5 种事实全部存在且由 ****`proves`**** 边连接** 才能升级为正式漏洞：
 
+| 类型  | 证明什么 |
+| --- | --- |
+| `entrypoint` | 导出组件，攻击者能调的入口 |
+| `reachability` | 攻击者控制的输入能到达后续节点 |
+| `control` | 攻击者控制的字段到达了 sink 参数 |
+| `guard` | 保护机制被绕过、缺失、或放行 |
+| `sink` + `impact` | 危险操作及其可见后果 |
+
 复合漏洞链由五种边组合： `enable` （A 创建 B 需要的入口）、 `carry` （A 传输数据给 B）、 `amplify` （A 放大 B 的影响）、 `bypass` （A 打穿 B 的保护）、 `observe` （A 让 B 的影响可见）。
 
 漏洞模式覆盖 30+ 种应用层场景：Intent 重定向、Bundle/key 失配、WebView JS bridge、Provider 数据泄露/SQL 注入/路径穿越、broadcast 劫持、PendingIntent 滥用、fragment 注入、task hijack、动态 dex 加载、跨 app 数据通道等。
 
-[回复或点赞可查看完整内容](#quick_reply_form)
+### decx-framework-vulnhunt：Android 框架层漏洞挖掘
+
+跟 app-vulnhunt 同样的 subagent 委托架构和证据图流程，但面向框架层 Binder 服务。证据门是 **6-tuple** ，比 app 多一层 `identity` + `guard` 的 caller 身份证明：
+
+| 类型  | 证明什么 |
+| --- | --- |
+| `service-entrypoint` | Binder 服务暴露了方法 |
+| `binder-reachability` | 非特权 app 能触达这个方法 |
+| `control` | 攻击者控制的参数到达了 sink |
+| `identity` + `guard` | caller 身份和权限检查在 trust boundary 处的状态 |
+| `sink` | 特权操作被执行 |
+| `impact` | 系统级可见后果 |
+
+框架层没有"导出组件"的概念——入口是 AIDL 方法和 Binder Stub/Proxy。reachability 要求证明 unprivileged call context 能真正到达方法实现，不是只看方法签名有没有 `@EnforcePermission` 。
+
+漏洞模式覆盖框架层特有的 10 种：权限缺失、 `clearCallingIdentity` 后以 system 身份执行、caller 身份/package/user 混淆、Intent launch 特权滥用、ContentProvider 代理、callback/token 延迟身份问题、竞态条件（TOCTOU）、transition controller 劫持、Intent 校验-执行 gap（ `getType()` 两阶段变化）、native socket/HIDL/HAL 等厂商攻击面。
+
+框架层漏洞挖掘的前提是能拿到 Android 框架源码——就是 `decx ard framework run` 做的事。
+
+### decx-report：漏洞报告自动生成
+
+从证据图读取已确认的漏洞链，自动生成 HTML 或 Markdown 报告。四个等权重章节（目标情况→问题说明→组合链利用→安全建议）。报告不改写证据—— `decx-report` 只从已确认的 evidence 中读取，不创造内容。
+
+### decx-poc：漏洞 PoC 自动构建
+
+从一条 verified chain 自动生成可编译的 Android PoC 应用。8 种攻击面模板（Activity/Broadcast/Provider/Service/Intent/WebView/Framework Service），每种硬编码了对应攻击面的正确利用模式。Sink 7 项重验证，任一失败标记 `dead-end` 不继续。
+
+### decx-cli：基础设施
+
+统一 decx-cli 命令行的参数规则、session 管理、告诉模型怎么使用 Decx。
+
+### 五个 Skill 组成的闭环
+
+```
+decx-cli 管理 session + 执行命令
+    ↓
+decx-app-vulnhunt / decx-framework-vulnhunt
+  主 agent 委托 → subagent 分析 → 证据图 → 风险判定
+    ↓
+decx-report 从证据图生成报告
+    ↓
+decx-poc 从 verified chain 构建 PoC
+```
+
+从 APK/框架丢给 AI 到拿到报告和 PoC 。decx + skill 完成整个 逆向 → 漏洞 → 报告 → PoC 的闭环。
+
+## 结语
+
+这个项目起源于实际的工作需求，但是也是因为有了 Jadx，jadx-ai-mcp，cairn 这些项目帮我打了底，才能有动力去实现这一套轮子。
+
+项目地址：https://github.com/jygzyc/decx
 
 [#基础理论](https://bbs.kanxue.com/forum-161-1-117.htm) [#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm) [#漏洞相关](https://bbs.kanxue.com/forum-161-1-123.htm) [#程序开发](https://bbs.kanxue.com/forum-161-1-124.htm) [#工具脚本](https://bbs.kanxue.com/forum-161-1-128.htm)
 
@@ -129,3 +421,69 @@ subagent 收到一个 intent goal（比如"收集攻击面：导出组件、deep
 > **mb\_roiscepd · 9 楼**
 > 
 > tql
+
+> **jygzyc · 10 楼**
+> 
+> > [mb\_rjdrqvpa](https://bbs.kanxue.com/user-932635.htm) 佬，你这个项目和jadx mcp有什么区别，优点？除了不依赖jadx GUI+找漏洞，对于逆向，有什么帮助？
+> 
+> 工程化和自动化
+
+> **mb\_pfgnxxyq · 11 楼**
+> 
+> 666
+
+> **mb\_ysikfhxt · 12 楼**
+> 
+> 111
+
+> **buluo533 · 13 楼**
+> 
+> 学习了
+
+> **千谦 · 14 楼**
+> 
+> 666
+
+> **恋~ · 15 楼**
+> 
+> 6666
+
+> **lbunknow · 16 楼**
+> 
+> 666
+
+> **mb\_zoyhhbnr · 17 楼**
+> 
+> 666
+
+> **Snowman\_Liam · 18 楼**
+> 
+> 6666
+
+> **wx\_北极星\_493 · 19 楼**
+> 
+> 看看
+
+> **\_Mask\_ · 20 楼**
+> 
+> 看看
+
+> **mb\_euhyowpw · 21 楼**
+> 
+> 666
+
+> **xingbing · 22 楼**
+> 
+> 学习了
+
+> **amwpecel · 23 楼**
+> 
+> 9999
+
+> **随风而行aa · 24 楼**
+> 
+> 看看
+
+> **shuangmou · 25 楼**
+> 
+> 感谢分享
