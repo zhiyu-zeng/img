@@ -2,21 +2,21 @@
 title: 【看雪】anti-token 纯算法分析
 source: https://bbs.kanxue.com/thread-291889.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-07-06T14:09:50+08:00
-trace_id: 1eac3d2b-f9eb-4bc3-8b43-8d5127574327
-content_hash: 9a673bfa51961895c352abd2f92c25e16d331d29e186e308d96ad73421cb71cc
+clip_date: 2026-07-07T16:26:50+08:00
+trace_id: 1f9bb154-0dbc-40bc-a37d-aebd7a0b661c
+content_hash: 38fdcba4d92bcd69b12b98827e6ce47bfd33ec83758fc8ac8a1b25c8c245f9ed
 status: summarized
 tags:
   - 看雪
 series: null
-feed_source: 看雪·Android安全
-ai_summary: 分析了拼多多APP安全token的生成算法，其核心流程是将设备信息打包为自定义TLV格式，经gzip压缩后使用AES加密，最终输出固定前缀的密文。
+feed_source: null
+ai_summary: 拼多多anti-token算法通过收集设备及系统数据，经压缩加密生成安全token。
 ai_summary_style: key-points
 images_status:
   total: 21
   succeeded: 21
   failed_urls: []
-notion_page_id: 39575244-d011-815c-b19f-f9dbf8d4360e
+notion_page_id: 39675244-d011-812a-9873-d207c9435023
 ioc:
   cves: []
   cwes: []
@@ -31,13 +31,17 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 分析了拼多多APP安全token的生成算法，其核心流程是将设备信息打包为自定义TLV格式，经gzip压缩后使用AES加密，最终输出固定前缀的密文。
+> 拼多多anti-token算法通过收集设备及系统数据，经压缩加密生成安全token。
 > 
-> - **数据封装流程：** native方法先采集34个设备信息tag，按tag值排序后拼接成带版本号和长度的TLV格式raw_packet，再进行gzip压缩。
-> - **加密参数：** 采用AES-128-CBC-PKCS7加密，密钥为硬编码字符串“pdd_aes_180121_1”，初始化向量(IV)为16字节全零，最终结果前加“2af”前缀后Base64编码。
-> - **TLV数据格式：** 每条记录record由2字节大端长度(record_len)、1字节类型(type，固定为1)、1字节tag编号、1字节payload长度和可变长payload组成。
-> - **tag33生成算法：** 基于当前时间戳的秒和微秒值，分别作为种子调用srand48和lrand48生成两个随机数，组合成64位整数写入。
-> - **混淆与分析：** 主函数存在控制流扁平化混淆，但通过AI辅助可去除，从而分析出完整的数据采集、压缩与加密逻辑。
+> - **算法核心流程：** 收集34个tag数据（设备序列号、系统属性、SIM状态、时间戳等），打包成TLV格式raw_packet，依次进行gzip压缩、AES-128-CBC加密（密钥"pdd_aes_180121_1"，IV全零）、Base64编码，最终添加前缀"2af"。
+> 
+> - **逆向分析方法：** 通过Hook JNI的RegisterNatives函数，定位到libpdd_secure.so中info2方法的偏移地址0x1CFAC，并针对其控制流扁平化混淆编写去混淆脚本以还原逻辑。
+> 
+> - **数据结构设计：** raw_packet包含版本号、记录总长度及多个TLV record；每个record由2字节大端长度、1字节类型（固定0x01）、1字节tag编号、1字节payload长度和可变payload构成。
+> 
+> - **加密与编码细节：** AES加密使用固定密钥和全零IV，采用PKCS7填充；压缩后的数据经加密和Base64编码后，与前缀"2af"拼接形成最终字符串。
+> 
+> - **Tag数据来源：** 包括静态设备信息（如ro.product.brand）、系统属性（如Android版本）、Telephony网络数据（如SIM状态）、环境风险标志及动态生成的时间戳和UUID。
 
 本文基于AI分析 anti-token，不得不感慨AI确实强大。
 
@@ -1491,3 +1495,9 @@ IDA 中 `0x1CFAC` 的关键调用点：
 ![image-20260702184240675](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/209cbe86a34e2156.png)
 
 相关的去混淆脚本和Hook脚本会打包到附件中
+
+[#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm)
+
+## 附件
+
+- [相关附件.zip](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/attach/2026/07/25b9b838fbd755a9.zip) （10.33MB，53次下载）
