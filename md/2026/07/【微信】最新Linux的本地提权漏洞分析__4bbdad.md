@@ -2,28 +2,26 @@
 title: 【微信】最新Linux的本地提权漏洞分析
 source: https://mp.weixin.qq.com/s?__biz=MzU3MTY5MzQxMA==&mid=2247485280&idx=1&sn=1fcdc3c1ef0b8299952a470ef99300d9
 source_host: mp.weixin.qq.com
-clip_date: 2026-07-14T00:34:54+08:00
-trace_id: a1e19c1f-9baf-46d4-94fc-b9b274876b17
-content_hash: 4c94e7a5d6f8e279c071babaff010e88735601c98ba3178243f573a588a8a8dd
+clip_date: 2026-07-14T09:47:04+08:00
+trace_id: cd5704e5-1bdd-4f09-9ae1-6864a849b066
+content_hash: 60616bdb86e9472c4fcf7a80b76b02911b1c6ff09a2c45d2ecd477bc46b707ea
 status: summarized
 tags:
   - 微信
   - 本地提权
-  - Linux内核漏洞
-  - IPsec
-  - CVE-2026-43503
+  - 内核漏洞
   - DirtyClone
+  - IPsec
+  - AppArmor
 series: null
-feed_source: null
-ai_summary: Linux内核的IPsec解密逻辑存在漏洞，攻击者可利用克隆网络缓冲区时丢失的共享标记，将解密结果错误地写入文件页缓存，从而修改只读文件如`/usr/bin/su`以实现本地提权。
+feed_source: 公众号·软件安全与逆向分析
+ai_summary: DirtyClone（CVE-2026-43503）是Linux内核IPsec子系统中的一个本地提权漏洞，它利用内核在复制skb数据包时丢失共享标记的缺陷，通过原地解密篡改内存中的页缓存文件来获取root权限。
 ai_summary_style: key-points
 images_status:
   total: 2
-  succeeded: 0
-  failed_urls:
-    - https://wechat2rss.xlab.app/img-proxy/?k=fc727c60&u=https%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_jpg%2FSq4BUsrXeTicvar7HXvHicePpYZ4HgnQBUG1yFofDc763OQo0mXKqGmLD4mocxj2KbVK8usEkelGbvPm1WrTmBHBRmYiaBYxKce8XCsZdVrLP8%2F0%3Fwx_fmt%3Djpeg
-    - https://wechat2rss.xlab.app/img-proxy/?k=c245d7ce&u=https%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_png%2FSq4BUsrXeT9BsAlcic3F292p9sQQshL0daUMliaRh4eIaj8lEyFMdga1WicrxNicrdMg3IOhbNhP77BO9xSRpkbouLRo05ok9AXSLMq8uJRtDnE%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg
-notion_page_id: 39c75244-d011-81ae-b695-ca3d80071818
+  succeeded: 2
+  failed_urls: []
+notion_page_id: 39d75244-d011-81a9-a4d1-db30c074c2fa
 ioc:
   cves:
     - CVE-2026-43503
@@ -36,21 +34,20 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> Linux内核的IPsec解密逻辑存在漏洞，攻击者可利用克隆网络缓冲区时丢失的共享标记，将解密结果错误地写入文件页缓存，从而修改只读文件如`/usr/bin/su`以实现本地提权。
+> DirtyClone（CVE-2026-43503）是Linux内核IPsec子系统中的一个本地提权漏洞，它利用内核在复制skb数据包时丢失共享标记的缺陷，通过原地解密篡改内存中的页缓存文件来获取root权限。
 > 
-> - **漏洞成因：** 函数`__pskb_copy_fclone()`在克隆`skb`时，未能正确复制`SKBFL_SHARED_FRAG`标志，导致`esp_input()`误判缓冲区状态而跳过COW操作，直接进行原地解密。
-> - **利用原理：** 攻击者可控制XFRM状态中的`seq_hi`字段来携带目标字节，配合加密算法使IPsec解密结果被写入内存中的页缓存，从而篡改目标文件内容。
-> - **典型利用链：** PoC通过`TEE`或`nft dup`触发漏洞，重复修改`/usr/bin/su`文件的前192字节为恶意代码，执行后即可获得root权限。
-> - **环境约束：** Ubuntu 24.04及以上版本默认通过AppArmor限制非特权用户命名空间，使得标准利用方式（如`unshare`）受阻，但漏洞本身依然存在。
-> - **修复与缓解：** 主线内核已修复，根本解决方法是升级内核；临时缓解措施包括保持AppArmor对`userns`的限制、限制`CAP_NET_ADMIN`权限及避免加载相关内核模块。
+> - **漏洞原理：** `__pskb_copy_fclone()`函数在克隆skb时，未能正确传递`SKBFL_SHARED_FRAG`标志，导致`esp_input()`误判，跳过COW（写时复制）保护，将解密操作直接写入了原本共享的文件页缓存。
+> - **利用方式：** PoC通过`nft dup to local`复制一个包含目标文件（如`/usr/bin/su`）页缓存的ESP数据包，利用漏洞反复原地解密，覆盖文件开头192字节，从而在执行时获得root shell。
+> - **系统约束：** Ubuntu 24.04默认通过AppArmor限制了非特权用户创建user namespace，这阻碍了PoC中获取`CAP_NET_ADMIN`能力的初始步骤，但漏洞本身依然存在。
+> - **修复与缓解：** 主线内核已在v7.1-rc5版本修复。根本解决办法是升级内核；临时缓解可保留AppArmor限制、避免授予普通用户`CAP_NET_ADMIN`及禁用相关内核模块自动加载。
 
-![](⚠️ https://wechat2rss.xlab.app/img-proxy/?k=fc727c60&u=https%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_jpg%2FSq4BUsrXeTicvar7HXvHicePpYZ4HgnQBUG1yFofDc763OQo0mXKqGmLD4mocxj2KbVK8usEkelGbvPm1WrTmBHBRmYiaBYxKce8XCsZdVrLP8%2F0%3Fwx_fmt%3Djpeg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/730e65948d090a15.jpg)
 
 最新Linux的本地提权漏洞分析
 
 2026年6月25日，JFrog Security Research公开了DirtyClone（CVE-2026-43503）。它不是一个全新的内核原语，而是DirtyFrag修复链上的回归绕过： `__pskb_copy_fclone()` 在克隆 `skb` 时丢掉了 `SKBFL_SHARED_FRAG` ，于是 `esp_input()` 把一张仍然挂着文件页缓存的页误判成普通网络缓冲区，最后在原地解密时把数据写回了页缓存。
 
-![](⚠️ https://wechat2rss.xlab.app/img-proxy/?k=c245d7ce&u=https%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_png%2FSq4BUsrXeT9BsAlcic3F292p9sQQshL0daUMliaRh4eIaj8lEyFMdga1WicrxNicrdMg3IOhbNhP77BO9xSRpkbouLRo05ok9AXSLMq8uJRtDnE%2F640%3Fwx_fmt%3Dpng%26from%3Dappmsg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/dad77f8ac3aaaf87.png)
 
 从NVD的变更记录看，这也不是单点失误，而是一组frag-transfer helper在转移frag描述符时都可能把共享标记弄丢；DirtyClone公开利用的是其中最直接的 `__pskb_copy_fclone()` 克隆路径。
 
