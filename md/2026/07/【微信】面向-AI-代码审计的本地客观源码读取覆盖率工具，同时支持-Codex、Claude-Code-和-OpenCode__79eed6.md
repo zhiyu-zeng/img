@@ -2,35 +2,35 @@
 title: 【微信】面向 AI 代码审计的本地客观源码读取覆盖率工具，同时支持 Codex、Claude Code 和 OpenCode
 source: https://mp.weixin.qq.com/s/kvSvM8r9TuuVGdiYNi1W8Q
 source_host: mp.weixin.qq.com
-clip_date: 2026-07-23T07:45:11+08:00
-trace_id: bf64089c-1323-42a7-93b8-0072d63a6eb6
-content_hash: 0728327b8700236733e2288255c251fe94393191839333ce18ccce3a4b1956c9
+clip_date: 2026-07-23T21:09:44+08:00
+trace_id: 1a02f6c8-f452-44b6-9064-85d7fcfc6e23
+content_hash: 84fb6c5c283523441de0d55bcfeb5982d233365e527bd94d19a5bf6c37d393e4
 status: summarized
 tags:
   - 微信
-  - AI辅助逆向
   - 安全工具
+  - AI辅助逆向
 series: null
-feed_source: 公众号聚合·Doonsec
-ai_summary: AuditCov是一个用于追踪AI代码审计工具客观读取源码覆盖率的本地工具，支持Codex、Claude Code和OpenCode。
+feed_source: null
+ai_summary: AuditCov是一款本地工具，用于客观统计AI代码审计会话中源码文件的读取覆盖率，支持Codex、Claude Code和OpenCode，但其覆盖率本身不能证明代码已被正确理解或审计完成。
 ai_summary_style: key-points
 images_status:
   total: 8
   succeeded: 8
   failed_urls: []
-notion_page_id: 3a575244-d011-8107-bb8d-e6b4a65d345f
+notion_page_id: 3a675244-d011-81d2-b585-c05365c69f70
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> AuditCov是一个用于追踪AI代码审计工具客观读取源码覆盖率的本地工具，支持Codex、Claude Code和OpenCode。
+> AuditCov是一款本地工具，用于客观统计AI代码审计会话中源码文件的读取覆盖率，支持Codex、Claude Code和OpenCode，但其覆盖率本身不能证明代码已被正确理解或审计完成。
 > 
-> - **核心功能：** 统计AI工具成功读取了哪些源码文件和代码行，提供客观的读取覆盖率数据，而非判断代码是否被理解或审计完成。
-> - **支持工具：** 同时支持Codex、Claude Code和OpenCode，通过Hook机制在工具调用前后关联，仅记录成功返回的读取操作。
-> - **展示界面：** 提供Web界面管理项目，展示项目、会话、父子Agent及逐文件的目录树和行级覆盖状态，支持多选会话合并计算。
-> - **部署与使用：** 通过Python脚本启动本地服务并安装适配器，需在Web界面手动创建项目指定代码库路径，之后AI工具的操作会自动上报。
-> - **重要限制：** 覆盖率仅是客观读取记录，不能证明代码已被正确理解、分析或完成安全审计。
+> - **核心功能：** 通过Hook机制捕获Codex、Claude Code和OpenCode会话中成功读取的源码文件与行，并在Web界面按项目、会话（包括父子Agent）展示覆盖率。
+> - **技术实现：** 采用本地SQLite数据库存储状态，无需外部依赖；Hook使用调用前/后两阶段关联，仅将成功返回的Read计入覆盖；对超大读取请求按行边界安全截断。
+> - **关键特性：** 覆盖率定义为“客观读取覆盖率”，独立于AI的理解程度；Web界面支持创建项目、多会话选择与查看逐行覆盖状态；统计服务不可用时将放行原工具调用。
+> - **安装部署：** 提供Python脚本用于安装特定Code Agent（Codex、Claude Code、OpenCode）的适配器，安装后需重启对应Agent以生效。
+> - **使用方法：** 启动统计服务与Web界面后，在Web端创建项目并指定代码仓路径；然后在Code Agent中按推荐方式使用，审计时在Web界面刷新查看覆盖情况。
 
 **夜组安全** *2026年7月23日 07:30*
 
@@ -114,10 +114,10 @@ auditcov-server
 可用启动参数：
 
 ```
---host HOST     监听地址，默认 127.0.0.1
---port PORT     监听端口，默认 8765
---db PATH       显式指定 SQLite 数据库
---quiet         不打印启动地址
+--host HOST     监听地址，默认 127.0.0.1
+--port PORT     监听端口，默认 8765
+--db PATH       显式指定 SQLite 数据库
+--quiet         不打印启动地址
 ```
 
 服务第一版需要手动启动。建议先启动服务，再启动 Code Agent。
