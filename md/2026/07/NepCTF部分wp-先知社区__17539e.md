@@ -5,7 +5,7 @@ source_host: xz.aliyun.com
 clip_date: 2026-07-22T11:56:55+08:00
 trace_id: 1dd9902c-529e-492f-b7af-66bc87062c9c
 content_hash: bd2d99b8689807d2c58ede11481f789fecced4d9c3271a367cb5d0638d90bed9
-status: summarized
+status: synced
 tags:
   - CTF
   - Web安全
@@ -17,7 +17,7 @@ images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3ab75244-d011-815a-9a78-f610cc830e94
 ioc:
   cves: []
   cwes: []
