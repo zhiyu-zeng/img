@@ -5,7 +5,7 @@ source_host: mp.weixin.qq.com
 clip_date: 2026-07-22T11:44:47+08:00
 trace_id: 462de0e6-1f86-445d-8b21-c3c833f811c5
 content_hash: d0537f70a352ac634f8c5a8807817fd0d3d598d058552af1edc0ee8125117890
-status: summarized
+status: synced
 tags:
   - 微信
   - 漏洞分析
@@ -18,7 +18,7 @@ images_status:
   total: 1
   succeeded: 1
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3ab75244-d011-81fe-a1eb-de862f38e6ea
 ioc: null
 ---
 
