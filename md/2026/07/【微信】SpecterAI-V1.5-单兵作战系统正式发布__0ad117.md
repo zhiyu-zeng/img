@@ -2,8 +2,8 @@
 title: 【微信】SpecterAI V1.5 单兵作战系统正式发布
 source: https://mp.weixin.qq.com/s/zE6rPde_ZHEMMB2W2CzD6w
 source_host: mp.weixin.qq.com
-clip_date: 2026-07-28T14:48:28+08:00
-trace_id: c2b93861-2e14-4cba-abe5-ef78e1b13d4f
+clip_date: 2026-07-28T17:12:02+08:00
+trace_id: 2314dd7b-f584-48f6-babc-95fe8614dd39
 content_hash: 1d12fdf1600d2477229aadd7d64940c542146b4ac127dc67b14b94f5bf1a6116
 status: synced
 tags:
@@ -11,52 +11,28 @@ tags:
   - 安全工具
   - AI应用
 series: null
-feed_source: 公众号聚合·Doonsec
-ai_summary: SpecterAI V1.5是一款基于Kali Linux 2026.1定制的AI原生渗透系统，集成了多款AI安全工具与专家技能库，实现红队作战环境的零配置开箱即用。
+feed_source: null
+ai_summary: SpecterAI V1.5 是一个基于 Kali-Linux 2026.1 深度定制、集成了多种 AI 安全工具和安全技能模块的开箱即用渗透测试单兵作战系统。
 ai_summary_style: key-points
 images_status:
-  total: 9
-  succeeded: 9
+  total: 1
+  succeeded: 1
   failed_urls: []
-notion_page_id: 3ab75244-d011-81d2-9978-c3b33c036984
-ioc:
-  cves:
-    - CVE-2023-22527
-  cwes: []
-  hashes: []
-  domains: []
-  tools: []
-  techniques: []
+notion_page_id: 3ab75244-d011-81b8-99d0-f5474f68534f
+ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> SpecterAI V1.5是一款基于Kali Linux 2026.1定制的AI原生渗透系统，集成了多款AI安全工具与专家技能库，实现红队作战环境的零配置开箱即用。
+> SpecterAI V1.5 是一个基于 Kali-Linux 2026.1 深度定制、集成了多种 AI 安全工具和安全技能模块的开箱即用渗透测试单兵作战系统。
 > 
-> - **AI工具链：** 预装HexStrike-AI（本地127.0.0.1:8888）、CyberStrike-AI（https://127.0.0.1:8080）、Claude Code + CC Switch代理路由，并新增Strix安全扫描器，支持本地、GitHub及在线目标的多维分析。
-> - **技能模块：** 内含6大Skills，包括自动化渗透（/secskills）、OWASP Top 10代码审计（/code-audit deep）、APK/iOS逆向工程、CTF解题（/solve-challenge）、58个红队专家技能（Claude-Red）和817项跨框架安全技能（Cybersecurity-Skills）。
-> - **系统基础：** 基于Linux 6.19.14内核、100G磁盘，默认账户root/root，已安装Docker 29.5.2、Chrome 148、IDEA 2026.1（激活至2099年），集成BleachBit清理工具和Clash Verge代理。
-> - **分发与福利：** 通过微信公众号“暗魂攻防实验室”获取镜像，同时提供小米MiMo V2.5大模型邀请码ZUYUC7，CyberStrike-AI内可用。
+> - **系统底包：** 基于 Kali-Linux 2026.1（内核 6.19.14+kali-amd64），VMware 虚机，分区 100G，默认 root/root，使用 fcitx5 输入法，预装 Docker 29.5.2、Chrome 148 等基础工具。
+> - **AI 武器库：** 内置 HexStrike-AI（`127.0.0.1:8888`）、CyberStrike-AI（`127.0.0.1:8080`）、Claude Code（CC Switch 代理国内大模型）、Strix 安全扫描器等多款 AI 工具，实现本地一键启动。
+> - **六大 Skills 模块：** 包含 `/secskills` 自动化渗透链、`/code-audit` 覆盖 10 大维度的智能代码审计、安卓/iOS 逆向工程、CTF 自动解题、Claude-Red（58 个红队专家技能）以及 Cybersecurity-Skills（817 项映射 6 大框架的结构化技能）。
+> - **系统优化与代理：** 集成 Clash Verge 网络代理，内置 BleachBit 一键清理，IDEA 2026.1 已激活至 2099 年，并支持切换阿里云源加速国内更新。
+> - **福利与获取：** 可配合小米 MiMo V2.5 模型，提供 20 个专属邀请码 `ZUYUC7`；系统镜像通过微信公众号“暗魂攻防实验室”等渠道获取。
 
 **暗魂安全团队** *2026年7月28日 14:28*
-
-**点击蓝字**
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/46f00d596f2f870f.png)
-
-**关注我们**
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/c27ebb19cb5b0511.png)
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/f7aeba0e95eb4a20.png)
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/d43085ff833b8d8f.png)
-
-**微信搜一搜**
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/1ed8d88fc9cc10d0.png)
-
-暗魂攻防实验室
 
 ## AI 赋能 · 开箱即用 · 重新定义红队渗透
 
@@ -357,26 +333,6 @@ SpecterAI V1.5 预装了 **6 大核心 Skills 模块** ，让 AI 成为你最得
 
 **SpecterAI V1.5** —— 让你的 Kali 拥有 AI 大脑，奔赴下一场攻防战斗吧！
 
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/55f6d667f9e5cadd.png)
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/e0ed938f888529a6.png)
-
 * * *
 
-**联系微信客服**
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/a4bdb73b149760c0.gif)
-
-![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/3bd52a1bec13be5c.png)
-
-扫码联系
-
-暗魂攻防实验室
-
-● [【实战派推荐】提升渗透效率的2款工具](https://mp.weixin.qq.com/s?__biz=MzkyMjE1NzQ2MA==&mid=2247490758&idx=1&sn=a11ba2a7181ad1c42115bc305e8a24f2&scene=21#wechat_redirect)
-
-● [CVE-2023-22527复现实录：沉浸式攻防体验尽在CyberStrikeLab靶场](https://mp.weixin.qq.com/s?__biz=MzkyMjE1NzQ2MA==&mid=2247490708&idx=1&sn=e4f6a9830fda07759f1e6507007bd44a&scene=21#wechat_redirect)
-
-微信搜一搜
-
-暗魂攻防实验室
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/e0ed938f888529a6.png)
