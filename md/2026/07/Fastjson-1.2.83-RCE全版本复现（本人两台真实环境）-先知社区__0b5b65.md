@@ -5,12 +5,14 @@ source_host: xz.aliyun.com
 clip_date: 2026-07-27T17:48:41+08:00
 trace_id: cc5df854-0e49-46a9-beb0-fc6ea3e5099e
 content_hash: bdc015111b1fb0be22e5e082e9a87fa10c3c96485d810f52a39540bdd2930867
-status: imaged
-tags: []
+status: synced
+tags:
+  - 漏洞分析
+  - Fastjson漏洞
 series: null
 feed_source: 先知安全技术社区
-ai_summary: null
-ai_summary_style: null
+ai_summary: Fastjson 1.2.66–1.2.83 可利用 @JSONType 注解的信任逻辑倒置，结合 Spring Boot 的 LaunchedURLClassLoader 实现无需 AutoType 的远程代码执行。
+ai_summary_style: key-points
 images_status:
   total: 15
   succeeded: 1
@@ -29,9 +31,19 @@ images_status:
     - https://xzfile.aliyuncs.com/media/upload/picture/20260726121242-3f4587a1-88a8-1.png
     - https://xzfile.aliyuncs.com/media/upload/picture/20260726121242-3f832a88-88a8-1.png
     - https://xzfile.aliyuncs.com/media/upload/picture/20260726121243-3fb7da1e-88a8-1.png
-notion_page_id: null
+notion_page_id: 3ab75244-d011-8192-b474-e4b802e232fa
 ioc: null
 ---
+
+> 💡 **AI 总结（key-points）**
+>
+> Fastjson 1.2.66–1.2.83 可利用 @JSONType 注解的信任逻辑倒置，结合 Spring Boot 的 LaunchedURLClassLoader 实现无需 AutoType 的远程代码执行。
+> 
+> - **漏洞核心：** Fastjson 将攻击者控制的 `@type` 值直接拼成资源路径，通过 `getResourceAsStream` 加载远程 `.class` 文件，并错误地把该文件自带的 `@JSONType` 注解当作可信标志，从而放行类加载与初始化，触发 `<clinit>` 中的恶意代码。
+> - **利用条件：** 应用运行在 JDK 环境，且使用 Spring Boot FatJar（`LaunchedURLClassLoader`）；SafeMode 开启可阻断，但默认关闭。
+> - **关键危害：** 即使 `autoTypeSupport=false`（AutoType 关闭），只要扫描到 `@JSONType` 注解，条件 `autoTypeSupport || jsonType` 依然成立，导致直接调用 `TypeUtils.loadClass()`，完全绕过类型检查。
+> - **攻击手法：** JDK8 下可直接通过 `jar:http://attacker/...` 远程加载恶意类；JDK17+ 需先将恶意 JAR 下载到本地，再通过枚举 `/proc/self/fd/N` 文件描述符触发加载。
+> - **修复方案：** 升级到 fastjson 1.2.84 或 fastjson2，或强制启用 SafeMode：`-Dfastjson.parser.safeMode=true`。
 
 声明：
 
