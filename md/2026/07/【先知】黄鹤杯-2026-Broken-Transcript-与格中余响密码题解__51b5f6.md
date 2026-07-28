@@ -2,36 +2,35 @@
 title: 【先知】黄鹤杯 2026 Broken Transcript 与格中余响密码题解
 source: https://xz.aliyun.com/news/92584
 source_host: xz.aliyun.com
-clip_date: 2026-07-28T17:11:05+08:00
-trace_id: 3236f244-8399-495e-9f83-681f9e09afa3
-content_hash: 206251f711e7e773f68baf87de3445258e50fd825c0698d0d1811f025a7cbc98
+clip_date: 2026-07-28T17:14:11+08:00
+trace_id: de5b6ee2-8f31-413a-956a-293563dd81fc
+content_hash: 461971dbb31dcedaddb496b9f3bfc1d4117b02d08073990244cedb8c092f1f1a
 status: synced
 tags:
   - 先知
-  - CTF
   - 密码学
+  - CTF
 series: null
 feed_source: null
-ai_summary: 通过CRT还原p的高704位，并用Coppersmith法恢复低320位分解RSA；格签名因等式t=A·s无误差项，直接解线性系统即可恢复私钥。
+ai_summary: 通过12条模不同素数的p高位泄漏记录进行CRT合并，恢复RSA素数p的高704位，再利用Coppersmith方法求出低320位完成解密；类Dilithium格签名因缺少误差项，可利用A·s=t的精确等式直接解线性方程组恢复私钥。
 ai_summary_style: key-points
 images_status:
-  total: 2
+  total: 1
   succeeded: 1
-  failed_urls:
-    - D:\wp\周报图片\微信图片_20260725180022_203_20.png
-notion_page_id: 3ab75244-d011-81bc-8979-d1e8c288bfc9
+  failed_urls: []
+notion_page_id: 3ab75244-d011-8153-a0e0-d174627b6b7e
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过CRT还原p的高704位，并用Coppersmith法恢复低320位分解RSA；格签名因等式t=A·s无误差项，直接解线性系统即可恢复私钥。
+> 通过12条模不同素数的p高位泄漏记录进行CRT合并，恢复RSA素数p的高704位，再利用Coppersmith方法求出低320位完成解密；类Dilithium格签名因缺少误差项，可利用A·s=t的精确等式直接解线性方程组恢复私钥。
 > 
-> - **CRT恢复RSA缺失高位：** 12条state=1记录中y≡a·upper+b (mod m)，反解出upper≡(y-b)·a⁻¹ (mod m)，12个模数互素且乘积超过704位，CRT合并唯一确定p>>320。
-> 
-> - **Coppersmith攻击恢复低位：** 构造一元多项式f(x)=upper·2³²⁰+x在模n下，用small_roots(beta≈0.49)求小根X=2³²⁰，得到低320位low，还原完整p并分解n解密。
-> 
-> - **格签名精确等式还原私钥：** 方案中去掉误差项，使验证条件退化为t=A·s，将A的多项式矩阵转为128×128矩阵B，在模q下高斯消元求解s，系数全落在[-2,2]且HMAC标签校验通过，恢复的私钥与真实私钥一致。
+> - **CRT合并条件：** 12条state=1记录中模数m均为约60—61位素数且两两互素，乘积比特数超704位，因此可通过中国剩余定理唯一确定p的高704位upper。
+> - **Coppersmith小根求解：** 令p = upper·2³²⁰ + x，其中0 ≤ x < 2³²⁰，在模n下构造一元多项式，用small_roots(epsilon=0.02, beta≈0.49)成功解出低320位，恢复完整私钥。
+> - **格签名破绽：** 签名验证等式可化简为A·y + c·(A·s - t)，只有当A·s = t精确成立时才能通过，方案缺少Dilithium中的误差项和高低舍入，导致私钥可解。
+> - **线性方程组构造：** 将2×2多项式矩阵A的各块转为64×64负循环卷积矩阵，拼成128×128大矩阵B，右端为公钥t的128个系数，在模q下高斯消元求得私钥s的全部系数，且每个系数均在[-2,2]内，与参数eta=2一致。
+> - **验证流程：** 恢复出的私钥成功通过verifier.py的open_sealed流程，HMAC标签校验通过，证明完全正确并解出flag。
 
 ## 黄鹤杯密码详解
 
@@ -226,7 +225,7 @@ def open_sealed(pub, s):
 print(open_sealed(pub, s).decode())
 ```
 
-![](⚠️ d:\wp\%E5%91%A8%E6%8A%A5%E5%9B%BE%E7%89%87\%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260725180022_203_20.png) ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/734de580338d0320.png)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/07/734de580338d0320.png)
 
 ## 总结
 
