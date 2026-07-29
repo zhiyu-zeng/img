@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">DBI trace detection flow</title>
+  <desc id="desc">A protected thread wakes a watchdog, receives asynchronous PC samples, executes a BRK instruction, and combines both signal contexts into a sticky detection result.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .lane { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .target { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; }
+      .watcher { fill: #ccfbf1; stroke: #0f766e; stroke-width: 2; }
+      .kernel { fill: #fef3c7; stroke: #d97706; stroke-width: 2; }
+      .result { fill: #fee2e2; stroke: #dc2626; stroke-width: 2; }
+      .title { font: 700 34px system-ui, sans-serif; fill: #0f172a; }
+      .heading { font: 700 23px system-ui, sans-serif; fill: #0f172a; }
+      .label { font: 600 19px system-ui, sans-serif; fill: #0f172a; }
+      .small { font: 500 17px system-ui, sans-serif; fill: #475569; }
+      .arrow { fill: none; stroke: #475569; stroke-width: 3; marker-end: url(#arrow); }
+      .signal { fill: none; stroke: #dc2626; stroke-width: 3; stroke-dasharray: 9 7; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1440" height="900" rx="8"/>
+  <text class="title" x="720" y="55" text-anchor="middle">同步探针中的两条PC检测路径</text>
+
+  <rect class="lane" x="45" y="90" width="430" height="640" rx="8"/>
+  <rect class="lane" x="505" y="90" width="430" height="640" rx="8"/>
+  <rect class="lane" x="965" y="90" width="430" height="640" rx="8"/>
+
+  <text class="heading" x="260" y="135" text-anchor="middle">受保护线程</text>
+  <text class="heading" x="720" y="135" text-anchor="middle">共享Watchdog</text>
+  <text class="heading" x="1180" y="135" text-anchor="middle">内核 / Signal Handler</text>
+
+  <rect class="target" x="100" y="175" width="320" height="76" rx="8"/>
+  <text class="label" x="260" y="208" text-anchor="middle">DBI_TRACE_DETECTED()</text>
+  <text class="small" x="260" y="234" text-anchor="middle">发布目标线程与TLS状态</text>
+
+  <path class="arrow" d="M420 213 L560 213"/>
+
+  <rect class="watcher" x="560" y="175" width="320" height="76" rx="8"/>
+  <text class="label" x="720" y="208" text-anchor="middle">条件变量唤醒</text>
+  <text class="small" x="720" y="234" text-anchor="middle">空闲时不轮询</text>
+
+  <path class="arrow" d="M260 251 L260 315"/>
+
+  <rect class="target" x="100" y="315" width="320" height="86" rx="8"/>
+  <text class="label" x="260" y="349" text-anchor="middle">进入纯汇编窗口</text>
+  <text class="small" x="260" y="376" text-anchor="middle">active = 1，等待8个样本</text>
+
+  <path class="signal" d="M560 355 L420 355"/>
+  <text class="small" x="490" y="337" text-anchor="middle">SIGUSR2 x 8</text>
+
+  <path class="signal" d="M420 380 C650 430 900 420 1020 350"/>
+
+  <rect class="kernel" x="1020" y="300" width="320" height="105" rx="8"/>
+  <text class="label" x="1180" y="337" text-anchor="middle">异步Signal Handler</text>
+  <text class="small" x="1180" y="365" text-anchor="middle">读取ucontext_t.pc</text>
+  <text class="small" x="1180" y="390" text-anchor="middle">检查是否位于窗口内</text>
+
+  <path class="arrow" d="M260 401 L260 490"/>
+
+  <rect class="target" x="100" y="490" width="320" height="82" rx="8"/>
+  <text class="label" x="260" y="524" text-anchor="middle">执行BRK #0x4d2</text>
+  <text class="small" x="260" y="551" text-anchor="middle">同步触发SIGTRAP</text>
+
+  <path class="signal" d="M420 531 L1020 531"/>
+
+  <rect class="kernel" x="1020" y="480" width="320" height="105" rx="8"/>
+  <text class="label" x="1180" y="517" text-anchor="middle">SIGTRAP Handler</text>
+  <text class="small" x="1180" y="545" text-anchor="middle">记录PC / SP / LR</text>
+  <text class="small" x="1180" y="570" text-anchor="middle">PC += 4 后恢复执行</text>
+
+  <path class="arrow" d="M720 251 L720 620"/>
+
+  <rect class="watcher" x="560" y="620" width="320" height="70" rx="8"/>
+  <text class="label" x="720" y="651" text-anchor="middle">采样完成</text>
+  <text class="small" x="720" y="676" text-anchor="middle">通知目标线程并重新休眠</text>
+
+  <path class="arrow" d="M1180 585 L1180 760 L900 760"/>
+  <path class="arrow" d="M260 572 L260 760 L540 760"/>
+  <path class="arrow" d="M720 690 L720 745"/>
+
+  <rect class="result" x="390" y="745" width="660" height="105" rx="8"/>
+  <text class="label" x="720" y="784" text-anchor="middle">outside_count &gt; 0 或 trap PC不匹配</text>
+  <text class="small" x="720" y="815" text-anchor="middle">strong_count++，进程级g_detected保持为1</text>
+</svg>

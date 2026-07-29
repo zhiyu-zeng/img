@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="780" viewBox="0 0 1440 780" role="img" aria-labelledby="title desc">
+  <title id="title">Native execution and DBI execution</title>
+  <desc id="desc">Native execution runs original instructions directly, while DBI translates and instruments basic blocks into a code cache before CPU execution.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .native { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2; }
+      .dbi { fill: #ccfbf1; stroke: #0f766e; stroke-width: 2; }
+      .cache { fill: #fef3c7; stroke: #d97706; stroke-width: 2; }
+      .cpu { fill: #fee2e2; stroke: #dc2626; stroke-width: 2; }
+      .title { font: 700 34px system-ui, sans-serif; fill: #0f172a; }
+      .heading { font: 700 25px system-ui, sans-serif; fill: #0f172a; }
+      .label { font: 600 21px system-ui, sans-serif; fill: #0f172a; }
+      .small { font: 500 18px system-ui, sans-serif; fill: #475569; }
+      .note { font: 600 20px system-ui, sans-serif; fill: #7c2d12; }
+      .arrow { fill: none; stroke: #475569; stroke-width: 3; marker-end: url(#arrow); }
+      .dash { fill: none; stroke: #d97706; stroke-width: 3; stroke-dasharray: 9 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1440" height="780" rx="8"/>
+  <text class="title" x="720" y="58" text-anchor="middle">原生执行与DBI执行的区别</text>
+
+  <rect class="panel" x="55" y="95" width="560" height="500" rx="8"/>
+  <text class="heading" x="335" y="145" text-anchor="middle">Native</text>
+
+  <rect class="native" x="145" y="200" width="380" height="105" rx="8"/>
+  <text class="label" x="335" y="244" text-anchor="middle">目标SO原始指令</text>
+  <text class="small" x="335" y="278" text-anchor="middle">basic block in .text</text>
+
+  <path class="arrow" d="M335 305 L335 395"/>
+
+  <rect class="cpu" x="145" y="395" width="380" height="105" rx="8"/>
+  <text class="label" x="335" y="439" text-anchor="middle">CPU直接执行</text>
+  <text class="small" x="335" y="473" text-anchor="middle">Physical PC位于原始.text</text>
+
+  <rect class="panel" x="660" y="95" width="725" height="500" rx="8"/>
+  <text class="heading" x="1022" y="145" text-anchor="middle">DBI Trace</text>
+
+  <rect class="native" x="710" y="200" width="240" height="105" rx="8"/>
+  <text class="label" x="830" y="244" text-anchor="middle">原始指令</text>
+  <text class="small" x="830" y="278" text-anchor="middle">Guest PC</text>
+
+  <path class="arrow" d="M950 252 L1010 252"/>
+
+  <rect class="dbi" x="1010" y="200" width="320" height="105" rx="8"/>
+  <text class="label" x="1170" y="240" text-anchor="middle">JIT解码 / 修补</text>
+  <text class="small" x="1170" y="274" text-anchor="middle">插入trace与分析代码</text>
+
+  <path class="arrow" d="M1170 305 L1170 370"/>
+
+  <rect class="cache" x="1010" y="370" width="320" height="105" rx="8"/>
+  <text class="label" x="1170" y="414" text-anchor="middle">Code Cache</text>
+  <text class="small" x="1170" y="448" text-anchor="middle">翻译后的可执行指令</text>
+
+  <path class="arrow" d="M1010 422 L950 422"/>
+
+  <rect class="cpu" x="710" y="370" width="240" height="105" rx="8"/>
+  <text class="label" x="830" y="414" text-anchor="middle">CPU执行</text>
+  <text class="small" x="830" y="448" text-anchor="middle">Physical PC</text>
+
+  <path class="dash" d="M830 370 C830 330 830 330 830 305"/>
+  <text class="small" x="735" y="342">DBI维护映射</text>
+
+  <rect class="cache" x="215" y="645" width="1010" height="78" rx="8"/>
+  <text class="note" x="720" y="693" text-anchor="middle">检测关键：绕过Guest PC修正层，让内核保存CPU真正执行位置</text>
+</svg>
+
