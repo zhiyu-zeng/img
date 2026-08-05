@@ -1,0 +1,67 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="953" height="505" viewBox="0 0 953 505" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif">
+  <title>Response queue poisoning</title>
+  <defs>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#111827" flood-opacity="0.08"></feDropShadow>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="953" height="505" fill="#ffffff"></rect>
+  <g transform="translate(-23,0)">
+    <image x="51" y="73" width="58" height="56"></image>
+    <g filter="url(#soft)">
+      <rect x="140.5" y="28.5" width="329" height="145" rx="12" fill="#ffffff" stroke="#e5e7eb"></rect>
+    </g>
+    <text x="156" y="55" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#2648c8">GET /<tspan fill="#111827">&lt;@urlencode_all&gt;</tspan> HTTP/1.1</text>
+    <text x="156" y="76" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#2648c8">Host: example.com</text>
+    <text x="156" y="107" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">GET / HTTP/1.1</text>
+    <text x="156" y="128" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">Foo: bar<tspan fill="#111827">&lt;/@urlencode_all&gt;</tspan> HTTP/1.1</text>
+    <text x="156" y="149" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">Host: example.com</text>
+    <line x1="484" y1="92" x2="554" y2="92" stroke="#111827" stroke-width="2"></line>
+    <polygon points="564,92 553,86 553,98" fill="#111827"></polygon>
+    <line x1="494" y1="110" x2="564" y2="110" stroke="#111827" stroke-width="2"></line>
+    <polygon points="484,110 495,104 495,116" fill="#111827"></polygon>
+    <rect x="578.5" y="67.5" width="235" height="67" rx="10" fill="#eef1fd" stroke="#c7d0f7" stroke-width="1"></rect>
+    <text x="594" y="106" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#2648c8">HTTP/1.1 200 OK</text>
+    <image x="42" y="208" width="76" height="74"></image>
+    <g filter="url(#soft)">
+      <rect x="140.5" y="211.5" width="329" height="67" rx="12" fill="#ffffff" stroke="#e5e7eb"></rect>
+    </g>
+    <text x="156" y="238" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#1f9d4d">GET / HTTP/1.1</text>
+    <text x="156" y="259" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#1f9d4d">Host: example.com</text>
+    <line x1="484" y1="236" x2="554" y2="236" stroke="#111827" stroke-width="2"></line>
+    <polygon points="564,236 553,230 553,242" fill="#111827"></polygon>
+    <line x1="494" y1="254" x2="564" y2="254" stroke="#111827" stroke-width="2"></line>
+    <polygon points="484,254 495,248 495,260" fill="#111827"></polygon>
+    <rect x="578.5" y="211.5" width="235" height="67" rx="10" fill="#fdeeee" stroke="#f6c9c9" stroke-width="1"></rect>
+    <text x="594" y="250" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">HTTP/1.1 200 OK</text>
+    <image x="51" y="361" width="58" height="56"></image>
+    <g filter="url(#soft)">
+      <rect x="140.5" y="316.5" width="329" height="145" rx="12" fill="#ffffff" stroke="#e5e7eb"></rect>
+    </g>
+    <text x="156" y="343" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#2648c8">GET /<tspan fill="#111827">&lt;@urlencode_all&gt;</tspan> HTTP/1.1</text>
+    <text x="156" y="364" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#2648c8">Host: example.com</text>
+    <text x="156" y="395" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">GET / HTTP/1.1</text>
+    <text x="156" y="416" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">Foo: bar<tspan fill="#111827">&lt;/@urlencode_all&gt;</tspan> HTTP/1.1</text>
+    <text x="156" y="437" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#d92d2d">Host: example.com</text>
+    <line x1="484" y1="380" x2="554" y2="380" stroke="#111827" stroke-width="2"></line>
+    <polygon points="564,380 553,374 553,386" fill="#111827"></polygon>
+    <line x1="494" y1="398" x2="564" y2="398" stroke="#111827" stroke-width="2"></line>
+    <polygon points="484,398 495,392 495,404" fill="#111827"></polygon>
+    <rect x="578.5" y="355.5" width="235" height="67" rx="10" fill="#eaf7ef" stroke="#b9e3c9" stroke-width="1"></rect>
+    <text x="594" y="382" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#1f9d4d">HTTP/1.1 200 OK</text>
+    <text x="594" y="403" font-family="'JetBrains Mono','DejaVu Sans Mono',Menlo,Consolas,monospace" font-size="14" fill="#1f9d4d">Set-Cookie: sess=abcde</text>
+    <rect x="661.5" y="422.5" width="152" height="55" rx="9" fill="#ffffff" stroke="#111827" stroke-width="1.5"></rect>
+    <text x="677" y="444" font-size="15" font-weight="700" fill="#111827">Attacker receives</text>
+    <text x="677" y="464" font-size="15" font-weight="700" fill="#111827">victim's response</text>
+    <g>
+      <rect x="847" y="200" width="98" height="36" rx="10" fill="none" stroke="#111827" stroke-width="6"></rect>
+      <circle cx="860" cy="218" r="4" fill="#111827"></circle>
+      <rect x="873" y="214.5" width="34" height="7" rx="3.5" fill="#111827"></rect>
+    </g>
+    <g>
+      <rect x="847" y="254" width="98" height="36" rx="10" fill="none" stroke="#111827" stroke-width="6"></rect>
+      <circle cx="860" cy="272" r="4" fill="#111827"></circle>
+      <rect x="873" y="268.5" width="34" height="7" rx="3.5" fill="#111827"></rect>
+    </g>
+  </g>
+</svg>
