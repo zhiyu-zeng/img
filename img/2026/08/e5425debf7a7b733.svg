@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="260" viewBox="0 0 980 260">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#5b6673"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .soft{fill:#f8fafc;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .accent{fill:#eff6ff;stroke:#7aa7e8;stroke-width:1.7;rx:12;ry:12}
+      .warn{fill:#fff7ed;stroke:#f0a15f;stroke-width:1.7;rx:12;ry:12}
+      .ok{fill:#f0fdf4;stroke:#6bbf8a;stroke-width:1.7;rx:12;ry:12}
+      .bad{fill:#fff1f2;stroke:#ef798a;stroke-width:1.7;rx:12;ry:12}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Noto Sans SC",sans-serif;font-size:16px;fill:#1f2937}
+      .small{font-size:13px;fill:#4b5563}
+      .line{stroke:#5b6673;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#9aa4b2;stroke-width:1.5;fill:none;stroke-dasharray:5 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect class="warn" x="50" y="98" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="125.0" y="125.0" text-anchor="middle">槽值</text>
+  <text class="txt" x="125.0" y="145.0" text-anchor="middle">已覆盖</text>
+  <rect class="accent" x="260" y="98" width="165" height="64" rx="12" ry="12"/>
+  <text class="txt" x="342.5" y="125.0" text-anchor="middle">GDB</text>
+  <text class="txt" x="342.5" y="145.0" text-anchor="middle">pc 到 system@plt</text>
+  <rect class="accent" x="490" y="98" width="160" height="64" rx="12" ry="12"/>
+  <text class="txt" x="570.0" y="125.0" text-anchor="middle">strace</text>
+  <text class="txt" x="570.0" y="145.0" text-anchor="middle">/bin/sh -c</text>
+  <rect class="soft" x="715" y="98" width="190" height="64" rx="12" ry="12"/>
+  <text class="txt" x="810.0" y="125.0" text-anchor="middle">id 输出</text>
+  <text class="txt" x="810.0" y="145.0" text-anchor="middle">看 euid / nosuid</text>
+  <path class="line" d="M200,130 L260,130"/>
+  <path class="line" d="M425,130 L490,130"/>
+  <path class="line" d="M650,130 L715,130"/>
+</svg>

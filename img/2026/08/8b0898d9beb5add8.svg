@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="300" viewBox="0 0 980 300">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#5b6673"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .soft{fill:#f8fafc;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .accent{fill:#eff6ff;stroke:#7aa7e8;stroke-width:1.7;rx:12;ry:12}
+      .warn{fill:#fff7ed;stroke:#f0a15f;stroke-width:1.7;rx:12;ry:12}
+      .ok{fill:#f0fdf4;stroke:#6bbf8a;stroke-width:1.7;rx:12;ry:12}
+      .bad{fill:#fff1f2;stroke:#ef798a;stroke-width:1.7;rx:12;ry:12}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Noto Sans SC",sans-serif;font-size:16px;fill:#1f2937}
+      .small{font-size:13px;fill:#4b5563}
+      .line{stroke:#5b6673;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#9aa4b2;stroke-width:1.5;fill:none;stroke-dasharray:5 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect class="soft" x="40" y="115" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="115.0" y="152.0" text-anchor="middle">puts(argv[4])</text>
+  <rect class="accent" x="245" y="115" width="130" height="64" rx="12" ry="12"/>
+  <text class="txt" x="310.0" y="152.0" text-anchor="middle">puts@plt</text>
+  <rect class="accent" x="430" y="115" width="160" height="64" rx="12" ry="12"/>
+  <text class="txt" x="510.0" y="152.0" text-anchor="middle">puts@got.plt</text>
+  <rect class="soft" x="690" y="42" width="180" height="64" rx="12" ry="12"/>
+  <text class="txt" x="780.0" y="79.0" text-anchor="middle">_dl_runtime_resolve</text>
+  <rect class="ok" x="690" y="190" width="180" height="64" rx="12" ry="12"/>
+  <text class="txt" x="780.0" y="227.0" text-anchor="middle">libc puts</text>
+  <path class="line" d="M190,147 L245,147"/>
+  <path class="line" d="M375,147 L430,147"/>
+  <path class="line" d="M590,135 L690,74"/>
+  <text class="txt small" x="637" y="92" text-anchor="middle">未解析</text>
+  <path class="line" d="M780,106 L780,190"/>
+  <text class="txt small" x="812" y="153" text-anchor="middle">写回地址</text>
+  <path class="line" d="M590,160 L690,220"/>
+  <text class="txt small" x="637" y="206" text-anchor="middle">已解析</text>
+</svg>

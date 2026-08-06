@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="310" viewBox="0 0 980 310">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#5b6673"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .soft{fill:#f8fafc;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .accent{fill:#eff6ff;stroke:#7aa7e8;stroke-width:1.7;rx:12;ry:12}
+      .warn{fill:#fff7ed;stroke:#f0a15f;stroke-width:1.7;rx:12;ry:12}
+      .ok{fill:#f0fdf4;stroke:#6bbf8a;stroke-width:1.7;rx:12;ry:12}
+      .bad{fill:#fff1f2;stroke:#ef798a;stroke-width:1.7;rx:12;ry:12}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Noto Sans SC",sans-serif;font-size:16px;fill:#1f2937}
+      .small{font-size:13px;fill:#4b5563}
+      .line{stroke:#5b6673;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#9aa4b2;stroke-width:1.5;fill:none;stroke-dasharray:5 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect class="soft" x="40" y="62" width="160" height="64" rx="12" ry="12"/>
+  <text class="txt" x="120.0" y="89.0" text-anchor="middle">No / Partial</text>
+  <text class="txt" x="120.0" y="109.0" text-anchor="middle">RELRO</text>
+  <rect class="warn" x="260" y="62" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="335.0" y="89.0" text-anchor="middle">.got.plt</text>
+  <text class="txt" x="335.0" y="109.0" text-anchor="middle">rw-p</text>
+  <rect class="warn" x="470" y="62" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="545.0" y="99.0" text-anchor="middle">覆盖槽值</text>
+  <rect class="bad" x="680" y="62" width="170" height="64" rx="12" ry="12"/>
+  <text class="txt" x="765.0" y="99.0" text-anchor="middle">控制流改向</text>
+  <path class="line" d="M200,94 L260,94"/>
+  <path class="line" d="M410,94 L470,94"/>
+  <path class="line" d="M620,94 L680,94"/>
+  <rect class="soft" x="40" y="188" width="160" height="64" rx="12" ry="12"/>
+  <text class="txt" x="120.0" y="215.0" text-anchor="middle">Full</text>
+  <text class="txt" x="120.0" y="235.0" text-anchor="middle">RELRO</text>
+  <rect class="ok" x="260" y="188" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="335.0" y="215.0" text-anchor="middle">.got.plt</text>
+  <text class="txt" x="335.0" y="235.0" text-anchor="middle">r--p</text>
+  <rect class="bad" x="470" y="188" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="545.0" y="225.0" text-anchor="middle">写入失败</text>
+  <rect class="bad" x="680" y="188" width="170" height="64" rx="12" ry="12"/>
+  <text class="txt" x="765.0" y="215.0" text-anchor="middle">SIGSEGV</text>
+  <text class="txt" x="765.0" y="235.0" text-anchor="middle">SEGV_ACCERR</text>
+  <path class="line" d="M200,220 L260,220"/>
+  <path class="line" d="M410,220 L470,220"/>
+  <path class="line" d="M620,220 L680,220"/>
+</svg>

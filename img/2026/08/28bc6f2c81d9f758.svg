@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="300" viewBox="0 0 980 300">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#5b6673"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .soft{fill:#f8fafc;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .accent{fill:#eff6ff;stroke:#7aa7e8;stroke-width:1.7;rx:12;ry:12}
+      .warn{fill:#fff7ed;stroke:#f0a15f;stroke-width:1.7;rx:12;ry:12}
+      .ok{fill:#f0fdf4;stroke:#6bbf8a;stroke-width:1.7;rx:12;ry:12}
+      .bad{fill:#fff1f2;stroke:#ef798a;stroke-width:1.7;rx:12;ry:12}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Noto Sans SC",sans-serif;font-size:16px;fill:#1f2937}
+      .small{font-size:13px;fill:#4b5563}
+      .line{stroke:#5b6673;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#9aa4b2;stroke-width:1.5;fill:none;stroke-dasharray:5 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect class="soft" x="40" y="115" width="120" height="64" rx="12" ry="12"/>
+  <text class="txt" x="100.0" y="142.0" text-anchor="middle">setuid</text>
+  <text class="txt" x="100.0" y="162.0" text-anchor="middle">启动</text>
+  <rect class="accent" x="210" y="115" width="125" height="64" rx="12" ry="12"/>
+  <text class="txt" x="272.5" y="152.0" text-anchor="middle">AT_SECURE</text>
+  <rect class="ok" x="390" y="42" width="170" height="64" rx="12" ry="12"/>
+  <text class="txt" x="475.0" y="69.0" text-anchor="middle">过滤 LD_*</text>
+  <text class="txt" x="475.0" y="89.0" text-anchor="middle">环境变量</text>
+  <rect class="soft" x="390" y="190" width="170" height="64" rx="12" ry="12"/>
+  <text class="txt" x="475.0" y="227.0" text-anchor="middle">进入 main</text>
+  <rect class="warn" x="620" y="190" width="150" height="64" rx="12" ry="12"/>
+  <text class="txt" x="695.0" y="227.0" text-anchor="middle">进程内写入</text>
+  <rect class="bad" x="830" y="190" width="110" height="64" rx="12" ry="12"/>
+  <text class="txt" x="885.0" y="227.0" text-anchor="middle">GOT 槽</text>
+  <path class="line" d="M160,147 L210,147"/>
+  <path class="line" d="M335,135 L390,84"/>
+  <path class="line" d="M335,160 L390,222"/>
+  <path class="line" d="M560,222 L620,222"/>
+  <path class="line" d="M770,222 L830,222"/>
+  <text class="txt small" x="362" y="100" text-anchor="middle">收紧加载环境</text>
+  <text class="txt small" x="595" y="210" text-anchor="middle">不自动修复</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="250" viewBox="0 0 980 250">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#5b6673"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .soft{fill:#f8fafc;stroke:#c9d1d9;stroke-width:1.5;rx:12;ry:12}
+      .accent{fill:#eff6ff;stroke:#7aa7e8;stroke-width:1.7;rx:12;ry:12}
+      .warn{fill:#fff7ed;stroke:#f0a15f;stroke-width:1.7;rx:12;ry:12}
+      .ok{fill:#f0fdf4;stroke:#6bbf8a;stroke-width:1.7;rx:12;ry:12}
+      .bad{fill:#fff1f2;stroke:#ef798a;stroke-width:1.7;rx:12;ry:12}
+      .txt{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Noto Sans SC",sans-serif;font-size:16px;fill:#1f2937}
+      .small{font-size:13px;fill:#4b5563}
+      .line{stroke:#5b6673;stroke-width:1.8;fill:none;marker-end:url(#arrow)}
+      .dash{stroke:#9aa4b2;stroke-width:1.5;fill:none;stroke-dasharray:5 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect class="warn" x="40" y="92" width="170" height="64" rx="12" ry="12"/>
+  <text class="txt" x="125.0" y="119.0" text-anchor="middle">puts@got.plt</text>
+  <text class="txt" x="125.0" y="139.0" text-anchor="middle">= system@plt</text>
+  <rect class="soft" x="270" y="92" width="155" height="64" rx="12" ry="12"/>
+  <text class="txt" x="347.5" y="129.0" text-anchor="middle">puts(argv[4])</text>
+  <rect class="accent" x="480" y="92" width="130" height="64" rx="12" ry="12"/>
+  <text class="txt" x="545.0" y="129.0" text-anchor="middle">puts@plt</text>
+  <rect class="warn" x="665" y="92" width="145" height="64" rx="12" ry="12"/>
+  <text class="txt" x="737.5" y="129.0" text-anchor="middle">system@plt</text>
+  <rect class="ok" x="860" y="92" width="90" height="64" rx="12" ry="12"/>
+  <text class="txt" x="905.0" y="119.0" text-anchor="middle">system</text>
+  <text class="txt" x="905.0" y="139.0" text-anchor="middle">(argv[4])</text>
+  <path class="line" d="M210,124 L270,124"/>
+  <path class="line" d="M425,124 L480,124"/>
+  <path class="line" d="M610,124 L665,124"/>
+  <path class="line" d="M810,124 L860,124"/>
+  <text class="txt small" x="240" y="112" text-anchor="middle">覆盖</text>
+  <text class="txt small" x="637" y="112" text-anchor="middle">间接跳转</text>
+</svg>
