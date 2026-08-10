@@ -2,23 +2,23 @@
 title: 【看雪】D3CTF 2026 d3llvm.apk 反调试定位与加密 SO的Dump
 source: https://bbs.kanxue.com/thread-292355.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-08-07T21:55:53+08:00
-trace_id: 9296ea4a-ecda-47fb-8c48-5379cc66c58d
-content_hash: ab652e3fcbe8a30435ae74f9200ba295b8c52450d825e78f04fdc62cdef22d84
+clip_date: 2026-08-10T21:18:38+08:00
+trace_id: a26662b2-90d8-42e8-a049-cb1a138ccf09
+content_hash: 5d5fd4c1c4a7ae64497e24ce9c848b30ec6e8562a0da2526dfa8fd402fa0464d
 status: synced
 tags:
   - 看雪
   - Android逆向
   - Frida
 series: null
-feed_source: 看雪·Android安全
+feed_source: null
 ai_summary: D3CTF 2026「d3llvm」可从 logcat 定位外层 JNI_OnLoad 失败点，用 Frida 逐层放行反调试检测，并在 dlsym 返回 Payload_OnLoad 的瞬间从内存恢复加密的 libd3llvm_payload.so，进而定位第二层完整性校验并让 APK 成功运行。
 ai_summary_style: key-points
 images_status:
   total: 12
   succeeded: 12
   failed_urls: []
-notion_page_id: 3b575244-d011-81f9-893d-d1bc3cc4ca2e
+notion_page_id: 3b875244-d011-81b4-ba69-e3ffd7239d25
 ioc: null
 ---
 
