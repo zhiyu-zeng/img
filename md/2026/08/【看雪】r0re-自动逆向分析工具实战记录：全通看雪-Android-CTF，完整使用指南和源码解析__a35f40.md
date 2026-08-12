@@ -5,7 +5,7 @@ source_host: bbs.kanxue.com
 clip_date: 2026-08-12T09:55:54+08:00
 trace_id: 1ad3b5ed-e7b0-4104-83c7-621f9fb06f72
 content_hash: cb74c3ec8b01c177c75f6df9b2b077017f653afe88e46a401f28add8fdb595b9
-status: summarized
+status: synced
 tags:
   - 看雪
   - Android逆向
@@ -18,7 +18,7 @@ images_status:
   total: 17
   succeeded: 17
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3ba75244-d011-811b-861b-e4d250e54179
 ioc: null
 ---
 
