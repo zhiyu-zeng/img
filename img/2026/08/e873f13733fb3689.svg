@@ -1,0 +1,286 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 704 292" font-family="'DejaVu Sans','Helvetica Neue',Arial,sans-serif">
+   <defs>
+    <marker viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#8fbf6a">
+     </path>
+    </marker>
+    <marker viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#cf7b76">
+     </path>
+    </marker>
+    <marker viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#9a9a9a">
+     </path>
+    </marker>
+   </defs>
+   <text x="40" y="22" font-family="'DejaVu Sans','Helvetica Neue',Arial,sans-serif" font-size="11" fill="#9a9a9a" font-weight="normal" text-anchor="start">
+    
+    
+    
+    hash = xxHash64(mangled canonical function type), low 32 bits
+   </text>
+   <rect x="40" y="44" width="182" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="52" y="64" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#e8e8e8" font-size="14">
+     
+     
+     
+     fp = ops[i]
+    </tspan>
+   </text>
+   <rect x="40" y="74" width="182" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="52" y="94" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#e8e8e8" font-size="14">
+     
+     
+     
+     hash = *(fp - 4)
+    </tspan>
+   </text>
+   <rect x="40" y="104" width="182" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="52" y="124" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#e8e8e8" font-size="14">
+     
+     
+     
+     if hash ==
+    </tspan>
+    <tspan fill="#b5e08f" font-size="14" font-weight="bold">
+     
+     
+     
+     0x4d6f256d
+    </tspan>
+   </text>
+   <rect x="40" y="134" width="182" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="68" y="154" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="14" font-weight="bold">
+     
+     
+     
+     call fp
+    </tspan>
+   </text>
+   <rect x="40" y="164" width="182" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="52" y="184" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#e8e8e8" font-size="14">
+     
+     
+     
+     else
+    </tspan>
+    <tspan fill="#ef9d98" font-size="14" font-weight="bold">
+     
+     
+     
+     brk
+    </tspan>
+   </text>
+   <rect x="40" y="216" width="182" height="34" fill="#4a2c29" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="52" y="238" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="13" fill="#ef9d98" font-weight="bold" text-anchor="start">
+    
+    
+    
+    report_cfi_failure()
+   </text>
+   <rect x="306" y="48" width="170" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="391.0" y="68" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="14" fill="#b5e08f" font-weight="bold" text-anchor="middle">
+    
+    
+    
+    .word 0x4d6f256d
+   </text>
+   <rect x="306" y="78" width="170" height="32" fill="#31363c" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="316" y="98" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="13" fill="#e8e8e8" font-weight="normal" text-anchor="start">
+    
+    
+    
+    proc_do_uuid:
+   </text>
+   <rect x="306" y="110" width="170" height="20" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="391.0" y="125" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="15" fill="#9a9a9a" font-weight="normal" text-anchor="middle">
+    
+    
+    
+    ...
+   </text>
+   <rect x="306" y="130" width="170" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="391.0" y="150" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="14" fill="#b5e08f" font-weight="bold" text-anchor="middle">
+    
+    
+    
+    .word 0x4d6f256d
+   </text>
+   <rect x="306" y="160" width="170" height="32" fill="#31363c" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="316" y="180" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="13" fill="#e8e8e8" font-weight="normal" text-anchor="start">
+    
+    
+    
+    proc_dostring:
+   </text>
+   <rect x="306" y="192" width="170" height="20" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="391.0" y="207" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="15" fill="#9a9a9a" font-weight="normal" text-anchor="middle">
+    
+    
+    
+    ...
+   </text>
+   <rect x="306" y="212" width="170" height="30" fill="#262a30" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="391.0" y="232" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="14" fill="#ef9d98" font-weight="bold" text-anchor="middle">
+    
+    
+    
+    .word 0xa7b4212f
+   </text>
+   <rect x="306" y="242" width="170" height="32" fill="#31363c" stroke="#9096a0" stroke-width="1.4">
+   </rect>
+   <text x="316" y="262" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" font-size="13" fill="#e8e8e8" font-weight="normal" text-anchor="start">
+    
+    
+    
+    commit_creds:
+   </text>
+   <text x="502" y="45.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     int
+    </tspan>
+    <tspan fill="#9a9a9a" font-size="12.5">
+     
+     
+     
+     proc_do_uuid
+    </tspan>
+   </text>
+   <text x="502" y="59.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     (struct ctl_table*, int,
+    </tspan>
+   </text>
+   <text x="502" y="73.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     void*, size_t*, loff_t*)
+    </tspan>
+   </text>
+   <text x="502" y="87.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="10.5">
+     
+     
+     
+     _ZTSFiP9ctl_tableiPvPmPxE
+    </tspan>
+   </text>
+   <path d="M 496 63.0 L 479 63.0" stroke="#9a9a9a" stroke-width="1.3" fill="none" marker-end="url(#k)">
+   </path>
+   <text x="502" y="127.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     int
+    </tspan>
+    <tspan fill="#9a9a9a" font-size="12.5">
+     
+     
+     
+     proc_dostring
+    </tspan>
+   </text>
+   <text x="502" y="141.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     (struct ctl_table*, int,
+    </tspan>
+   </text>
+   <text x="502" y="155.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="12.5" font-weight="bold">
+     
+     
+     
+     void*, size_t*, loff_t*)
+    </tspan>
+   </text>
+   <text x="502" y="169.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#b5e08f" font-size="10.5">
+     
+     
+     
+     _ZTSFiP9ctl_tableiPvPmPxE
+    </tspan>
+   </text>
+   <path d="M 496 145.0 L 479 145.0" stroke="#9a9a9a" stroke-width="1.3" fill="none" marker-end="url(#k)">
+   </path>
+   <text x="502" y="213.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#ef9d98" font-size="12.5" font-weight="bold">
+     
+     
+     
+     int
+    </tspan>
+    <tspan fill="#9a9a9a" font-size="12.5">
+     
+     
+     
+     commit_creds
+    </tspan>
+   </text>
+   <text x="502" y="228.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#ef9d98" font-size="12.5" font-weight="bold">
+     
+     
+     
+     (struct cred*)
+    </tspan>
+   </text>
+   <text x="502" y="242.0" font-family="'DejaVu Sans Mono','JetBrains Mono',monospace" xml:space="preserve">
+    <tspan fill="#ef9d98" font-size="10.5">
+     
+     
+     
+     _ZTSFiP4credE
+    </tspan>
+   </text>
+   <path d="M 496 227.0 L 479 227.0" stroke="#9a9a9a" stroke-width="1.3" fill="none" marker-end="url(#k)">
+   </path>
+   <path d="M 222 119.0 C 250 119.0, 274 63.0, 303 63.0" stroke="#8fbf6a" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#g)">
+   </path>
+   <path d="M 222 119.0 C 250 119.0, 274 145.0, 303 145.0" stroke="#8fbf6a" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#g)">
+   </path>
+   <path d="M 222 119.0 C 250 119.0, 274 227.0, 303 227.0" stroke="#cf7b76" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#r)">
+   </path>
+   <path d="M 222 149.0 C 250 149.0, 274 94.0, 303 94.0" stroke="#8fbf6a" stroke-width="1.9" fill="none" marker-end="url(#g)">
+   </path>
+   <path d="M 222 149.0 C 250 149.0, 274 176.0, 303 176.0" stroke="#8fbf6a" stroke-width="1.9" fill="none" marker-end="url(#g)">
+   </path>
+   <path d="M 222 179.0 C 250 179.0, 274 258.0, 303 258.0" stroke="#cf7b76" stroke-width="1.9" fill="none" marker-end="url(#r)">
+   </path>
+   <circle cx="262.1" cy="218.5" r="9" fill="#262a30" stroke="#cf7b76" stroke-width="1.4">
+   </circle>
+   <path d="M 257.5 213.9 L 266.7 223.1 M 257.5 223.1 L 266.7 213.9" stroke="#cf7b76" stroke-width="2.3" stroke-linecap="round">
+   </path>
+   <path d="M 104 194 L 104 214" stroke="#cf7b76" stroke-width="1.9" fill="none" marker-end="url(#r)">
+   </path>
+  </svg>

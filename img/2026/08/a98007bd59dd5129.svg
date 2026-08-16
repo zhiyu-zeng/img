@@ -1,0 +1,414 @@
+  <svg viewBox="0 0 720 347.9" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <linearGradient gradientUnits="userSpaceOnUse" spreadMethod="repeat" x1="0" y1="0" x2="102.1" y2="77.9">
+     <stop offset="0" stop-color="#E03B2F">
+     </stop>
+     <stop offset="0.14" stop-color="#F08A24">
+     </stop>
+     <stop offset="0.29" stop-color="#E8C21F">
+     </stop>
+     <stop offset="0.43" stop-color="#3FA85C">
+     </stop>
+     <stop offset="0.57" stop-color="#2E7BC4">
+     </stop>
+     <stop offset="0.71" stop-color="#7A3FA8">
+     </stop>
+     <stop offset="0.86" stop-color="#C63E8C">
+     </stop>
+     <stop offset="1" stop-color="#E03B2F">
+     </stop>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="380.0" y1="86.0" x2="380.0" y2="117.5">
+     <stop offset="0" stop-color="#F08A24">
+     </stop>
+     <stop offset="0.2" stop-color="#E8C21F">
+     </stop>
+     <stop offset="0.4" stop-color="#3FA85C">
+     </stop>
+     <stop offset="0.6" stop-color="#2E7BC4">
+     </stop>
+     <stop offset="0.8" stop-color="#7A3FA8">
+     </stop>
+     <stop offset="1" stop-color="#C63E8C">
+     </stop>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="122" y1="146" x2="182" y2="208">
+     <stop offset="0.0" stop-color="#3DA367">
+     </stop>
+     <stop offset="0.2" stop-color="#3278C2">
+     </stop>
+     <stop offset="0.4" stop-color="#7A3FA8">
+     </stop>
+     <stop offset="0.6" stop-color="#BE3E8F">
+     </stop>
+     <stop offset="0.8" stop-color="#DC3C3F">
+     </stop>
+     <stop offset="1.0" stop-color="#EC7926">
+     </stop>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="110" y1="146" x2="60" y2="208">
+     <stop offset="0.0" stop-color="#3DA367">
+     </stop>
+     <stop offset="0.2" stop-color="#3278C2">
+     </stop>
+     <stop offset="0.4" stop-color="#7A3FA8">
+     </stop>
+     <stop offset="0.6" stop-color="#BE3E8F">
+     </stop>
+     <stop offset="0.8" stop-color="#DC3C3F">
+     </stop>
+     <stop offset="1.0" stop-color="#EC7926">
+     </stop>
+    </linearGradient>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#BE4A30">
+     </path>
+    </marker>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#6A8CC0">
+     </path>
+    </marker>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#5FA275">
+     </path>
+    </marker>
+   </defs>
+   <g transform="translate(12.000,-2.902) scale(1.07907)">
+    <rect x="0.0" y="108.0" width="80.0" height="38.0" fill="#F5F2EC">
+    </rect>
+    <rect x="150.0" y="108.0" width="80.0" height="38.0" fill="#F5F2EC">
+    </rect>
+    <rect x="300.0" y="86.0" width="110.0" height="22.0" fill="#F5F2EC">
+    </rect>
+    <rect x="0.0" y="210.0" width="20.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="100.0" y="210.0" width="25.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="299.0" y="210.0" width="24.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="365.0" y="210.0" width="26.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="0.0" y="70.0" width="65.0" height="38.0" fill="#ECE8DF">
+    </rect>
+    <rect x="65.0" y="70.0" width="165.0" height="38.0" fill="#D8E1F0">
+    </rect>
+    <rect x="80.0" y="108.0" width="70.0" height="38.0" fill="#F1C7B4">
+    </rect>
+    <rect x="300.0" y="50.0" width="110.0" height="36.0" fill="#ECD9BB">
+    </rect>
+    <rect x="300.0" y="108.0" width="110.0" height="38.0" fill="#ECD9BB">
+    </rect>
+    <rect x="20.0" y="210.0" width="80.0" height="40.0" fill="#ECE8DF">
+    </rect>
+    <rect x="150.0" y="210.0" width="65.0" height="40.0" fill="#DDE6E9">
+    </rect>
+    <rect x="215.0" y="210.0" width="42.0" height="40.0" fill="#DDE6E9">
+    </rect>
+    <rect x="257.0" y="210.0" width="42.0" height="40.0" fill="#DDE6E9">
+    </rect>
+    <rect x="323.0" y="210.0" width="42.0" height="40.0" fill="#DDE6E9">
+    </rect>
+    <rect x="110.0" y="268.0" width="200.0" height="40.0" fill="#DFEEE2">
+    </rect>
+    <rect x="465.0" y="46.0" width="180.0" height="38.0" fill="#EBF2EC">
+    </rect>
+    <rect x="465.0" y="100.0" width="180.0" height="32.0" fill="#EBF2EC">
+    </rect>
+    <rect x="465.0" y="210.0" width="180.0" height="40.0" fill="#EBF2EC">
+    </rect>
+    <path d="M0.0,108.0 L80.0,108.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,146.0 L80.0,146.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M150.0,108.0 L230.0,108.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M150.0,146.0 L230.0,146.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M300.0,86.0 L300.0,108.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M410.0,86.0 L410.0,108.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,210.0 L20.0,210.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,250.0 L20.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M100.0,210.0 L125.0,210.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M100.0,250.0 L125.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M299.0,210.0 L323.0,210.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M299.0,250.0 L323.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M381.0,210.0 L391.0,210.0" fill="none" stroke="#A8A399" stroke-width="1.3">
+    </path>
+    <path d="M365.0,210.0 L381.0,210.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M381.0,250.0 L391.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3">
+    </path>
+    <path d="M365.0,250.0 L381.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M391.0,210.0 L391.0,250.0" fill="none" stroke="#A8A399" stroke-width="1.3">
+    </path>
+    <path d="M440.0,14 L440.0,256.0" fill="none" stroke="#666" stroke-width="1.0" stroke-dasharray="5 4">
+    </path>
+    <rect x="0.0" y="70.0" width="65.0" height="38.0" fill="none" stroke="#C3BBAC" stroke-width="1.3">
+    </rect>
+    <rect x="65.0" y="70.0" width="165.0" height="38.0" fill="none" stroke="#6A8CC0" stroke-width="1.3">
+    </rect>
+    <rect x="80.0" y="108.0" width="70.0" height="38.0" fill="none" stroke="url(#rb)" stroke-width="1.3" stroke-dasharray="5 3.5">
+    </rect>
+    <rect x="300.0" y="50.0" width="110.0" height="36.0" fill="none" stroke="#AD8449" stroke-width="1.3">
+    </rect>
+    <rect x="300.0" y="108.0" width="110.0" height="38.0" fill="none" stroke="#AD8449" stroke-width="1.3">
+    </rect>
+    <rect x="20.0" y="210.0" width="80.0" height="40.0" fill="none" stroke="#C3BBAC" stroke-width="1.3" stroke-dasharray="5 3.5">
+    </rect>
+    <rect x="150.0" y="210.0" width="65.0" height="40.0" fill="none" stroke="#8EACB4" stroke-width="1.3">
+    </rect>
+    <rect x="215.0" y="210.0" width="42.0" height="40.0" fill="none" stroke="#8EACB4" stroke-width="1.3">
+    </rect>
+    <rect x="257.0" y="210.0" width="42.0" height="40.0" fill="none" stroke="#8EACB4" stroke-width="1.3">
+    </rect>
+    <rect x="323.0" y="210.0" width="42.0" height="40.0" fill="none" stroke="#8EACB4" stroke-width="1.3">
+    </rect>
+    <rect x="110.0" y="268.0" width="200.0" height="40.0" fill="none" stroke="#5FA275" stroke-width="1.3">
+    </rect>
+    <rect x="465.0" y="46.0" width="180.0" height="38.0" fill="none" stroke="#6A8CC0" stroke-width="1.3">
+    </rect>
+    <rect x="465.0" y="100.0" width="180.0" height="32.0" fill="none" stroke="url(#rb)" stroke-width="1.3">
+    </rect>
+    <rect x="465.0" y="210.0" width="180.0" height="40.0" fill="none" stroke="#5FA275" stroke-width="1.3">
+    </rect>
+    <path d="M200,24 L350,24 L350,48.0" fill="none" stroke="#BE4A30" stroke-width="1.6" marker-end="url(#aRed)">
+    </path>
+    <path d="M330.0,86.0 L330.0,107.0" fill="none" stroke="#6A8CC0" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M380.0,86.0 L380.0,97.5" fill="none" stroke="url(#rb3)" stroke-width="1.6">
+    </path>
+    <path d="M380.0,107.0 L376.2,97.5 L383.8,97.5 z" fill="url(#rb3)">
+    </path>
+    <path d="M300.0,112.0 L231.0,89.0" fill="none" stroke="#6A8CC0" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M300.0,127.0 L161.5,127.0" fill="none" stroke="url(#rb)" stroke-width="1.6">
+    </path>
+    <path d="M152.0,127.0 L161.5,123.2 L161.5,130.8 z" fill="url(#rb)">
+    </path>
+    <path d="M122,146.0 L175.4,201.2" fill="none" stroke="url(#fanR)" stroke-width="1.6">
+    </path>
+    <path d="M182.0,208.0 L172.7,203.8 L178.1,198.5 z" fill="#EC7926">
+    </path>
+    <path d="M110,146.0 L66.0,200.6" fill="none" stroke="url(#fanL)" stroke-width="1.6">
+    </path>
+    <path d="M60.0,208.0 L63.0,198.2 L68.9,203.0 z" fill="#EC7926">
+    </path>
+    <path d="M170,250.0 L170,267.0" fill="none" stroke="#5FA275" stroke-width="1.6" marker-end="url(#aLgr)">
+    </path>
+    <path d="M200,268.0 L200,251.0" fill="none" stroke="#5FA275" stroke-width="1.6" marker-end="url(#aLgr)">
+    </path>
+    <path d="M463.0,65 L412.0,65" fill="none" stroke="#6A8CC0" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M463.0,116 L419.9,87.3" fill="none" stroke="url(#rb)" stroke-width="1.6">
+    </path>
+    <path d="M412.0,82.0 L422.0,84.1 L417.8,90.4 z" fill="url(#rb)">
+    </path>
+    <path d="M465.0,222.0 L393,222.0" fill="none" stroke="#5FA275" stroke-width="1.6" marker-end="url(#aLgr)">
+    </path>
+    <path d="M393,240.0 L464.0,240.0" fill="none" stroke="#5FA275" stroke-width="1.6" marker-end="url(#aLgr)">
+    </path>
+    <path d="M79.0,171.0 L91.0,183.0 M91.0,171.0 L79.0,183.0" fill="none" stroke="#BE4A30" stroke-width="2.2" stroke-linecap="round">
+    </path>
+    <text x="230.0" y="64.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12.5" fill="#333" text-anchor="end" font-weight="700">
+     
+     
+     
+     ashmem_area
+    </text>
+    <text x="32.0" y="94.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#8A857B" text-anchor="middle">
+     
+     
+     
+     dev/ashmem/
+    </text>
+    <text x="147.0" y="87.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     name[]
+    </text>
+    <text x="147.0" y="100.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#666" text-anchor="middle">
+     
+     
+     
+     245 bytes from ioctl
+    </text>
+    <text x="0.0" y="66.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="8.6" fill="#666" text-anchor="start">
+     
+     
+     
+     +0
+    </text>
+    <text x="65.0" y="66.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="8.6" fill="#666" text-anchor="start">
+     
+     
+     
+     +11
+    </text>
+    <text x="115.0" y="131.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     bin_buffer*
+    </text>
+    <text x="80.0" y="154.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="8.6" fill="#666" text-anchor="start">
+     
+     
+     
+     +88
+    </text>
+    <text x="230.0" y="157.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12.5" fill="#333" text-anchor="end" font-weight="700">
+     
+     
+     
+     configfs_buffer
+    </text>
+    <text x="410.0" y="42.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12.5" fill="#333" text-anchor="end" font-weight="700">
+     
+     
+     
+     file
+    </text>
+    <text x="355.0" y="72.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     f_op*
+    </text>
+    <text x="328.0" y="96.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9.5" fill="#6A8CC0" text-anchor="end">
+     
+     
+     
+     ashmem_ioctl
+    </text>
+    <text x="355.0" y="131.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     private_data*
+    </text>
+    <text x="192.0" y="28.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="11" fill="#BE4A30" text-anchor="end">
+     
+     
+     
+     GhostLock write
+    </text>
+    <text x="275.0" y="37.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#BE4A30" text-anchor="middle">
+     
+     
+     
+     ashmem_misc.fops
+    </text>
+    <text x="265.0" y="122.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#C15A3D" text-anchor="middle">
+     
+     
+     
+     configfs_bin_
+    </text>
+    <text x="265.0" y="137.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="9" fill="#C15A3D" text-anchor="middle">
+     
+     
+     
+     write_iter
+    </text>
+    <text x="60.0" y="235.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#8A857B" text-anchor="middle">
+     
+     
+     
+     cred
+    </text>
+    <text x="0.0" y="204.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12.5" fill="#333" text-anchor="start" font-weight="700">
+     
+     
+     
+     cred_jar
+    </text>
+    <text x="182.0" y="235.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     page*
+    </text>
+    <text x="236.0" y="235.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     offset
+    </text>
+    <text x="278.0" y="235.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     len
+    </text>
+    <text x="344.0" y="235.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     flags
+    </text>
+    <text x="391.0" y="204.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12.5" fill="#333" text-anchor="end" font-weight="700">
+     
+     
+     
+     pipe_buffer
+    </text>
+    <text x="73.0" y="181.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="10" fill="#BE4A30" text-anchor="end">
+     
+     
+     
+     hardened
+    </text>
+    <text x="97.0" y="181.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="10" fill="#BE4A30" text-anchor="start">
+     
+     
+     
+     usercopy
+    </text>
+    <text x="210.0" y="293.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     arbitrary kernel read / write
+    </text>
+    <text x="434.0" y="22.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#666" text-anchor="end">
+     
+     
+     
+     kernel
+    </text>
+    <text x="446.0" y="22.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#666" text-anchor="start">
+     
+     
+     
+     user
+    </text>
+    <text x="555.0" y="69.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     ioctl(fd, ASHMEM_SET_NAME)
+    </text>
+    <text x="555.0" y="120.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     write(fd, data, len)
+    </text>
+    <text x="555.0" y="236.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12.5" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     pipe read / write
+    </text>
+   </g>
+  </svg>

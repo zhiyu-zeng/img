@@ -1,0 +1,190 @@
+  <svg viewBox="0 0 720 229.3" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#BE4A30">
+     </path>
+    </marker>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#4F6699">
+     </path>
+    </marker>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#3E895F">
+     </path>
+    </marker>
+    <marker viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+     <path d="M0,1.4 L12,5 L0,8.6 z" fill="#8A857B">
+     </path>
+    </marker>
+   </defs>
+   <g transform="translate(12.000,-11.105) scale(1.18974)">
+    <rect x="0.0" y="60.0" width="18.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="128.0" y="60.0" width="22.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="280.0" y="60.0" width="22.0" height="40.0" fill="#F5F2EC">
+    </rect>
+    <rect x="0.0" y="140.0" width="18.0" height="44.0" fill="#F5F2EC">
+    </rect>
+    <rect x="128.0" y="140.0" width="30.0" height="44.0" fill="#F5F2EC">
+    </rect>
+    <rect x="268.0" y="140.0" width="22.0" height="44.0" fill="#F5F2EC">
+    </rect>
+    <rect x="18.0" y="60.0" width="110.0" height="40.0" fill="#ECD9BB">
+    </rect>
+    <rect x="150.0" y="60.0" width="130.0" height="40.0" fill="#ECD9BB">
+    </rect>
+    <rect x="18.0" y="140.0" width="110.0" height="44.0" fill="#ECE8DF">
+    </rect>
+    <rect x="158.0" y="140.0" width="110.0" height="44.0" fill="#D8E1F0">
+    </rect>
+    <rect x="355.0" y="60.0" width="230.0" height="40.0" fill="#EBF2EC">
+    </rect>
+    <rect x="355.0" y="140.0" width="230.0" height="44.0" fill="#EBF2EC">
+    </rect>
+    <path d="M0.0,60.0 L18.0,60.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,100.0 L18.0,100.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M128.0,60.0 L150.0,60.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M128.0,100.0 L150.0,100.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M280.0,60.0 L302.0,60.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M280.0,100.0 L302.0,100.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,140.0 L18.0,140.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M0.0,184.0 L18.0,184.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M128.0,140.0 L158.0,140.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M128.0,184.0 L158.0,184.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M268.0,140.0 L290.0,140.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M268.0,184.0 L290.0,184.0" fill="none" stroke="#A8A399" stroke-width="1.3" stroke-dasharray="1.6 2.6">
+    </path>
+    <path d="M330.0,34 L330.0,192" fill="none" stroke="#666" stroke-width="1.0" stroke-dasharray="5 4">
+    </path>
+    <rect x="18.0" y="60.0" width="110.0" height="40.0" fill="none" stroke="#AD8449" stroke-width="1.3">
+    </rect>
+    <rect x="150.0" y="60.0" width="130.0" height="40.0" fill="none" stroke="#AD8449" stroke-width="1.3">
+    </rect>
+    <rect x="18.0" y="140.0" width="110.0" height="44.0" fill="none" stroke="#C3BBAC" stroke-width="1.3">
+    </rect>
+    <rect x="355.0" y="60.0" width="230.0" height="40.0" fill="none" stroke="#3E895F" stroke-width="1.3">
+    </rect>
+    <rect x="355.0" y="140.0" width="230.0" height="44.0" fill="none" stroke="#3E895F" stroke-width="1.3">
+    </rect>
+    <path d="M110,34 L110,58" fill="none" stroke="#BE4A30" stroke-width="1.6" marker-end="url(#aRed)">
+    </path>
+    <path d="M60,102.0 L19.0,138.0" fill="none" stroke="#8A857B" stroke-width="1.6" stroke-dasharray="5 3.5" marker-end="url(#aDead)">
+    </path>
+    <path d="M100,102.0 L159.0,138.0" fill="none" stroke="#4F6699" stroke-width="1.6" marker-end="url(#aInd)">
+    </path>
+    <path d="M353.0,80.0 L282.0,80.0" fill="none" stroke="#3E895F" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M148.0,80.0 L130.0,80.0" fill="none" stroke="#3E895F" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M120,102.0 L213.0,138.0" fill="none" stroke="#3E895F" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <path d="M270.0,162.0 L353.0,162.0" fill="none" stroke="#3E895F" stroke-width="1.6" marker-end="url(#aGrn)">
+    </path>
+    <rect x="158.0" y="140.0" width="110.0" height="44.0" fill="none" stroke="#6A8CC0" stroke-width="1.3">
+    </rect>
+    <text x="73.0" y="84.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     .data
+    </text>
+    <text x="215.0" y="76.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     .proc_handler
+    </text>
+    <text x="215.0" y="91.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     proc_do_uuid
+    </text>
+    <text x="18.0" y="52.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="13" fill="#333" text-anchor="start" font-weight="700">
+     
+     
+     
+     ctl_table
+    </text>
+    <text x="110.0" y="28.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="11" fill="#BE4A30" text-anchor="middle">
+     
+     
+     
+     GhostLock write
+    </text>
+    <text x="73.0" y="167.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#8A857B" text-anchor="middle">
+     
+     
+     
+     boot_id
+    </text>
+    <text x="213.0" y="159.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f1f1f" text-anchor="middle">
+     
+     
+     
+     loggers[0][1]
+    </text>
+    <text x="213.0" y="174.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#3E895F" text-anchor="middle">
+     
+     
+     
+     &amp;nfulnl_logger
+    </text>
+    <text x="324.0" y="28.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#666" text-anchor="end">
+     
+     
+     
+     kernel
+    </text>
+    <text x="336.0" y="28.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#666" text-anchor="start">
+     
+     
+     
+     user
+    </text>
+    <text x="470.0" y="77.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="10.5" fill="#666" text-anchor="middle">
+     
+     
+     
+     /proc/sys/kernel/random/boot_id
+    </text>
+    <text x="470.0" y="92.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="10.5" fill="#666" text-anchor="middle">
+     
+     
+     
+     read file
+    </text>
+    <text x="377.6" y="160.0" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="14" text-anchor="start">
+     <tspan fill="#3E895F">
+      
+      
+      
+      6022x2xx-xxff-ffff
+     </tspan>
+     <tspan fill="#8A857B">
+      
+      
+      
+      -...
+     </tspan>
+    </text>
+    <text x="470.0" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif" font-size="10.5" fill="#666" text-anchor="middle">
+     
+     
+     
+     convert hex to pointer, leak KASLR
+    </text>
+   </g>
+  </svg>
