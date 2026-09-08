@@ -2,10 +2,10 @@
 title: Troubleshooting a System Crash – Winsider Seminars & Solutions Inc.
 source: https://windows-internals.com/troubleshooting-a-system-crash/
 source_host: windows-internals.com
-clip_date: 2026-09-09T01:57:14+08:00
-trace_id: 09fc8b72-e775-4745-9f39-4b31f2ead022
+clip_date: 2026-09-09T01:58:21+08:00
+trace_id: f41393dc-5302-4051-9bcc-07a257834694
 content_hash: 660b27b96699a812b0ef7572d67c88c77c05141ac1eac7db6607a98139e4c3b0
-status: summarized
+status: synced
 tags:
   - 系统崩溃排查
   - Intel SUR
@@ -17,7 +17,7 @@ images_status:
   total: 4
   succeeded: 4
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3d575244-d011-811d-836b-cbbab5ab32eb
 ioc: null
 ---
 
