@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 430" role="img" aria-labelledby="title desc">
+  <title id="title">SELECT-only PostgreSQL SQL injection to RCE chain</title>
+  <desc id="desc">Two-row diagram showing the HTTP and PostgreSQL steps from a Drupal JSON API SQL injection to command execution through PostgreSQL session preload.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#15151f" flood-opacity="0.18"/>
+    </filter>
+    <style>
+      .bg { fill: #f8f8fb; }
+      .lane { fill: #fff; stroke: #deddf0; stroke-width: 1.5; }
+      .node { fill: #292a38; stroke: #5a45f2; stroke-width: 2.2; filter: url(#shadow); }
+      .node.hot { stroke: #ff2f8e; }
+      .label { fill: #fff; font-family: Arial, sans-serif; font-weight: 700; font-size: 17px; }
+      .small { fill: #d7d8ee; font-family: Arial, sans-serif; font-weight: 500; font-size: 13px; }
+      .lane-label { fill: #5a45f2; font-family: Arial, sans-serif; font-weight: 800; font-size: 15px; }
+      .arrow-line { fill: none; stroke: #5a45f2; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+      .arrow-head { fill: #5a45f2; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1040" height="430" rx="18"/>
+
+  <rect class="lane" x="36" y="34" width="968" height="165" rx="14"/>
+  <text class="lane-label" x="62" y="64">HTTP / APPLICATION LAYER</text>
+
+  <rect class="lane" x="36" y="242" width="968" height="152" rx="14"/>
+  <text class="lane-label" x="62" y="272">POSTGRESQL SERVER LAYER</text>
+
+  <g transform="translate(62 96)">
+    <rect class="node hot" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">JSON:API filter</text>
+    <text class="small" x="18" y="52">unauthenticated</text>
+    <text class="small" x="18" y="68">SQL injection</text>
+  </g>
+
+  <g transform="translate(398 96)">
+    <rect class="node" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">SELECT expression</text>
+    <text class="small" x="18" y="52">inside Drupal query</text>
+    <text class="small" x="18" y="68">no stacked SQL</text>
+  </g>
+
+  <g transform="translate(746 96)">
+    <rect class="node hot" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">PostgreSQL</text>
+    <text class="small" x="18" y="52">superuser</text>
+    <text class="small" x="18" y="68">function calls</text>
+  </g>
+
+  <line class="arrow-line" x1="252" y1="134" x2="380" y2="134"/>
+  <polygon class="arrow-head" points="380,127 394,134 380,141"/>
+  <line class="arrow-line" x1="588" y1="134" x2="728" y2="134"/>
+  <polygon class="arrow-head" points="728,127 742,134 728,141"/>
+
+  <g transform="translate(62 302)">
+    <rect class="node" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">Large objects</text>
+    <text class="small" x="18" y="52">arbitrary bytes</text>
+    <text class="small" x="18" y="68">to server file</text>
+  </g>
+
+  <g transform="translate(306 302)">
+    <rect class="node" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">Native .so</text>
+    <text class="small" x="18" y="52">written inside</text>
+    <text class="small" x="18" y="68">PGDATA</text>
+  </g>
+
+  <g transform="translate(550 302)">
+    <rect class="node" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">Config reload</text>
+    <text class="small" x="18" y="52">postgresql.auto.conf</text>
+    <text class="small" x="18" y="68">pg_reload_conf()</text>
+  </g>
+
+  <g transform="translate(794 302)">
+    <rect class="node hot" width="190" height="76" rx="9"/>
+    <text class="label" x="18" y="29">Fresh backend</text>
+    <text class="small" x="18" y="52">session preload</text>
+    <text class="small" x="18" y="68">_PG_init() RCE</text>
+  </g>
+
+  <path class="arrow-line" d="M841 172 V222 H46 V340 H50"/>
+  <polygon class="arrow-head" points="50,333 64,340 50,347"/>
+  <line class="arrow-line" x1="252" y1="340" x2="288" y2="340"/>
+  <polygon class="arrow-head" points="288,333 302,340 288,347"/>
+  <line class="arrow-line" x1="496" y1="340" x2="532" y2="340"/>
+  <polygon class="arrow-head" points="532,333 546,340 532,347"/>
+  <line class="arrow-line" x1="740" y1="340" x2="776" y2="340"/>
+  <polygon class="arrow-head" points="776,333 790,340 776,347"/>
+</svg>
