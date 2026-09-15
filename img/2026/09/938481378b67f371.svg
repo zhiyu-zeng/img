@@ -1,0 +1,56 @@
+<svg width="760" height="360" viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#888"></path>
+    </marker>
+    <marker id="arr-l" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#888"></path>
+    </marker>
+  </defs>
+
+  <rect width="760" height="360" fill="#f0f0f0"></rect>
+
+  
+  <rect x="20" y="56" width="720" height="272" rx="6" fill="white" stroke="#1e1e2e" stroke-width="2"></rect>
+  <text x="36" y="49" fill="#bbb" font-family="Courier New, monospace" font-size="9" letter-spacing="4" font-weight="bold">HARNESS</text>
+
+  
+  <rect x="40" y="78" width="378" height="232" rx="4" fill="#f7f7f7" stroke="#ddd" stroke-width="1"></rect>
+  <text x="229" y="102" text-anchor="middle" fill="#222" font-family="Courier New, monospace" font-size="12" font-weight="bold">Orchestration Logic</text>
+
+  <text x="66" y="130" fill="#555" font-family="Courier New, monospace" font-size="10">·  which tools to call?</text>
+  <text x="66" y="150" fill="#555" font-family="Courier New, monospace" font-size="10">·  in what order?</text>
+  <text x="66" y="170" fill="#555" font-family="Courier New, monospace" font-size="10">·  what context to provide?</text>
+  <text x="66" y="190" fill="#555" font-family="Courier New, monospace" font-size="10">·  what to do with the results?</text>
+  <text x="66" y="210" fill="#555" font-family="Courier New, monospace" font-size="10">·  which model fits this stage?</text>
+  <text x="66" y="230" fill="#555" font-family="Courier New, monospace" font-size="10">·  when to advance to the next stage?</text>
+
+  <text x="229" y="292" text-anchor="middle" fill="#bbb" font-family="Courier New, monospace" font-size="9">stateful · sequential</text>
+
+  
+  
+  <line x1="420" y1="192" x2="460" y2="192" stroke="#888" stroke-width="1.5" marker-end="url(#arr-r)"></line>
+  <text x="440" y="185" text-anchor="middle" fill="#aaa" font-family="Courier New, monospace" font-size="8">calls</text>
+  
+  <line x1="460" y1="206" x2="420" y2="206" stroke="#888" stroke-width="1.5" marker-end="url(#arr-r)"></line>
+  <text x="440" y="222" text-anchor="middle" fill="#aaa" font-family="Courier New, monospace" font-size="8">results</text>
+
+  
+  <rect x="462" y="78" width="258" height="232" rx="4" fill="#f7f7f7" stroke="#ddd" stroke-width="1"></rect>
+  <text x="591" y="102" text-anchor="middle" fill="#222" font-family="Courier New, monospace" font-size="12" font-weight="bold">MCP Tools</text>
+
+  <text x="480" y="130" fill="#555" font-family="Courier New, monospace" font-size="10">decompile_binary()</text>
+  <text x="480" y="149" fill="#555" font-family="Courier New, monospace" font-size="10">run_fuzzer()</text>
+  <text x="480" y="168" fill="#555" font-family="Courier New, monospace" font-size="10">run_command()</text>
+  <text x="480" y="187" fill="#555" font-family="Courier New, monospace" font-size="10">query_nvd()</text>
+  <text x="480" y="206" fill="#555" font-family="Courier New, monospace" font-size="10">read_crash()</text>
+  <text x="480" y="225" fill="#555" font-family="Courier New, monospace" font-size="10">radare2_query()</text>
+  <text x="480" y="244" fill="#555" font-family="Courier New, monospace" font-size="10">trace_taint()</text>
+  <text x="480" y="265" fill="#bbb" font-family="Courier New, monospace" font-size="9" font-style="italic">...and 293 more</text>
+
+  <text x="591" y="292" text-anchor="middle" fill="#bbb" font-family="Courier New, monospace" font-size="9">atomic · stateless</text>
+
+  
+  <text x="380" y="344" text-anchor="middle" fill="#999" font-family="Courier New, monospace" font-size="10" font-style="italic">MCPs respond when called. The harness decides when, in what order, and what to do with the result.</text>
+
+</svg>
