@@ -5,7 +5,7 @@ source_host: blog.orange.tw
 clip_date: 2026-09-08T23:52:39+08:00
 trace_id: 13cfd1fe-78e9-4b83-a41e-28192b218327
 content_hash: e4324e7a33a7c4eddc7d97a2e97a8653c8461a594a85b6b72694a00943e5acc7
-status: summarized
+status: synced
 tags:
   - CTF
   - 漏洞分析
@@ -17,7 +17,7 @@ images_status:
   total: 2
   succeeded: 2
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3de75244-d011-811f-a072-f9733ecafc0a
 ioc:
   cves:
     - CVE-2012-1823
