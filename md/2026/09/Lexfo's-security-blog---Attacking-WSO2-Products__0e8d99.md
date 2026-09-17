@@ -5,7 +5,7 @@ source_host: blog.lexfo.fr
 clip_date: 2026-09-09T10:46:50+08:00
 trace_id: 6680f906-97e7-4994-b623-cb0dd8e6ddee
 content_hash: ed1031188551a790c815cc622bf015a6bfd2d1252be479e34c8b5f35431217ac
-status: summarized
+status: synced
 tags:
   - 漏洞分析
   - WSO2
@@ -17,7 +17,7 @@ images_status:
   total: 16
   succeeded: 16
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3de75244-d011-81bf-8445-ca9d9e875e30
 ioc:
   cves:
     - CVE-2022-29464
