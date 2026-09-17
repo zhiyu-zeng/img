@@ -5,7 +5,7 @@ source_host: www.mdsec.co.uk
 clip_date: 2026-09-11T10:20:17+08:00
 trace_id: f0cb3555-424c-4219-93d5-345893fc7331
 content_hash: 7d4b5cb707689be81beb999b97d8a848f0cd256c3b7d441970256fe4b9ef10a3
-status: summarized
+status: synced
 tags:
   - ServiceNow
   - 红队渗透
@@ -17,7 +17,7 @@ images_status:
   total: 6
   succeeded: 6
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3de75244-d011-818f-9877-f92da70129c8
 ioc: null
 ---
 
