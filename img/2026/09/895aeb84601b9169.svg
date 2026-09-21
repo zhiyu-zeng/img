@@ -1,0 +1,190 @@
+<svg viewBox="0 0 720 282.7" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif">
+<style>
+ .reg{font-size:8px;font-weight:700;fill:#ECE4D8}
+ .name{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:7px;font-weight:700;fill:#F0E9DD}
+ .fld{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:5.2px;fill:#ECE4D8}
+ .adr{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:5px;fill:#A99E8D}
+ .m{text-anchor:middle}
+ .zoom{stroke:#837C72;stroke-width:0.8;stroke-dasharray:3 2;fill:none}
+ .zks{stroke:#89827A;stroke-width:0.8;fill:none}
+ .tick{stroke:#837C72;stroke-width:0.8}
+ .tickS{stroke:#89827A;stroke-width:0.8}
+ .ghost{stroke:#DB6A48;stroke-width:0.9;fill:none}
+ .ash{stroke:#5E93A6;stroke-width:0.9;fill:none}
+ .pipe{stroke:#6BAE78;stroke-width:0.9;fill:none}
+ .psel{stroke:#DB6A48;stroke-width:0.8;fill:none}
+ .pC{stroke:#C9A05A;stroke-width:0.9;stroke-dasharray:3 2;fill:none}
+ .pB{stroke:#6E97A2;stroke-width:0.9;stroke-dasharray:3 2;fill:none}
+ .pLB{stroke:#93B3B9;stroke-width:0.9;stroke-dasharray:3 2;fill:none}
+</style>
+<defs>
+<pattern id="hatch" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#2A251E"/><line x1="0" y1="0" x2="0" y2="5" stroke="#443E36" stroke-width="1.2"/></pattern>
+<marker id="mAsh" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#5E93A6"/></marker>
+<marker id="mPipe" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#6BAE78"/></marker>
+<marker id="mPtC" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#C9A05A"/></marker>
+<marker id="mPtB" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#6E97A2"/></marker>
+<marker id="mPtLB" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#93B3B9"/></marker>
+<marker id="mGL" viewBox="0 0 12 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#DB6A48"/></marker>
+<marker id="pL" viewBox="0 0 12 10" refX="1.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto"><path d="M12,1.4 L0,5 L12,8.6 z" fill="#DB6A48"/></marker>
+<marker id="pR" viewBox="0 0 12 10" refX="10.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto"><path d="M0,1.4 L12,5 L0,8.6 z" fill="#DB6A48"/></marker>
+</defs>
+<g transform="translate(-40.338,-30.777) scale(2.01302)">
+
+<!-- ===================== MEMORY BAR ===================== -->
+<rect x="30" y="66" width="16" height="20" fill="url(#hatch)"/>
+<rect x="150" y="66" width="8" height="20" fill="url(#hatch)"/>
+<rect x="248" y="66" width="8" height="20" fill="url(#hatch)"/>
+<rect x="306" y="66" width="8" height="20" fill="url(#hatch)"/>
+<rect x="364" y="66" width="8" height="20" fill="url(#hatch)"/>
+<rect x="46" y="66" width="104" height="20" fill="#3A2E2C" stroke="#C79A94" stroke-width="0.75"/>
+<text class="reg m" x="98" y="79">physmap</text>
+<rect x="158" y="66" width="90" height="20" fill="#283230" stroke="#8EACB4" stroke-width="0.75"/>
+<text class="reg m" x="214" y="79">kernel image</text>
+<rect x="256" y="66" width="50" height="20" fill="#38311F" stroke="#C6AC6C" stroke-width="0.75"/>
+<rect x="314" y="66" width="50" height="20" fill="#322D25" stroke="#B4A691" stroke-width="0.75"/>
+<text class="adr" x="46" y="62">0xffffff8000000000</text>
+<text class="adr" x="158" y="62">0xffffffc008000000 + slide</text>
+<text class="adr" x="256" y="62">0xffffffc010000000</text>
+<text class="adr" x="314" y="62">0xfffffffe00000000</text>
+
+<!-- ===================== MAPS ===================== -->
+<!-- ashmem_misc -->
+<line class="tick" x1="54" y1="67" x2="54" y2="85"/><line class="tick" x1="60" y1="67" x2="60" y2="85"/>
+<path class="zoom" d="M54,66 L40,50"/><path class="zoom" d="M60,66 L76,50"/>
+<!-- fake rt_mutex + pipe_buffer (KernelSnitch) : moved to physmap-left -->
+<line class="tickS" x1="66" y1="67" x2="66" y2="85"/><line class="tickS" x1="72" y1="67" x2="72" y2="85"/>
+<path class="zks" d="M66,86 L46,99"/><path class="zks" d="M72,86 L138,99"/>
+<!-- boot_id : tick shifted right to clear the address text -->
+<line class="tick" x1="132" y1="67" x2="132" y2="85"/><line class="tick" x1="138" y1="67" x2="138" y2="85"/>
+<path class="zoom" d="M132,66 L86,50"/><path class="zoom" d="M138,66 L122,50"/>
+<!-- configfs -->
+<line class="tick" x1="166" y1="67" x2="166" y2="85"/><line class="tick" x1="172" y1="67" x2="172" y2="85"/>
+<path class="zoom" d="M166,86 L185,99"/><path class="zoom" d="M172,86 L239,99"/>
+<!-- loggers -->
+<line class="tick" x1="178" y1="67" x2="178" y2="85"/><line class="tick" x1="184" y1="67" x2="184" y2="85"/>
+<path class="zoom" d="M178,66 L170,50"/><path class="zoom" d="M184,66 L222,50"/>
+<!-- rt_mutex_waiter -->
+<line class="tick" x1="278" y1="67" x2="278" y2="85"/><line class="tick" x1="284" y1="67" x2="284" y2="85"/>
+<path class="zoom" d="M278,86 L250,99"/><path class="zoom" d="M284,86 L342,99"/>
+<text class="reg m" x="281" y="79" stroke="#38311F" stroke-width="2.6" stroke-linejoin="round">stack</text>
+<text class="reg m" x="281" y="79">stack</text>
+<!-- vmemmap -> page[] (narrowed) -->
+<path class="zoom" d="M344,66 L333,50"/><path class="zoom" d="M350,66 L361,50"/>
+<line class="tick" x1="344" y1="67" x2="344" y2="85"/><line class="tick" x1="350" y1="67" x2="350" y2="85"/>
+<text class="reg m" x="339" y="79" stroke="#322D25" stroke-width="2.6" stroke-linejoin="round">vmemmap</text>
+<text class="reg m" x="339" y="79">vmemmap</text>
+
+<!-- ===================== TOP ROW BOXES ===================== -->
+<!-- ashmem_misc (moved left) -->
+<rect x="40" y="34" width="12" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="46" y="43.9">⋯</text>
+<rect x="52" y="34" width="24" height="16" fill="#3E3320" stroke="#C9A05A" stroke-width="0.75"/>
+<text class="fld m" x="64" y="43.9">fops*</text>
+<text class="name m" x="58" y="57" font-size="5.4">ashmem_misc</text>
+<!-- boot_id (moved left) -->
+<rect x="110" y="34" width="12" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="116" y="43.9">⋯</text>
+<rect x="86" y="34" width="24" height="16" fill="#28332F" stroke="#93B3B9" stroke-width="0.75"/>
+<text class="fld m" x="98" y="43.9">data*</text>
+<text class="name m" x="104" y="57" font-size="6.4">boot_id</text>
+<!-- loggers[0][1] : box only, moved right -->
+<rect x="170" y="34" width="52" height="16" fill="#28332F" stroke="#93B3B9" stroke-width="0.75"/>
+<text class="fld m" x="196" y="43" fill="#A99E8D">&amp;nfulnl_logger</text>
+<!-- task_struct (moved left) -->
+<rect x="228" y="34" width="8" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="232" y="43.9">⋯</text>
+<rect x="256" y="34" width="8" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="260" y="43.9">⋯</text>
+<rect x="236" y="34" width="20" height="16" fill="#3A2A2C" stroke="#C98494" stroke-width="0.75"/>
+<text class="fld m" x="246" y="43.9">cred*</text>
+<rect x="264" y="34" width="28" height="16" fill="#3A2A2C" stroke="#C98494" stroke-width="0.75"/>
+<text class="fld m" x="278" y="43.9">seccomp</text>
+<text class="name m" x="260" y="57">task_struct</text>
+<!-- page[] : single cell, grey both sides -->
+<rect x="327" y="34" width="6" height="16" fill="url(#hatch)"/>
+<rect x="333" y="34" width="28" height="16" fill="#2F3320" stroke="#9DB36A" stroke-width="0.75"/>
+<text class="fld m" x="347" y="44.6" font-size="6.6">page[]</text>
+<rect x="361" y="34" width="6" height="16" fill="url(#hatch)"/>
+
+<!-- ===================== ROW 2 : physmap strip ===================== -->
+<rect x="40" y="99" width="6" height="16" fill="url(#hatch)"/>
+<rect x="94" y="99" width="8" height="16" fill="url(#hatch)"/>
+<rect x="138" y="99" width="6" height="16" fill="url(#hatch)"/>
+<rect x="46" y="99" width="16" height="16" fill="#223333" stroke="#6E97A2" stroke-width="0.75"/>
+<text class="fld m" x="54" y="105">wait</text>
+<text class="fld m" x="54" y="112">lock</text>
+<rect x="62" y="99" width="12" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="68" y="108.9">⋯</text>
+<rect x="74" y="99" width="20" height="16" fill="#223333" stroke="#6E97A2" stroke-width="0.75"/>
+<text class="fld m" x="84" y="108.9">owner*</text>
+<rect x="102" y="99" width="24" height="16" fill="#2F3320" stroke="#9DB36A" stroke-width="0.75"/>
+<text class="fld m" x="114" y="108.9">page*</text>
+<rect x="126" y="99" width="12" height="16" fill="#322E28" stroke="#7A736A" stroke-width="0.75"/>
+<text class="fld m" x="132" y="108.9">⋯</text>
+<text class="name m" x="62" y="123" font-size="6">fake rt_mutex</text>
+<text class="name m" x="126" y="123" font-size="6">pipe_buffer</text>
+
+<!-- configfs -->
+<rect x="185" y="99" width="26" height="16" fill="#3E3320" stroke="#C9A05A" stroke-width="0.75"/>
+<text class="fld m" x="198" y="108.9">read</text>
+<rect x="211" y="99" width="28" height="16" fill="#3E3320" stroke="#C9A05A" stroke-width="0.75"/>
+<text class="fld m" x="225" y="108.9">write</text>
+<text class="name m" x="212" y="123">configfs</text>
+
+<!-- rt_mutex_waiter -->
+<rect x="250" y="99" width="20" height="16" fill="#3E2A22" stroke="#D4714E" stroke-dasharray="3 2" stroke-width="0.75"/>
+<text class="fld m" x="260" y="108.9">tree</text>
+<rect x="270" y="99" width="28" height="16" fill="#3E2A22" stroke="#D4714E" stroke-dasharray="3 2" stroke-width="0.75"/>
+<text class="fld m" x="284" y="108.9">pi_tree</text>
+<rect x="298" y="99" width="22" height="16" fill="#3E2A22" stroke="#D4714E" stroke-dasharray="3 2" stroke-width="0.75"/>
+<text class="fld m" x="309" y="108.9">task*</text>
+<rect x="320" y="99" width="22" height="16" fill="#223333" stroke="#6E97A2" stroke-width="0.75"/>
+<text class="fld m" x="331" y="108.9">lock*</text>
+<text class="name m" x="296" y="123">rt_mutex_waiter</text>
+<path class="psel" d="M250,93 L284,93" marker-start="url(#pL)"/>
+<path class="psel" d="M308,93 L342,93" marker-end="url(#pR)"/>
+<text class="fld m" x="296" y="95" fill="#DB6A48">pselect</text>
+
+<!-- ===================== ARROWS ===================== -->
+<path class="ghost" d="M64,22 L64,34" marker-end="url(#mGL)"/>
+<path class="ghost" d="M98,22 L98,34" marker-end="url(#mGL)"/>
+<path class="pLB" d="M122,42 L170,42" marker-end="url(#mPtLB)"/>
+<path class="ash" d="M185,107 L140,107" marker-end="url(#mAsh)"/>
+<path class="pC" d="M64,50 L64,96 L211,96 L211,99" marker-end="url(#mPtC)"/>
+<path class="pB" d="M331,115 L331,135 L36,135 L36,107 L46,107" marker-end="url(#mPtB)"/>
+<!-- pipe_buffer.page* -> page[] @ vmemmap tick (orthogonal, from below) -->
+<path class="pipe" d="M102,115 L102,129 L347,129 L347,86"/>
+<!-- pipe R/W : page[] -> task_struct -->
+<path class="pipe" d="M333,42 L292,42" marker-end="url(#mPipe)"/>
+
+<!-- ===================== STEP BADGES ===================== -->
+<!-- 1 Prepare GhostLock : under rt_mutex_waiter -->
+<circle cx="265" cy="145" r="5" fill="#5F564A"/>
+<text x="265" y="147" font-size="6.6px" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+<text x="273" y="147" font-size="6.3px" fill="#ECE4D8">Prepare GhostLock</text>
+<!-- 2 KASLR leak : label hugs arrow, number below -->
+<text x="146" y="38" font-size="6.3px" fill="#ECE4D8" text-anchor="middle">KASLR leak</text>
+<circle cx="146" cy="48" r="5" fill="#5F564A"/>
+<text x="146" y="50.1" font-size="6.6px" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+<!-- 3 hijack fops -->
+<text x="45" y="32" font-size="6.3px" fill="#ECE4D8" text-anchor="middle">hijack fops</text>
+<circle cx="31" cy="42" r="5" fill="#5F564A"/>
+<text x="31" y="44.1" font-size="6.6px" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+<!-- 4 ashmem write : on the configfs->pipe blue arrow -->
+<text x="163" y="103" font-size="6.3px" fill="#ECE4D8" text-anchor="middle">ashmem write</text>
+<circle cx="163" cy="114" r="5" fill="#5F564A"/>
+<text x="163" y="116.1" font-size="6.6px" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+<!-- 5 get root : label hugs arrow, number below -->
+<text x="313" y="38" font-size="6.3px" fill="#ECE4D8" text-anchor="middle">get root</text>
+<circle cx="313" cy="48" r="5" fill="#5F564A"/>
+<text x="313" y="50.1" font-size="6.6px" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+
+<!-- ===================== LEGEND ===================== -->
+<path d="M122,24 L136,24" stroke="#DB6A48" stroke-width="0.9" fill="none" marker-end="url(#mGL)"/>
+<text x="142" y="26" font-size="6.4px" fill="#ECE4D8">GhostLock write</text>
+<line x1="201" y1="24" x2="217" y2="24" stroke="#6BAE78" stroke-width="0.9"/>
+<text x="221" y="26" font-size="6.4px" fill="#ECE4D8">pipe_buffer R/W</text>
+<line x1="280" y1="24" x2="296" y2="24" stroke="#837C72" stroke-width="0.9"/>
+<text x="300" y="26" font-size="6.4px" fill="#ECE4D8">KernelSnitch</text>
+</g>
+</svg>
