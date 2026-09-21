@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 470" font-family="sans-serif">
+<defs><marker id="cf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e0908a"/></marker><marker id="fl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c8c8c8"/></marker></defs>
+<text x="212.0" y="52.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle" fill="#cfcfcf">step 2 : fake inet6_protocol + ROP</text>
+<text x="212.0" y="66.0" font-family="sans-serif" font-size="9" font-weight="normal" text-anchor="middle" fill="#a8a8a8">the CFH  -&gt;  DirtyMode</text>
+<text x="635.0" y="52.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle" fill="#cfcfcf">step 1 : fake rt_mutex_waiter + lock</text>
+<text x="635.0" y="66.0" font-family="sans-serif" font-size="9" font-weight="normal" text-anchor="middle" fill="#a8a8a8">the one constrained write survives</text>
+<line x1="430" y1="59" x2="390" y2="59" stroke="#c8c8c8" stroke-width="1.5" marker-end="url(#fl)"/>
+<text x="410.0" y="49.0" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="middle" fill="#c8c8c8">ready to trigger CFH</text>
+<path d="M81,128.5 L76,128.5 L76,331.5 L81,331.5" fill="none" stroke="#79c6d6" stroke-width="2"/>
+<text x="68.0" y="224.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="end" fill="#79c6d6">ROP</text>
+<text x="68.0" y="236.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#79c6d6">stack</text>
+<path d="M95,82.5 L90,82.5 L90,147.5 L95,147.5" fill="none" stroke="#c39bd6" stroke-width="2"/>
+<text x="68.0" y="109.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="end" fill="#c39bd6">Fake</text>
+<text x="68.0" y="121.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#c39bd6">inet6</text>
+<path d="M95,335.5 L90,335.5 L90,400.5 L95,400.5" fill="none" stroke="#e6b24e" stroke-width="2"/>
+<text x="68.0" y="362.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="end" fill="#e6b24e">JOP</text>
+<text x="68.0" y="374.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#e6b24e">vector</text>
+<text x="120.0" y="95.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x00</text>
+<rect x="128" y="82.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="95.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">PC0 (pivot 1/3)</text>
+<circle cx="139" cy="92" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="95.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">1</text>
+<text x="366.0" y="95.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">handler = JOP</text>
+<text x="120.0" y="118.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x08</text>
+<rect x="128" y="105.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="135.0" y="118.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">0 / udpv6</text>
+<text x="366.0" y="118.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">err</text>
+<text x="120.0" y="141.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x10</text>
+<rect x="128" y="128.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="150.0" y="141.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">3</text>
+<circle cx="139" cy="138" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="141.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">4</text>
+<text x="366.0" y="141.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">flags; stack land</text>
+<text x="120.0" y="164.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x18</text>
+<rect x="128" y="151.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="164.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">pop rsi ; ret</text>
+<circle cx="139" cy="161" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="164.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">5</text>
+<text x="120.0" y="187.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x20</text>
+<rect x="128" y="174.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="135.0" y="187.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">&amp;coredump_sysctls[1].mode</text>
+<text x="366.0" y="187.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">-&gt; rsi</text>
+<text x="120.0" y="210.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x28</text>
+<rect x="128" y="197.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="210.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">pop rdi ; pop rdi ; ret</text>
+<circle cx="139" cy="207" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="210.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">6</text>
+<text x="120.0" y="233.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x30</text>
+<rect x="128" y="220.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="135.0" y="233.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">&amp;0x10</text>
+<text x="366.0" y="233.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">-&gt; rbp (pivot); junk</text>
+<text x="120.0" y="256.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x38</text>
+<rect x="128" y="243.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="135.0" y="256.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">DirtyMode value</text>
+<text x="366.0" y="256.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">-&gt; edi</text>
+<text x="120.0" y="279.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x40</text>
+<rect x="128" y="266.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e88f8b" stroke-width="2.1"/>
+<text x="150.0" y="279.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">mov [rsi], edi ; ret</text>
+<circle cx="139" cy="276" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="279.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">7</text>
+<text x="366.0" y="279.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#e88f8b">the write</text>
+<text x="120.0" y="302.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x48</text>
+<rect x="128" y="289.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="302.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">msleep</text>
+<circle cx="139" cy="299" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="302.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">8</text>
+<text x="366.0" y="302.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">msleep(large edi)</text>
+<text x="120.0" y="325.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x50</text>
+<rect x="128" y="312.5" width="168" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="135.0" y="325.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="120.0" y="348.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x58</text>
+<rect x="128" y="335.5" width="168" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="135.0" y="348.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">&amp;pc2  (0x68)</text>
+<text x="366.0" y="348.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">-&gt; rdi</text>
+<text x="120.0" y="371.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x60</text>
+<rect x="128" y="358.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="371.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">PC1 (pivot 2/3)</text>
+<circle cx="139" cy="368" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="371.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">2</text>
+<text x="366.0" y="371.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">-&gt; rax ; call</text>
+<text x="120.0" y="394.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x68</text>
+<rect x="128" y="381.5" width="168" height="19" rx="3.5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.4"/>
+<text x="150.0" y="394.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">PC2 (pivot 3/3)</text>
+<circle cx="139" cy="391" r="7" fill="#c8c8c8"/>
+<text x="139.0" y="394.1" font-family="sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#161616">3</text>
+<text x="366.0" y="394.3" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="start" fill="#a8a8a8">via [rdi]</text>
+<text x="120.0" y="417.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x70</text>
+<rect x="128" y="404.5" width="168" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="135.0" y="417.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="120.0" y="440.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="end" fill="#8a8a8a">0x78</text>
+<rect x="128" y="427.5" width="168" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="135.0" y="440.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<polyline points="296,88.0 342,88.0 342,372.0 298,372.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,364.0 308,364.0 308,395.0 298,395.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,387.0 352,387.0 352,142.0 298,142.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,134.0 308,134.0 308,165.0 298,165.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,157.0 318,157.0 318,211.0 298,211.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,203.0 330,203.0 330,280.0 298,280.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<polyline points="296,272.0 308,272.0 308,303.0 298,303.0" fill="none" stroke="#e0908a" stroke-width="1.3" stroke-dasharray="4,2.5" marker-end="url(#cf)"/>
+<path d="M523,82.5 L518,82.5 L518,354.5 L523,354.5" fill="none" stroke="#8fb3e0" stroke-width="2"/>
+<text x="508.0" y="104.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="end" fill="#8fb3e0">Fake</text>
+<text x="508.0" y="116.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#8fb3e0">rt_mutex</text>
+<text x="508.0" y="128.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#8fb3e0">waiter</text>
+<path d="M537,220.5 L532,220.5 L532,308.5 L537,308.5" fill="none" stroke="#a6d086" stroke-width="2"/>
+<text x="508.0" y="259.0" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="end" fill="#a6d086">Fake</text>
+<text x="508.0" y="271.0" font-family="sans-serif" font-size="11" font-weight="400" text-anchor="end" fill="#a6d086">lock</text>
+<rect x="540" y="82.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="95.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">rb: parent | black</text>
+<text x="736.0" y="95.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x00</text>
+<rect x="540" y="105.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="118.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">rb_right = NULL</text>
+<text x="736.0" y="118.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x08</text>
+<rect x="540" y="128.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="141.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">rb_left = NULL</text>
+<text x="736.0" y="141.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x10</text>
+<rect x="540" y="151.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="164.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">prio = 138</text>
+<text x="736.0" y="164.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x18</text>
+<rect x="540" y="174.5" width="190" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="548.0" y="187.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="736.0" y="187.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x20</text>
+<rect x="540" y="197.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="210.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">self-ptr (+0x28)</text>
+<text x="736.0" y="210.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x28</text>
+<rect x="540" y="220.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#a6d086" stroke-width="2.1"/>
+<text x="548.0" y="233.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">lock.wait_lock = 0</text>
+<text x="736.0" y="233.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x30</text>
+<rect x="540" y="243.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#a6d086" stroke-width="2.1"/>
+<text x="548.0" y="256.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">lock.waiters = W0</text>
+<text x="736.0" y="256.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x38</text>
+<rect x="540" y="266.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#a6d086" stroke-width="2.1"/>
+<text x="548.0" y="279.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">lock.rb_leftmost = W0</text>
+<text x="736.0" y="279.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x40</text>
+<rect x="540" y="289.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#a6d086" stroke-width="2.1"/>
+<text x="548.0" y="302.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">lock.owner (benign)</text>
+<text x="736.0" y="302.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x48</text>
+<rect x="540" y="312.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="325.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">waiter.task = &amp;init_task</text>
+<text x="736.0" y="325.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x50</text>
+<rect x="540" y="335.5" width="190" height="19" rx="3.5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.4"/>
+<text x="548.0" y="348.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#ececec">waiter.lock -&gt; +0x30</text>
+<text x="736.0" y="348.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x58</text>
+<rect x="540" y="358.5" width="190" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="548.0" y="371.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="736.0" y="371.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x60</text>
+<rect x="540" y="381.5" width="190" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="548.0" y="394.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="736.0" y="394.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x68</text>
+<rect x="540" y="404.5" width="190" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="548.0" y="417.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="736.0" y="417.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x70</text>
+<rect x="540" y="427.5" width="190" height="19" rx="3.5" fill="#888888" fill-opacity="0.13" stroke="#7a7a7a" stroke-width="1.4"/>
+<text x="548.0" y="440.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">junk</text>
+<text x="736.0" y="440.3" font-family="monospace" font-size="9" font-weight="normal" text-anchor="start" fill="#8a8a8a">0x78</text>
+</svg>

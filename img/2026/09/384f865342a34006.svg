@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 666 480" font-family="sans-serif">
+<defs>
+<marker id="ah_dep" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8f8f8f"/></marker>
+<marker id="ah_deref" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e88f8b"/></marker>
+<marker id="ah_trig" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e0b24e"/></marker>
+</defs>
+<rect x="26" y="146" width="614" height="112" rx="7" fill="#e88f8b" fill-opacity="0.1" stroke="#e88f8b" stroke-width="1" stroke-opacity="0.55" stroke-dasharray="4 4"/>
+<rect x="26" y="262" width="614" height="110" rx="7" fill="#ffffff" fill-opacity="0.05" stroke="#6a6a6a" stroke-width="1" stroke-opacity="0.55" stroke-dasharray="4 4"/>
+<line x1="140" y1="40" x2="140" y2="462" stroke="#6a6a6a" stroke-width="1"/>
+<text x="140.0" y="30.0" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#ececec">waiter</text>
+<line x1="360" y1="40" x2="360" y2="462" stroke="#6a6a6a" stroke-width="1"/>
+<text x="360.0" y="30.0" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#ececec">owner</text>
+<line x1="576" y1="40" x2="576" y2="462" stroke="#6a6a6a" stroke-width="1"/>
+<text x="576.0" y="30.0" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#ececec">consumer</text>
+<rect x="133.0" y="138.0" width="14" height="63.0" rx="3" fill="#ffffff" fill-opacity="0.06" stroke="#6a6a6a" stroke-width="0.8" stroke-dasharray="3 3"/>
+<rect x="353.0" y="138.0" width="14" height="324.0" rx="3" fill="#ffffff" fill-opacity="0.06" stroke="#6a6a6a" stroke-width="0.8" stroke-dasharray="3 3"/>
+<rect x="80.0" y="53.0" width="120.0" height="30.0" rx="5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.5"/>
+<text x="140.0" y="71.8" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">lock f_pi_chain</text>
+<rect x="60.0" y="107.0" width="160.0" height="30.0" rx="5" fill="#6c8ebf" fill-opacity="0.2" stroke="#8fb3e0" stroke-width="1.5"/>
+<text x="140.0" y="125.8" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">FUTEX_WAIT_REQUEUE_PI</text>
+<text x="156.0" y="148.0" font-family="sans-serif" font-size="9.5" font-weight="normal" text-anchor="end" fill="#a8a8a8">waiter obj on stack</text>
+<rect x="98.0" y="201.0" width="84.0" height="30.0" rx="5" fill="#b85450" fill-opacity="0.24" stroke="#e88f8b" stroke-width="1.8"/>
+<text x="140.0" y="219.8" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">wake</text>
+<text x="140.0" y="241.0" font-family="sans-serif" font-size="9.5" font-weight="600" text-anchor="middle" fill="#e88f8b">dangling pi_blocked_on obtained</text>
+<rect x="61.0" y="287.0" width="158.0" height="30.0" rx="5" fill="#b85450" fill-opacity="0.24" stroke="#e88f8b" stroke-width="1.5"/>
+<text x="140.0" y="305.9" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">prctl(PR_SET_MM_MAP)</text>
+<text x="140.0" y="329.0" font-family="sans-serif" font-size="9.5" text-anchor="middle" fill="#e88f8b">forge rt_mutex_waiter</text>
+<rect x="86.0" y="385.0" width="108.0" height="30.0" rx="5" fill="#b85450" fill-opacity="0.24" stroke="#e88f8b" stroke-width="1.5"/>
+<text x="140.0" y="403.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#ececec">*target = W0</text>
+<text x="140.0" y="427.0" font-family="sans-serif" font-size="9.5" text-anchor="middle" fill="#e88f8b">constrained write</text>
+<rect x="297.0" y="53.0" width="126.0" height="30.0" rx="5" fill="#9673a6" fill-opacity="0.2" stroke="#c39bd6" stroke-width="1.5"/>
+<text x="360.0" y="71.8" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">lock f_pi_target</text>
+<rect x="300.0" y="107.0" width="120.0" height="30.0" rx="5" fill="#9673a6" fill-opacity="0.2" stroke="#c39bd6" stroke-width="1.5"/>
+<text x="360.0" y="125.8" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">lock f_pi_chain</text>
+<rect x="500.0" y="165.0" width="152.0" height="26.0" rx="5" fill="#d6b656" fill-opacity="0.2" stroke="#e6cf74" stroke-width="1.5"/>
+<text x="576.0" y="181.5" font-family="monospace" font-size="10" text-anchor="middle" fill="#ececec">FUTEX_CMP_REQUEUE_PI</text>
+<rect x="520.0" y="287.0" width="112.0" height="30.0" rx="5" fill="#4d9bb0" fill-opacity="0.2" stroke="#79c6d6" stroke-width="1.5"/>
+<text x="576.0" y="305.9" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">first CEA (W0)</text>
+<text x="576.0" y="329.0" font-family="sans-serif" font-size="9.5" text-anchor="middle" fill="#a8a8a8">loop</text>
+<rect x="518.0" y="331.0" width="116.0" height="30.0" rx="5" fill="#b85450" fill-opacity="0.24" stroke="#e88f8b" stroke-width="1.5"/>
+<text x="576.0" y="349.9" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">sched_setattr</text>
+<text x="576.0" y="373.0" font-family="sans-serif" font-size="9.5" text-anchor="middle" fill="#e88f8b">access</text>
+<rect x="511.0" y="417.0" width="130.0" height="30.0" rx="5" fill="#4d9bb0" fill-opacity="0.2" stroke="#79c6d6" stroke-width="1.5"/>
+<text x="576.0" y="435.9" font-family="monospace" font-size="11" text-anchor="middle" fill="#ececec">second CEA</text>
+<text x="576.0" y="459.0" font-family="sans-serif" font-size="9.5" text-anchor="middle" fill="#a8a8a8">triple-use: inet6 + ROP</text>
+<text x="430.0" y="155.0" font-family="sans-serif" font-size="9.5" font-weight="700" text-anchor="middle" fill="#e88f8b">the race</text>
+<text x="430.0" y="167.0" font-family="sans-serif" font-size="8.5" font-weight="normal" text-anchor="middle" fill="#e88f8b">-EDEADLK rollback</text>
+<line x1="360.0" y1="160.0" x2="140.0" y2="160.0" stroke="#8f8f8f" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah_dep)"/>
+<text x="250.0" y="155.0" font-family="monospace" font-size="9.5" text-anchor="middle" fill="#8f8f8f">f_pi_chain</text>
+<line x1="140.0" y1="184.0" x2="360.0" y2="184.0" stroke="#8f8f8f" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah_dep)"/>
+<text x="250.0" y="196.0" font-family="monospace" font-size="9.5" text-anchor="middle" fill="#8f8f8f">f_pi_target</text>
+<text x="250.0" y="172.0" font-family="monospace" font-size="9.5" font-weight="600" text-anchor="middle" fill="#e88f8b">-EDEADLK</text>
+<line x1="500.0" y1="180.0" x2="184.0" y2="210.0" stroke="#e0b24e" stroke-width="1.8" marker-end="url(#ah_trig)"/>
+<text x="358.0" y="277.0" font-family="sans-serif" font-size="9.5" font-weight="600" text-anchor="middle" fill="#ececec">stack-control window (wide open)</text>
+<text x="358.0" y="290.0" font-family="monospace" font-size="9" font-weight="normal" text-anchor="middle" fill="#a8a8a8">copy_from_user widened by PUNCH_HOLE</text>
+<line x1="518.0" y1="346.0" x2="140.0" y2="346.0" stroke="#e88f8b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah_deref)"/>
+<text x="340.0" y="340.0" font-family="monospace" font-size="9.5" text-anchor="middle" fill="#e88f8b">reads forged waiter</text>
+<line x1="140.0" y1="354.0" x2="140.0" y2="384.0" stroke="#e88f8b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah_deref)"/>
+<text x="182.0" y="373.0" font-family="monospace" font-size="9.5" text-anchor="start" fill="#e88f8b">rb-erase</text>
+</svg>
