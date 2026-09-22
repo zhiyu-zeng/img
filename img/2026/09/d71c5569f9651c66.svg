@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Normal SecureROM Image3 flow compared with the Part 3 control-flow splice</title>
+  <desc id="desc">The normal flow performs signature and policy checks; the pwned DFU payload calls the framing parser and resumes at the post-validation continuation.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd3fc"/>
+    </marker>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #f8fafc; }
+      .sub { font: 400 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #94a3b8; }
+      .lane { font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #cbd5e1; }
+      .label { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f8fafc; }
+      .body { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #cbd5e1; }
+      .box { fill: #172033; stroke: #475569; stroke-width: 2; rx: 12; }
+      .check { fill: #281a2d; stroke: #f472b6; stroke-width: 2; rx: 12; }
+      .keep { fill: #112a27; stroke: #34d399; stroke-width: 2; rx: 12; }
+      .payload { fill: #10243a; stroke: #38bdf8; stroke-width: 3; rx: 12; }
+      .line { fill: none; stroke: #7dd3fc; stroke-width: 3; marker-end: url(#arrow); }
+      .splice { fill: none; stroke: #34d399; stroke-width: 4; stroke-dasharray: 10 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="675" fill="#0b1020"/>
+  <text x="60" y="62" class="title">Bypass by reusing code, not rewriting BootROM</text>
+  <text x="60" y="93" class="sub">The payload reconstructs image3_load’s stack frame and joins its success path at 0x265d.</text>
+
+  <text x="60" y="164" class="lane">NORMAL FLOW</text>
+  <rect x="210" y="125" width="175" height="92" class="box"/>
+  <text x="229" y="160" class="label">image3_load</text>
+  <text x="229" y="188" class="body">0x24dc</text>
+  <path d="M385 171 H430" class="line"/>
+  <rect x="430" y="125" width="190" height="92" class="box"/>
+  <text x="449" y="160" class="label">parse framing</text>
+  <text x="449" y="188" class="body">0x1fec</text>
+  <path d="M620 171 H665" class="line"/>
+  <rect x="665" y="125" width="190" height="92" class="check"/>
+  <text x="684" y="160" class="label">SHSH + CERT</text>
+  <text x="684" y="188" class="body">0x2098 → 0x2b18</text>
+  <path d="M855 171 H900" class="line"/>
+  <rect x="900" y="125" width="225" height="92" class="check"/>
+  <text x="919" y="160" class="label">device policy</text>
+  <text x="919" y="188" class="body">CHIP / BORD / ECID …</text>
+
+  <text x="60" y="350" class="lane">PWNED DFU</text>
+  <rect x="210" y="305" width="175" height="98" class="payload"/>
+  <text x="229" y="340" class="label">limera1n</text>
+  <text x="229" y="368" class="body">our shellcode runs</text>
+  <path d="M385 354 H430" class="line"/>
+  <rect x="430" y="305" width="190" height="98" class="payload"/>
+  <text x="449" y="340" class="label">parse framing</text>
+  <text x="449" y="368" class="body">call ROM 0x1fed</text>
+
+  <path d="M620 354 C710 354 700 493 795 493" class="splice"/>
+  <text x="648" y="411" class="body">skip both check blocks</text>
+
+  <rect x="795" y="445" width="165" height="98" class="keep"/>
+  <text x="814" y="480" class="label">join success</text>
+  <text x="814" y="508" class="body">BX 0x265d</text>
+  <path d="M960 494 H995" class="line"/>
+  <rect x="995" y="445" width="130" height="98" class="keep"/>
+  <text x="1014" y="480" class="label">DATA</text>
+  <text x="1014" y="508" class="body">then jump</text>
+
+  <path d="M1012 217 V445" class="line"/>
+  <text x="1028" y="283" class="body">normal success</text>
+
+  <rect x="210" y="585" width="915" height="48" rx="10" fill="#111827" stroke="#334155"/>
+  <text x="234" y="615" class="body">Volatile by design: reboot removes the pwned loop and the immutable BootROM bytes remain unchanged.</text>
+</svg>

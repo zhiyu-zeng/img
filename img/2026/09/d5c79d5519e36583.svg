@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Image3 validation path in iPhone 3GS SecureROM 359.3.2</title>
+  <desc id="desc">A flow from an Image3 header through SHA-1 and certificate validation to the signature decision branch, followed by policy tags and DATA loading.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7dd3fc"/>
+    </marker>
+    <marker id="red-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#fb7185"/>
+    </marker>
+    <style>
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #f8fafc; }
+      .sub { font: 400 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #94a3b8; }
+      .label { font: 700 19px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f8fafc; }
+      .body { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #cbd5e1; }
+      .addr { font: 600 14px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #67e8f9; }
+      .box { fill: #172033; stroke: #334155; stroke-width: 2; rx: 14; }
+      .crypto { fill: #1e293b; stroke: #a78bfa; stroke-width: 2; rx: 14; }
+      .decision { fill: #281a2d; stroke: #f472b6; stroke-width: 3; rx: 14; }
+      .success { fill: #112a27; stroke: #34d399; stroke-width: 2; rx: 14; }
+      .fail { fill: #331a24; stroke: #fb7185; stroke-width: 2; rx: 14; }
+      .line { fill: none; stroke: #7dd3fc; stroke-width: 3; marker-end: url(#arrow); }
+      .redline { fill: none; stroke: #fb7185; stroke-width: 3; marker-end: url(#red-arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="675" fill="#0b1020"/>
+  <text x="60" y="62" class="title">What SecureROM validates before loading Image3 DATA</text>
+  <text x="60" y="93" class="sub">Recovered from this dump — S5L8920, SecureROM 359.3.2</text>
+
+  <rect x="60" y="145" width="210" height="125" class="box"/>
+  <text x="82" y="179" class="label">Img3 framing</text>
+  <text x="82" y="207" class="addr">image3_create_struct</text>
+  <text x="82" y="230" class="addr">0x1fec</text>
+  <text x="82" y="254" class="body">sizes + tag boundaries</text>
+
+  <path d="M270 207 H330" class="line"/>
+  <rect x="330" y="145" width="220" height="125" class="crypto"/>
+  <text x="352" y="179" class="label">Signed region</text>
+  <text x="352" y="207" class="addr">SHA-1 @ 0x0940</text>
+  <text x="352" y="232" class="body">header[0xc:] + tags</text>
+  <text x="352" y="254" class="body">before SHSH / CERT</text>
+
+  <path d="M550 207 H610" class="line"/>
+  <rect x="610" y="145" width="250" height="125" class="crypto"/>
+  <text x="632" y="179" class="label">X.509 + RSA</text>
+  <text x="632" y="207" class="addr">chain @ 0x2b18</text>
+  <text x="632" y="230" class="addr">PKCS#1 @ 0x28d0</text>
+  <text x="632" y="254" class="body">anchor: 0xa22c / 0x4bf</text>
+
+  <path d="M860 207 H920" class="line"/>
+  <rect x="920" y="145" width="220" height="125" class="decision"/>
+  <text x="942" y="179" class="label">valid?</text>
+  <text x="942" y="208" class="addr">CMP R4,#0</text>
+  <text x="942" y="232" class="addr">BNE 0x21f0</text>
+  <text x="942" y="254" class="body">branch at 0x2198</text>
+
+  <path d="M1030 270 V350" class="redline"/>
+  <rect x="920" y="350" width="220" height="92" class="fail"/>
+  <text x="942" y="386" class="label">reject</text>
+  <text x="942" y="414" class="body">return non-zero</text>
+
+  <path d="M920 207 H875 V510 H780" class="line"/>
+  <text x="795" y="488" class="body">R4 == 0</text>
+  <rect x="530" y="460" width="250" height="120" class="success"/>
+  <text x="552" y="495" class="label">policy tags</text>
+  <text x="552" y="523" class="addr">PROD / CHIP / ECID …</text>
+  <text x="552" y="551" class="body">success joins at 0x265c</text>
+
+  <path d="M530 520 H450" class="line"/>
+  <rect x="170" y="460" width="280" height="120" class="success"/>
+  <text x="192" y="495" class="label">DATA + optional KBAG</text>
+  <text x="192" y="523" class="addr">continuation 0x267a</text>
+  <text x="192" y="551" class="body">copy/decrypt, then execute</text>
+
+  <text x="60" y="640" class="sub">The Part 3 chainloader preserves framing and DATA handling, but enters at the green continuation.</text>
+</svg>
