@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 500" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="12">
+  <defs>
+    <pattern id="diagonal-stripe-2" patternUnits="userSpaceOnUse" width="8" height="8">
+      <path d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4" stroke="#ef4444" stroke-width="1.5" opacity="0.6"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="700" height="500" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="350" y="30" fill="#e6edf3" font-size="16" font-weight="600" text-anchor="middle">vFillBy16 Write Loop</text>
+
+  <!-- Memory region labels -->
+  <text x="50" y="70" fill="#7d8590" font-size="11">HEAP MEMORY</text>
+  <text x="420" y="70" fill="#7d8590" font-size="11">LOOP STATE</text>
+
+  <!-- Memory column -->
+  <!-- Allocated buffer region -->
+  <rect x="50" y="85" width="300" height="100" rx="4" fill="#238636" fill-opacity="0.2" stroke="#238636" stroke-width="2"/>
+  <text x="60" y="105" fill="#7d8590" font-size="10">0x105e00000</text>
+  <text x="180" y="105" fill="#3fb950" font-size="10">Allocated Buffer (1.25 MB)</text>
+
+  <!-- Row 0 -->
+  <rect x="60" y="115" width="280" height="20" rx="2" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657" stroke-width="1"/>
+  <text x="70" y="130" fill="#ffa657" font-size="9">AA BB CC DD AA BB CC DD AA BB CC DD ...</text>
+
+  <!-- Row 1 -->
+  <rect x="60" y="140" width="280" height="20" rx="2" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657" stroke-width="1"/>
+  <text x="70" y="155" fill="#ffa657" font-size="9">AA BB CC DD AA BB CC DD AA BB CC DD ...</text>
+
+  <!-- Row 2 (partial, at boundary) -->
+  <rect x="60" y="165" width="140" height="15" rx="2" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657" stroke-width="1"/>
+  <text x="80" y="177" fill="#7d8590" font-size="9">...</text>
+
+  <!-- OOB region -->
+  <rect x="50" y="185" width="300" height="200" rx="4" fill="url(#diagonal-stripe-2)" stroke="#f85149" stroke-width="2"/>
+  <text x="60" y="205" fill="#7d8590" font-size="10">0x105e14010</text>
+  <text x="180" y="205" fill="#f85149" font-size="10">Out-of-Bounds</text>
+
+  <!-- OOB rows being written -->
+  <rect x="60" y="215" width="280" height="20" rx="2" fill="#1a0a0a" stroke="#f85149" stroke-width="1"/>
+  <text x="70" y="230" fill="#ffa657" font-size="9">AA BB CC DD AA BB CC DD AA BB CC DD ...</text>
+
+  <rect x="60" y="240" width="280" height="20" rx="2" fill="#1a0a0a" stroke="#f85149" stroke-width="1"/>
+  <text x="70" y="255" fill="#ffa657" font-size="9">AA BB CC DD AA BB CC DD AA BB CC DD ...</text>
+
+  <rect x="60" y="265" width="280" height="20" rx="2" fill="#1a0a0a" stroke="#f85149" stroke-width="1"/>
+  <text x="70" y="280" fill="#ffa657" font-size="9">AA BB CC DD AA BB CC DD AA BB CC DD ...</text>
+
+  <!-- More rows indicator -->
+  <text x="190" y="310" fill="#7d8590" font-size="11">...</text>
+  <text x="145" y="330" fill="#7d8590" font-size="10">(65,000+ more rows)</text>
+
+  <!-- Unmapped region -->
+  <rect x="50" y="385" width="300" height="50" rx="4" fill="#f85149" fill-opacity="0.1" stroke="#f85149" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="60" y="405" fill="#7d8590" font-size="10">0x105ed0000</text>
+  <text x="180" y="405" fill="#f85149" font-size="10">Unmapped Memory</text>
+  <text x="200" y="425" fill="#f85149" font-size="12" font-weight="600">EXC_BAD_ACCESS</text>
+
+  <!-- Arrow showing write direction -->
+  <path d="M370,120 L370,400" stroke="#7d8590" stroke-width="1" stroke-dasharray="4,2"/>
+  <path d="M365,395 L370,405 L375,395" fill="#7d8590"/>
+  <text x="380" y="260" fill="#7d8590" font-size="10" transform="rotate(90,380,260)">write direction</text>
+
+  <!-- Loop state box -->
+  <rect x="420" y="85" width="260" height="170" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Pattern info -->
+  <text x="435" y="110" fill="#7d8590" font-size="10">bgcolor (from ANIM chunk):</text>
+  <rect x="435" y="118" width="95" height="24" rx="3" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657" stroke-width="1"/>
+  <text x="445" y="135" fill="#ffa657" font-size="11" font-weight="600">AA BB CC DD</text>
+  <text x="540" y="135" fill="#7d8590" font-size="10">attacker-controlled</text>
+
+  <!-- Loop variables -->
+  <text x="435" y="165" fill="#7d8590" font-size="10">dst:</text>
+  <text x="465" y="165" fill="#79c0ff" font-size="10">buf.data + (i * rowbytes)</text>
+
+  <text x="435" y="185" fill="#7d8590" font-size="10">len:</text>
+  <text x="465" y="185" fill="#79c0ff" font-size="10">rowbytes (262,160)</text>
+
+  <text x="435" y="205" fill="#7d8590" font-size="10">iterations:</text>
+  <text x="510" y="205" fill="#79c0ff" font-size="10">height (65,537)</text>
+
+  <!-- Pseudocode -->
+  <text x="435" y="230" fill="#7d8590" font-size="10">each iteration:</text>
+  <text x="445" y="248" fill="#e6edf3" font-size="10">memset_pattern16(dst, bgcolor, len)</text>
+
+  <!-- Legend -->
+  <rect x="420" y="270" width="260" height="85" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="435" y="290" fill="#7d8590" font-size="10">LEGEND</text>
+
+  <rect x="435" y="302" width="12" height="12" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657"/>
+  <text x="455" y="312" fill="#7d8590" font-size="10">Pattern bytes (bgcolor)</text>
+
+  <rect x="435" y="320" width="12" height="12" fill="#238636" fill-opacity="0.2" stroke="#238636"/>
+  <text x="455" y="330" fill="#7d8590" font-size="10">Allocated region</text>
+
+  <rect x="435" y="338" width="12" height="12" fill="url(#diagonal-stripe-2)" stroke="#f85149"/>
+  <text x="455" y="348" fill="#7d8590" font-size="10">Out-of-bounds region</text>
+
+  <!-- Key insight callout -->
+  <rect x="420" y="370" width="260" height="65" rx="6" fill="#f85149" fill-opacity="0.1" stroke="#f85149" stroke-width="1"/>
+  <text x="435" y="392" fill="#f85149" font-size="10">Buffer: 1.25 MB</text>
+  <text x="435" y="410" fill="#f85149" font-size="10">Writes: 16 GB (rowbytes * height)</text>
+  <text x="435" y="428" fill="#f85149" font-size="11" font-weight="600">12,800x overwrite</text>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 410" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="11">
+  <!-- Background -->
+  <rect width="500" height="410" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="250" y="25" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Malicious WebP Structure</text>
+
+  <!-- File bytes column -->
+  <text x="30" y="55" fill="#7d8590" font-size="10">OFFSET</text>
+  <text x="90" y="55" fill="#7d8590" font-size="10">BYTES</text>
+  <text x="260" y="55" fill="#7d8590" font-size="10">FIELD</text>
+
+  <!-- RIFF Header -->
+  <rect x="25" y="65" width="450" height="45" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="35" y="82" fill="#7d8590" font-size="9">0x00</text>
+  <text x="90" y="82" fill="#79c0ff" font-size="10">52 49 46 46</text>
+  <text x="260" y="82" fill="#e6edf3" font-size="10">"RIFF"</text>
+  <text x="35" y="100" fill="#7d8590" font-size="9">0x08</text>
+  <text x="90" y="100" fill="#79c0ff" font-size="10">57 45 42 50</text>
+  <text x="260" y="100" fill="#e6edf3" font-size="10">"WEBP"</text>
+
+  <!-- VP8X Chunk -->
+  <rect x="25" y="115" width="450" height="85" rx="3" fill="#f85149" fill-opacity="0.1" stroke="#f85149" stroke-width="1"/>
+  <text x="35" y="132" fill="#7d8590" font-size="9">0x0C</text>
+  <text x="90" y="132" fill="#79c0ff" font-size="10">56 50 38 58</text>
+  <text x="260" y="132" fill="#e6edf3" font-size="10">"VP8X" chunk</text>
+
+  <text x="35" y="152" fill="#7d8590" font-size="9">0x18</text>
+  <text x="90" y="152" fill="#f85149" font-size="10">04 40 00</text>
+  <text x="260" y="152" fill="#f85149" font-size="10">canvas_width - 1</text>
+  <text x="400" y="152" fill="#7d8590" font-size="9">(24-bit LE)</text>
+
+  <text x="35" y="172" fill="#7d8590" font-size="9">0x1B</text>
+  <text x="90" y="172" fill="#f85149" font-size="10">FF FF 00</text>
+  <text x="260" y="172" fill="#f85149" font-size="10">canvas_height - 1</text>
+  <text x="400" y="172" fill="#7d8590" font-size="9">(24-bit LE)</text>
+
+  <text x="90" y="192" fill="#7d8590" font-size="9">Triggers overflow: rowbytes * height</text>
+
+  <!-- ANIM Chunk -->
+  <rect x="25" y="205" width="450" height="65" rx="3" fill="#ffa657" fill-opacity="0.1" stroke="#ffa657" stroke-width="1"/>
+  <text x="35" y="222" fill="#7d8590" font-size="9">0x1E</text>
+  <text x="90" y="222" fill="#79c0ff" font-size="10">41 4E 49 4D</text>
+  <text x="260" y="222" fill="#e6edf3" font-size="10">"ANIM" chunk</text>
+
+  <text x="35" y="242" fill="#7d8590" font-size="9">0x26</text>
+  <text x="90" y="242" fill="#ffa657" font-size="10">41 42 43 04</text>
+  <text x="260" y="242" fill="#ffa657" font-size="10">bgcolor (BGRA)</text>
+  <text x="400" y="242" fill="#7d8590" font-size="9">"ABC" + 0x04</text>
+
+  <text x="90" y="262" fill="#7d8590" font-size="9">Written OOB via memset_pattern16</text>
+
+  <!-- Frame data -->
+  <rect x="25" y="275" width="450" height="30" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="250" y="294" fill="#7d8590" font-size="10" text-anchor="middle">ANMF / VP8 / ALPH chunks...</text>
+
+  <!-- Legend -->
+  <rect x="25" y="320" width="450" height="75" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="40" y="340" fill="#7d8590" font-size="10">ATTACKER CONTROL</text>
+
+  <rect x="40" y="352" width="12" height="12" fill="#f85149" fill-opacity="0.3" stroke="#f85149"/>
+  <text x="60" y="362" fill="#7d8590" font-size="10">Canvas dimensions (overflow trigger)</text>
+
+  <rect x="40" y="372" width="12" height="12" fill="#ffa657" fill-opacity="0.3" stroke="#ffa657"/>
+  <text x="60" y="382" fill="#7d8590" font-size="10">Background color (OOB write payload)</text>
+</svg>
