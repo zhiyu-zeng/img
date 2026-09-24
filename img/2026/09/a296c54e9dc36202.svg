@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 455" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="11">
+  <!-- Background -->
+  <rect width="500" height="455" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="250" y="25" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Bun Serialized Sourcemap Format</text>
+  <text x="250" y="42" fill="#a371f7" font-size="9" text-anchor="middle">Data pointed to by CompiledModuleGraphFile.sourcemap</text>
+
+  <!-- Main container -->
+  <rect x="50" y="65" width="280" height="380" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="190" y="85" fill="#7d8590" font-size="10" text-anchor="middle">SerializedSourceMap</text>
+
+  <!-- Header section -->
+  <rect x="65" y="100" width="250" height="55" rx="3" fill="#ffa657" fill-opacity="0.15" stroke="#ffa657" stroke-width="1"/>
+  <text x="190" y="120" fill="#ffa657" font-size="11" text-anchor="middle">Header (8 bytes)</text>
+  <text x="190" y="137" fill="#7d8590" font-size="9" text-anchor="middle">source_files_count: u32</text>
+  <text x="190" y="150" fill="#7d8590" font-size="9" text-anchor="middle">map_bytes_length: u32</text>
+
+  <!-- Source file names pointers -->
+  <rect x="65" y="165" width="250" height="50" rx="3" fill="#79c0ff" fill-opacity="0.15" stroke="#79c0ff" stroke-width="1"/>
+  <text x="190" y="185" fill="#79c0ff" font-size="11" text-anchor="middle">Source File Name Pointers</text>
+  <text x="190" y="203" fill="#7d8590" font-size="9" text-anchor="middle">StringPointer[N]</text>
+
+  <!-- Source content pointers -->
+  <rect x="65" y="225" width="250" height="50" rx="3" fill="#3fb950" fill-opacity="0.15" stroke="#3fb950" stroke-width="1"/>
+  <text x="190" y="245" fill="#3fb950" font-size="11" text-anchor="middle">Source Content Pointers</text>
+  <text x="190" y="263" fill="#7d8590" font-size="9" text-anchor="middle">StringPointer[N]</text>
+
+  <!-- VLQ mappings -->
+  <rect x="65" y="285" width="250" height="45" rx="3" fill="#a371f7" fill-opacity="0.15" stroke="#a371f7" stroke-width="1"/>
+  <text x="190" y="305" fill="#a371f7" font-size="11" text-anchor="middle">VLQ Mappings</text>
+  <text x="190" y="321" fill="#7d8590" font-size="9" text-anchor="middle">map_bytes_length bytes</text>
+
+  <!-- String data -->
+  <rect x="65" y="340" width="250" height="95" rx="3" fill="#238636" fill-opacity="0.15" stroke="#238636" stroke-width="1"/>
+  <text x="190" y="360" fill="#3fb950" font-size="11" text-anchor="middle">String Data</text>
+  
+  <rect x="80" y="370" width="220" height="22" rx="2" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+  <text x="190" y="385" fill="#7d8590" font-size="9" text-anchor="middle">file names (UTF-8)</text>
+
+  <rect x="80" y="398" width="220" height="28" rx="2" fill="#f85149" fill-opacity="0.1" stroke="#f85149" stroke-width="1"/>
+  <text x="190" y="416" fill="#f85149" font-size="9" text-anchor="middle">source contents (zstd compressed)</text>
+
+  <!-- Annotations on right side -->
+  <line x1="315" y1="100" x2="350" y2="100" stroke="#7d8590" stroke-width="1"/>
+  <text x="360" y="104" fill="#7d8590" font-size="9">+0x00</text>
+
+  <line x1="315" y1="165" x2="350" y2="165" stroke="#7d8590" stroke-width="1"/>
+  <text x="360" y="169" fill="#7d8590" font-size="9">+0x08</text>
+
+  <line x1="315" y1="225" x2="350" y2="225" stroke="#7d8590" stroke-width="1"/>
+  <text x="360" y="229" fill="#7d8590" font-size="9">+0x08 + N*8</text>
+
+  <line x1="315" y1="285" x2="350" y2="285" stroke="#7d8590" stroke-width="1"/>
+  <text x="360" y="289" fill="#7d8590" font-size="9">+0x08 + N*16</text>
+
+  <!-- N annotation -->
+  <rect x="350" y="180" width="145" height="30" rx="3" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="422" y="199" fill="#7d8590" font-size="9" text-anchor="middle">N = source_files_count</text>
+
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 600" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, monospace" font-size="10">
+  <!-- Background -->
+  <rect width="560" height="600" fill="#0d1117"/>
+
+  <!-- Title -->
+  <text x="280" y="25" fill="#e6edf3" font-size="13" font-weight="600" text-anchor="middle">Bun Standalone Blob Layout</text>
+  <text x="280" y="42" fill="#7d8590" font-size="9" text-anchor="middle">Embedded in executable (location varies by platform)</text>
+
+  <!-- Offset labels (left side) -->
+  <text x="118" y="68" fill="#7d8590" font-size="9" text-anchor="end">0</text>
+  <text x="118" y="223" fill="#7d8590" font-size="9" text-anchor="end">modules_ptr.offset</text>
+  <text x="118" y="418" fill="#7d8590" font-size="9" text-anchor="end">EOF - 48</text>
+  <text x="118" y="518" fill="#7d8590" font-size="9" text-anchor="end">EOF - 16</text>
+  <text x="118" y="573" fill="#7d8590" font-size="9" text-anchor="end">EOF</text>
+
+  <!-- DATA SECTION -->
+  <rect x="125" y="55" width="300" height="155" rx="3" fill="#238636" fill-opacity="0.12" stroke="#238636" stroke-width="1.5"/>
+  <text x="135" y="75" fill="#3fb950" font-size="11" font-weight="600">Data</text>
+  <text x="175" y="75" fill="#7d8590" font-size="9">(variable size)</text>
+  
+  <text x="145" y="100" fill="#7d8590" font-size="9">File contents (source code)</text>
+  <text x="145" y="118" fill="#7d8590" font-size="9">Sourcemaps (zstd compressed)</text>
+  <text x="145" y="136" fill="#7d8590" font-size="9">Bytecode (if present)</text>
+  <text x="145" y="154" fill="#7d8590" font-size="9">Embedded assets</text>
+  <line x1="135" y1="168" x2="415" y2="168" stroke="#30363d" stroke-width="1"/>
+  <text x="145" y="185" fill="#484f58" font-size="8">Referenced by StringPointer { offset, length }</text>
+  <text x="145" y="198" fill="#484f58" font-size="8">offset is relative to blob start (0)</text>
+
+  <!-- MODULE ARRAY -->
+  <rect x="125" y="220" width="300" height="185" rx="3" fill="#79c0ff" fill-opacity="0.12" stroke="#79c0ff" stroke-width="1.5"/>
+  <text x="135" y="240" fill="#79c0ff" font-size="11" font-weight="600">Module Array</text>
+  <text x="230" y="240" fill="#7d8590" font-size="9">(N × 36 bytes)</text>
+  
+  <!-- Module entry box -->
+  <rect x="140" y="250" width="270" height="145" rx="2" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="150" y="268" fill="#58a6ff" font-size="9">CompiledModuleGraphFile[i]</text>
+  
+  <text x="155" y="288" fill="#7d8590" font-size="8">+0x00</text>
+  <text x="195" y="288" fill="#e6edf3" font-size="9">name</text>
+  <text x="290" y="288" fill="#484f58" font-size="8">StringPointer → Data</text>
+  
+  <text x="155" y="306" fill="#7d8590" font-size="8">+0x08</text>
+  <text x="195" y="306" fill="#e6edf3" font-size="9">contents</text>
+  <text x="290" y="306" fill="#484f58" font-size="8">StringPointer → Data</text>
+  
+  <text x="155" y="324" fill="#7d8590" font-size="8">+0x10</text>
+  <text x="195" y="324" fill="#e6edf3" font-size="9">sourcemap</text>
+  <text x="290" y="324" fill="#a371f7" font-size="8">→ SerializedSourceMap*</text>
+  
+  <text x="155" y="342" fill="#7d8590" font-size="8">+0x18</text>
+  <text x="195" y="342" fill="#e6edf3" font-size="9">bytecode</text>
+  <text x="290" y="342" fill="#484f58" font-size="8">StringPointer → Data</text>
+  
+  <text x="155" y="360" fill="#7d8590" font-size="8">+0x20</text>
+  <text x="195" y="360" fill="#e6edf3" font-size="9">flags</text>
+  <text x="290" y="360" fill="#484f58" font-size="8">4 × u8</text>
+  
+  <line x1="150" y1="372" x2="400" y2="372" stroke="#30363d" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="275" y="388" fill="#484f58" font-size="8" text-anchor="middle">... repeated for each module ...</text>
+
+  <!-- OFFSETS -->
+  <rect x="125" y="415" width="300" height="90" rx="3" fill="#ffa657" fill-opacity="0.12" stroke="#ffa657" stroke-width="1.5"/>
+  <text x="135" y="435" fill="#ffa657" font-size="11" font-weight="600">Offsets</text>
+  <text x="185" y="435" fill="#7d8590" font-size="9">(32 bytes, fixed)</text>
+  
+  <text x="155" y="457" fill="#7d8590" font-size="8">+0x00</text>
+  <text x="195" y="457" fill="#e6edf3" font-size="9">modules_ptr</text>
+  <text x="310" y="457" fill="#484f58" font-size="8">→ Module Array start</text>
+  
+  <text x="155" y="475" fill="#7d8590" font-size="8">+0x08</text>
+  <text x="195" y="475" fill="#e6edf3" font-size="9">entry_point_id</text>
+  <text x="310" y="475" fill="#484f58" font-size="8">u32 index</text>
+  
+  <text x="155" y="493" fill="#7d8590" font-size="8">+0x0c</text>
+  <text x="195" y="493" fill="#e6edf3" font-size="9">flags, argv_ptr...</text>
+  <text x="310" y="493" fill="#484f58" font-size="8">(remaining fields)</text>
+
+  <!-- TRAILER -->
+  <rect x="125" y="515" width="300" height="55" rx="3" fill="#f85149" fill-opacity="0.12" stroke="#f85149" stroke-width="1.5"/>
+  <text x="135" y="537" fill="#f85149" font-size="11" font-weight="600">Trailer</text>
+  <text x="185" y="537" fill="#7d8590" font-size="9">(16 bytes, fixed)</text>
+  <text x="145" y="558" fill="#e6edf3" font-size="10">"\n---- Bun! ----\n"</text>
+
+  <!-- Parse direction - arrow with manual arrowhead -->
+  <line x1="470" y1="520" x2="470" y2="80" stroke="#7d8590" stroke-width="1.5"/>
+  <polygon points="470,55 463,75 477,75" fill="#7d8590"/>
+  <text x="485" y="295" fill="#7d8590" font-size="9">Parse</text>
+  <text x="485" y="308" fill="#7d8590" font-size="9">direction</text>
+</svg>
