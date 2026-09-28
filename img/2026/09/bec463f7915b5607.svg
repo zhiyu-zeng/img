@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">Locating os_execute from os_clock</title>
+  <desc id="desc">Unrelocated image base, loaded image base, os_clock, and os_execute are shown from left to right. A red bracket marks the ASLR slide to the loaded image base; a blue bracket marks the fixed build offset from os_clock to os_execute.</desc>
+  <style>
+    text { font-family: 'IBM Plex Mono', monospace; fill: #dedede; font-size: 17px; }
+    .muted { fill: #aaaaaa; font-size: 14px; }
+    .red { fill: #c28a7e; }
+    .blue { fill: #6ea8ff; }
+    .marker { stroke: #dedede; stroke-width: 2; }
+  </style>
+  <rect width="900" height="260" fill="#050505"/>
+
+  <path d="M80 91 V75 H270 V91" fill="none" stroke="#c28a7e" stroke-width="2"/>
+  <text x="175" y="60" text-anchor="middle" class="red">ASLR offset</text>
+
+  <path d="M80 113 V180" class="marker"/>
+  <rect x="270" y="123" width="530" height="46" fill="#101010" stroke="#888888" stroke-width="1.25"/>
+  <path d="M270 113 V180 M505 113 V180 M735 113 V180" class="marker"/>
+  <text x="80" y="193" text-anchor="middle" class="muted">unrelocated</text>
+  <text x="80" y="211" text-anchor="middle" class="muted">image base</text>
+  <text x="270" y="193" text-anchor="middle">loaded</text>
+  <text x="270" y="211" text-anchor="middle">image base</text>
+  <text x="505" y="205" text-anchor="middle" class="blue">os_clock</text>
+  <text x="735" y="205" text-anchor="middle">os_execute</text>
+
+  <path d="M505 219 V232 H735 V219" fill="none" stroke="#6ea8ff" stroke-width="2"/>
+  <text x="620" y="252" text-anchor="middle" class="blue">fixed build offset</text>
+</svg>

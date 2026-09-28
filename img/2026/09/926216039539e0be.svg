@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img" aria-labelledby="title desc">
+  <title id="title">Lua argument 1 lookup through a forged lua_State</title>
+  <desc id="desc">lua_State.ci points to CallInfo. CallInfo.func.p points to the function slot, followed by the argument 1 StackValue. lua_State.top.p points past that argument. The argument's TValue has a string tag and its value_.gc points to a TString whose contents hold the command.</desc>
+  <defs>
+    <style>
+      text { font-family: 'IBM Plex Mono', monospace; font-size: 16px; fill: #dedede; }
+      .name { font-size: 18px; font-weight: 600; fill: #6ea8ff; }
+      .note { font-size: 14px; font-style: italic; fill: #aaaaaa; }
+      .box { fill: #101010; stroke: #888888; stroke-width: 1.25; }
+      .header { fill: #161c24; }
+      .rule { fill: none; stroke: #42464c; stroke-width: 1; }
+      .pointer { fill: none; stroke: #c4c4c4; stroke-width: 1.5; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" markerWidth="8" markerHeight="8" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#c4c4c4" stroke-width="1.5"/></marker>
+  </defs>
+  <rect width="1200" height="390" fill="#050505"/>
+
+  <g data-object="lua_State" transform="translate(32 60)">
+    <rect width="220" height="208" class="box"/>
+    <rect x="1" y="1" width="218" height="46" class="header"/>
+    <text x="16" y="30" class="name">lua_State</text>
+    <path d="M0 48 H220 M0 80 H220 M0 128 H220 M0 176 H220" class="rule"/>
+    <text x="16" y="70" class="note">…</text>
+    <text x="16" y="110">StkIdRel top</text>
+    <text x="16" y="159">CallInfo* ci</text>
+    <text x="16" y="198" class="note">…</text>
+  </g>
+
+  <g data-object="CallInfo" transform="translate(322 32)">
+    <rect width="210" height="128" class="box"/>
+    <rect x="1" y="1" width="208" height="46" class="header"/>
+    <text x="16" y="30" class="name">CallInfo</text>
+    <path d="M0 48 H210 M0 96 H210" class="rule"/>
+    <text x="16" y="78">StkIdRel func</text>
+    <text x="16" y="117" class="note">…</text>
+  </g>
+
+  <g data-object="StackValue" transform="translate(600 76)">
+    <rect width="250" height="240" class="box"/>
+    <rect x="1" y="1" width="248" height="46" class="header"/>
+    <text x="16" y="30" class="name">StackValue[]</text>
+    <rect x="1" y="49" width="248" height="46" fill="#242a32"/>
+    <rect x="1" y="97" width="248" height="94" fill="#242a32"/>
+    <path d="M0 48 H250 M0 96 H250 M0 144 H250 M0 192 H250" class="rule"/>
+    <text x="16" y="78">function slot</text>
+    <text x="16" y="126">GCObject* value_.gc</text>
+    <text x="16" y="174">lu_byte tt_ = string</text>
+    <text x="16" y="222" class="note">first free slot</text>
+  </g>
+  <path d="M592 174 H580 V268 H592" fill="none" stroke="#6ea8ff" stroke-width="1.25"/>
+  <text x="546" y="221" transform="rotate(-90 546 221)" text-anchor="middle" class="note">argument 1</text>
+  <text x="564" y="221" transform="rotate(-90 564 221)" text-anchor="middle" class="note">TValue val</text>
+
+  <g data-object="TString" transform="translate(918 164)">
+    <rect width="250" height="144" class="box"/>
+    <rect x="1" y="1" width="248" height="46" class="header"/>
+    <text x="16" y="30" class="name">TString</text>
+    <path d="M0 48 H250 M0 80 H250" class="rule"/>
+    <text x="16" y="71" class="note">…</text>
+    <text x="16" y="111">char contents[1]</text>
+  </g>
+
+  <path data-connection="ci" d="M252 212 H287 V56 H322" class="pointer"/>
+  <path data-connection="func.p" d="M532 104 H565 V148 H600" class="pointer"/>
+  <path data-connection="top.p" d="M252 164 H270 V354 H884 V292 H850" class="pointer"/>
+  <path data-connection="value_.gc" d="M850 196 H884 V188 H918" class="pointer"/>
+</svg>

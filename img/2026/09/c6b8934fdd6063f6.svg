@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 550" role="img" aria-labelledby="title desc">
+  <title id="title">Parking lot with one medium space open</title>
+  <desc id="desc">The same small, medium, and large parking arenas are now mostly occupied. A medium car approaches the only empty space in its arena, which is highlighted.</desc>
+  <defs>
+    <style>
+      text { font-family: 'IBM Plex Mono', monospace; font-size: 20px; fill: #dedede; }
+      .arena-name { font-size: 30px; font-weight: 600; }
+      .arena { fill: #10151b; stroke: #414a54; stroke-width: 1.25; }
+      .spot { fill: #161c24; stroke: #8d98a4; stroke-width: 1.5; }
+      .chosen { fill: #1c2d42; stroke: #6ea8ff; stroke-width: 3; }
+      .body { fill: #34465a; stroke: #9cafc2; stroke-width: 1.5; }
+      .window { fill: #15212e; stroke: #9cafc2; stroke-width: 1; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" markerWidth="8" markerHeight="8" refX="9" refY="5" orient="auto">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="#6ea8ff" stroke-width="1.8"/>
+    </marker>
+    <g id="small-car">
+      <rect x="4" y="2" width="12" height="4" rx="1" fill="#050505"/><rect x="52" y="2" width="12" height="4" rx="1" fill="#050505"/>
+      <rect x="4" y="32" width="12" height="4" rx="1" fill="#050505"/><rect x="52" y="32" width="12" height="4" rx="1" fill="#050505"/>
+      <rect x="0" y="5" width="68" height="28" rx="8" class="body"/>
+      <rect x="19" y="9" width="30" height="20" rx="4" class="window"/>
+    </g>
+    <g id="medium-car">
+      <rect x="6" y="2" width="16" height="4" rx="1" fill="#050505"/><rect x="82" y="2" width="16" height="4" rx="1" fill="#050505"/>
+      <rect x="6" y="40" width="16" height="4" rx="1" fill="#050505"/><rect x="82" y="40" width="16" height="4" rx="1" fill="#050505"/>
+      <rect x="0" y="5" width="104" height="36" rx="10" class="body"/>
+      <rect x="28" y="10" width="48" height="26" rx="5" class="window"/>
+      <path d="M52 10 V36" stroke="#9cafc2" stroke-width="1"/>
+    </g>
+    <g id="large-car">
+      <rect x="10" y="2" width="22" height="5" rx="1" fill="#050505"/><rect x="134" y="2" width="22" height="5" rx="1" fill="#050505"/>
+      <rect x="10" y="44" width="22" height="5" rx="1" fill="#050505"/><rect x="134" y="44" width="22" height="5" rx="1" fill="#050505"/>
+      <rect x="0" y="6" width="166" height="40" rx="11" class="body"/>
+      <rect x="43" y="11" width="80" height="30" rx="5" class="window"/>
+      <path d="M83 11 V41" stroke="#9cafc2" stroke-width="1"/>
+    </g>
+  </defs>
+  <rect width="1120" height="550" fill="#050505"/>
+
+  <rect x="20" y="44" width="1080" height="118" class="arena"/>
+  <text x="120" y="103" text-anchor="middle" dominant-baseline="middle" class="arena-name">small</text>
+  <rect x="220" y="56" width="96" height="94" class="spot"/>
+  <rect x="328" y="56" width="96" height="94" class="spot"/>
+  <rect x="436" y="56" width="96" height="94" class="spot"/>
+  <rect x="544" y="56" width="96" height="94" class="spot"/>
+  <rect x="652" y="56" width="96" height="94" class="spot"/>
+  <rect x="760" y="56" width="96" height="94" class="spot"/>
+  <rect x="868" y="56" width="96" height="94" class="spot"/>
+  <rect x="976" y="56" width="96" height="94" class="spot"/>
+  <use href="#small-car" x="234" y="83"/>
+  <use href="#small-car" x="342" y="83"/>
+  <use href="#small-car" x="450" y="83"/>
+  <use href="#small-car" x="558" y="83"/>
+  <use href="#small-car" x="666" y="83"/>
+  <use href="#small-car" x="774" y="83"/>
+  <use href="#small-car" x="990" y="83"/>
+
+  <rect x="20" y="203" width="1080" height="128" class="arena"/>
+  <text x="120" y="267" text-anchor="middle" dominant-baseline="middle" class="arena-name">medium</text>
+  <rect x="220" y="215" width="132" height="104" class="spot"/>
+  <rect x="365" y="215" width="132" height="104" class="spot"/>
+  <rect x="510" y="215" width="132" height="104" class="spot"/>
+  <rect x="655" y="215" width="132" height="104" class="spot"/>
+  <rect x="800" y="215" width="132" height="104" class="chosen"/>
+  <rect x="945" y="215" width="132" height="104" class="spot"/>
+  <use href="#medium-car" x="234" y="245"/>
+  <use href="#medium-car" x="379" y="245"/>
+  <use href="#medium-car" x="524" y="245"/>
+  <use href="#medium-car" x="669" y="245"/>
+  <use href="#medium-car" x="959" y="245"/>
+
+  <path d="M20 382 H1100" fill="none" stroke="#786c50" stroke-width="2" stroke-dasharray="18 18"/>
+  <use href="#medium-car" x="48" y="344"/>
+  <path d="M170 369 H866 V324" fill="none" stroke="#6ea8ff" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <rect x="20" y="405" width="1080" height="128" class="arena"/>
+  <text x="120" y="469" text-anchor="middle" dominant-baseline="middle" class="arena-name">large</text>
+  <rect x="220" y="416" width="200" height="105" class="spot"/>
+  <rect x="436" y="416" width="200" height="105" class="spot"/>
+  <rect x="652" y="416" width="200" height="105" class="spot"/>
+  <rect x="868" y="416" width="200" height="105" class="spot"/>
+  <use href="#large-car" x="237" y="447"/>
+  <use href="#large-car" x="453" y="447"/>
+  <use href="#large-car" x="885" y="447"/>
+</svg>
