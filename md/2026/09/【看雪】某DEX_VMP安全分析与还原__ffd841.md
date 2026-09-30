@@ -16,19 +16,9 @@ ai_summary: 某安卓 DEX_VMP 通过已知明文 + JNI trace 回溯定位 codeit
 ai_summary_style: key-points:weak
 images_status:
   total: 47
-  succeeded: 37
-  failed_urls:
-    - upload/attach/202112/760871_K8A82WT9MXDZBS3.jpg
-    - upload/attach/202112/760871_MCK3AN5Z62UEU25.jpg
-    - upload/attach/202112/760871_23SNEC59HP724FA.jpg
-    - upload/attach/202112/760871_HAD9ZDD75Z6XMA2.jpg
-    - upload/attach/202112/760871_RXXRP5PH7BZABAJ.jpg
-    - upload/attach/202112/760871_GU63ZHNRHXUJHQ9.jpg
-    - upload/attach/202112/760871_AXTR4TYKGFKZW97.jpg
-    - upload/attach/202112/760871_JZDMKRBHWDHBASP.jpg
-    - upload/attach/202112/760871_ZE4XEB77YEAZ3ES.jpg
-    - upload/attach/202112/760871_5CG4TCW9RQ7UC3W.jpg
-notion_page_id: 3eb75244-d011-81f9-923c-e907863d3092
+  succeeded: 47
+  failed_urls: []
+notion_page_id: 3eb75244-d011-81b6-aa2d-dec84d961201
 ioc: null
 ---
 
@@ -66,9 +56,7 @@ ioc: null
 
 > 因为如果目标方法的字节码地址,都找不到,还原也就没法展开了.
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_K8A82WT9MXDZBS3.jpg)
-
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_K8A82WT9MXDZBS3.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/1b4aefd3a0530b3b.png)
 
 #### (2)为什么要分割VMP字节码?
 
@@ -89,11 +77,10 @@ ioc: null
 
 ## 二.某安卓VMP入口特征(2021.8月样本)
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_MCK3AN5Z62UEU25.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/90ecaa1340c773bc.png)
 
 > 跳板方法
 
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_MCK3AN5Z62UEU25.jpg)
 
 > 进入native后的参数处理逻辑
 
@@ -119,11 +106,10 @@ ioc: null
 > 我们看一下这个函数,从index到codeitem_addr的过程  
 > (0x2dce->0xcac85880)
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_23SNEC59HP724FA.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/5978091fc0fb6518.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/0834f8f73f8c7faa.png)
 
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_23SNEC59HP724FA.jpg)
 
 #### 如何在十几万数量级的汇编中定位到这段代码的?
 
@@ -131,9 +117,7 @@ ioc: null
 > 用到了两个关键数值,0x2dce(index)与0xcac85880(codeitems),  
 > 标记两个数值出现的中间区间即可.
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_HAD9ZDD75Z6XMA2.jpg)
-
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_HAD9ZDD75Z6XMA2.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/363d20ff5240c988.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/d1667353d0e2ad3d.png)
 
@@ -205,9 +189,7 @@ ioc: null
 > 因此我们检索一下,trace中对这片内存区域的访问情况  
 > 0xcac858a8取前5个高位,忽略后3个地位,即检索对0xcac85???的访问
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_RXXRP5PH7BZABAJ.jpg)
-
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_RXXRP5PH7BZABAJ.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/6ba11c891780892e.png)
 
 > 找到19条指令, 而对0xcac85???的访问,最早的第一条指令,出现在编号5691的位置,  
 > 对应的内存地址为0xcac85890,说明这里是ZxWebViewActivity.onCreate()第一条字节码.
@@ -241,11 +223,10 @@ ioc: null
 
 #### 通过观察codeitem的内存段的读取情况,可以达到这个目的
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_GU63ZHNRHXUJHQ9.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/ef796407a6212a1e.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/dab5274267d738dd.png)
 
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_GU63ZHNRHXUJHQ9.jpg)
 
 #### 如何快速区分出操作码和操作数?
 
@@ -292,13 +273,12 @@ ioc: null
 > 且充当操作数的角色,那么按照我们按照标准invoke-static反汇编规则进行解析,  
 > 就可以得到结论.
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_AXTR4TYKGFKZW97.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/5e61fdcba552be00.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/9230086cdd7e1563.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/b790bc8af3a1c601.png)
 
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_AXTR4TYKGFKZW97.jpg)
 
 .
 
@@ -364,15 +344,11 @@ ioc: null
 
 #### (2) VMP的实现高度依赖JNI函数,通过HOOK拿到其调用信息,是非常有效的切入点与突破口.
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_JZDMKRBHWDHBASP.jpg)
-
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_JZDMKRBHWDHBASP.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/1fdee16533f30ec5.png)
 
 #### (3) codeitems的连续性,集中存储的特性,通过内存访问统计最终被发现.
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_ZE4XEB77YEAZ3ES.jpg)
-
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_ZE4XEB77YEAZ3ES.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/6420fa5fb9a165a5.png)
 
 #### (4)某vmp指令由标准dalvik指令基础上略改而来,整体仍然保留了很多可用信息
 
@@ -425,11 +401,10 @@ ioc: null
 > 3 程序分析  
 > 污点分析 相似性分析等..
 
-![⚠️ 图片托管失败](upload/attach/202112/760871_5CG4TCW9RQ7UC3W.jpg)
+![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/ee6e8f331b54d87b.png)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/567df682786dac65.png)
 
-![⚠️ 图片托管失败](https://bbs.kanxue.com/upload/attach/202112/760871_5CG4TCW9RQ7UC3W.jpg)
 
 ![](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/d89014f1a858e4be.png)
 
