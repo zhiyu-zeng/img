@@ -5,7 +5,7 @@ source_host: www.elttam.com
 clip_date: 2026-09-18T10:40:06+08:00
 trace_id: 2e47eaa4-5cf6-4cc4-bc19-8ffb44913cb1
 content_hash: 902c788ecfe4e5be8eacf54a04c7bf2cf9da45af95195d20fb01e2de6c0b7e84
-status: summarized
+status: synced
 tags:
   - 硬件逆向
   - 协议分析
@@ -17,7 +17,7 @@ images_status:
   total: 6
   succeeded: 6
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3eb75244-d011-81b5-a4c4-f690730b05a2
 ioc: null
 ---
 
