@@ -5,7 +5,7 @@ source_host: www.elttam.com
 clip_date: 2026-09-18T10:45:11+08:00
 trace_id: 7aee04b0-777e-44c0-8a90-61d0deb1ce90
 content_hash: 21377e885c344cde63e5c8c82c8a388aa358b5c248d741cf6c5554a678707d2f
-status: summarized
+status: synced
 tags:
   - 漏洞分析
   - 协议分析
@@ -17,7 +17,7 @@ images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3eb75244-d011-8130-bbf1-cd81f0f1fd5b
 ioc: null
 ---
 
