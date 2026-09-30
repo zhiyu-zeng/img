@@ -5,7 +5,7 @@ source_host: www.elttam.com
 clip_date: 2026-09-18T10:40:38+08:00
 trace_id: 0e5e2a07-507e-4406-9004-81988135ba10
 content_hash: 6b15300c03c1ab383a7ec9b2eb0281803ab93849681310bbe3c75a733ac73ba4
-status: summarized
+status: synced
 tags:
   - 硬件逆向
   - 模拟执行
@@ -17,7 +17,7 @@ images_status:
   total: 5
   succeeded: 5
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3eb75244-d011-818a-a1b8-cd77dd68cdd5
 ioc: null
 ---
 
