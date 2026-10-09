@@ -2,35 +2,40 @@
 title: 【看雪】AMD64 编程手册 Vol.2 第 15 章「安全虚拟机」全文中文翻译
 source: https://bbs.kanxue.com/thread-292992.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:50:41+08:00
-trace_id: 2bd2b406-0aea-47c3-a8bc-c94440c4a494
-content_hash: f92dd5e1153cbd664a3f8f8c2fce3962162555bee64e5deba2ca0f1cf01fd8f2
+clip_date: 2026-10-09T23:58:57+08:00
+trace_id: baa3bbe8-b8a4-48a3-83a9-83d5b8ffaae5
+content_hash: 1115ee251ea1c970320900220428bfedf14cb8fd06b0678c59e601bc2225dc6a
 status: synced
 tags:
   - 看雪
-  - 硬件虚拟化
-  - SEV-SNP
+  - AMD SVM
+  - 虚拟化安全
 series: null
 feed_source: 看雪·逆向工程
-ai_summary: SVM 通过 VMRUN/VMCB 世界切换、拦截、嵌套分页及 SEV/SNP，在 AMD64 上提供硬件辅助虚拟化与客户隔离。
+ai_summary: |-
+  AMD SVM 以 VMCB、VMRUN/#VMEXIT 与多层拦截实现硬件虚拟化，并用 SKINIT、SEV/SNP、RMP 等强化隔离与安全。
+  - **执行模型：** VMRUN 以 RAX 指向 4KB 对齐 VMCB，保存主机状态并加载客户状态；拦截触发 #VMEXIT，EXITCODE 记录原因，EXITINFO1/2 与 EXITINTINFO 传递辅助信息及 IDT 投递状态。
+  - **拦截范围：** 指令、异常、中断、IOIO、MSR 等可拦截；IOPM 占 12KB 覆盖 64K 端口，MSRPM 四个 16Kbit 向量覆盖 MSR 范围，置 1 表示拦截。异常拦截在合并前检查，#PF 在写 CR2 前拦截并保存故障地址。
+  - **TLB/ASID：** TLB 条目按 ASID 标记；VMRUN/#VMEXIT 写 CR0/CR3/CR4/EFER 不刷新 TLB，TLB_CONTROL 支持 00/01/03/07 刷新语义，INVLPGA 可按客户虚拟页与 ASID 无效。
+  - **安全扩展：** SKINIT/TPM 用于可验证启动；SEV/SEV-ES 加密客户内存与寄存器；SEV-SNP 引入 RMP、VMPL、PVALIDATE/RMPADJUST、PSMASH、分段 RMP，防 hypervisor 篡改地址转换。
+  - **其他机制：** GIF 由 STGI/CLGI 控制；VMCB Clean 位缓存状态；AVIC 直接投递中断；还支持 SPEC_CTRL、ERAPS、IBS、PMC 虚拟化，以及受限/交替注入、BTB 隔离、Secure TSC、SMT 保护。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-81cb-96ec-c890f6a7ef63
+notion_page_id: 3f475244-d011-8161-a664-fd81b391e431
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> SVM 通过 VMRUN/VMCB 世界切换、拦截、嵌套分页及 SEV/SNP，在 AMD64 上提供硬件辅助虚拟化与客户隔离。
-> 
-> - **启用条件：** EFER.SVME=1 后才可用 VMRUN/VMLOAD/VMSAVE/CLGI/VMMCALL/INVLPGA，否则 #UD；SKINIT/STGI 还可由 CPUID Fn8000_0001_ECX[SKINIT] 启用。
-> - **VMRUN 与 VMCB：** VMRUN 以 RAX 指向 4KB 对齐 VMCB 物理页，仅 CPL0 可用；保存主机状态到 VM_HSAVE_PA，再加载客户状态与控制位；非法客户状态触发 #VMEXIT(VMEXIT_INVALID)。
-> - **退出与拦截：** #VMEXIT 清 GIF、写回客户状态、记录 EXITCODE/EXITINFO1/2/EXITINTINFO、清拦截并恢复主机；指令、异常、中断、IOIO、MSR、任务切换等可由 VMCB 位拦截，IOPM/MSRPM 分别按端口和 MSR 设权限。
-> - **TLB/ASID：** 客户 TLB 按 ASID 标记；VMRUN/VMEXIT 写 CR0/CR3/CR4/EFER 不刷 TLB；TLB_CONTROL 支持不刷新、全刷、刷本客户、刷本客户非全局，INVLPGA 可按 ASID 失效页。
-> - **安全扩展：** SKINIT 提供可信启动；SEV/SEV-ES 加密客户内存与寄存器，SEV-SNP 用 RMP、VMPL、PVALIDATE/RMPADJUST、PSMASH 及 Secure AVIC、分段 RMP、侧信道保护等防 hypervisor 篡改。
+> AMD SVM 以 VMCB、VMRUN/#VMEXIT 与多层拦截实现硬件虚拟化，并用 SKINIT、SEV/SNP、RMP 等强化隔离与安全。
+> - **执行模型：** VMRUN 以 RAX 指向 4KB 对齐 VMCB，保存主机状态并加载客户状态；拦截触发 #VMEXIT，EXITCODE 记录原因，EXITINFO1/2 与 EXITINTINFO 传递辅助信息及 IDT 投递状态。
+> - **拦截范围：** 指令、异常、中断、IOIO、MSR 等可拦截；IOPM 占 12KB 覆盖 64K 端口，MSRPM 四个 16Kbit 向量覆盖 MSR 范围，置 1 表示拦截。异常拦截在合并前检查，#PF 在写 CR2 前拦截并保存故障地址。
+> - **TLB/ASID：** TLB 条目按 ASID 标记；VMRUN/#VMEXIT 写 CR0/CR3/CR4/EFER 不刷新 TLB，TLB_CONTROL 支持 00/01/03/07 刷新语义，INVLPGA 可按客户虚拟页与 ASID 无效。
+> - **安全扩展：** SKINIT/TPM 用于可验证启动；SEV/SEV-ES 加密客户内存与寄存器；SEV-SNP 引入 RMP、VMPL、PVALIDATE/RMPADJUST、PSMASH、分段 RMP，防 hypervisor 篡改地址转换。
+> - **其他机制：** GIF 由 STGI/CLGI 控制；VMCB Clean 位缓存状态；AVIC 直接投递中断；还支持 SPEC_CTRL、ERAPS、IBS、PMC 虚拟化，以及受限/交替注入、BTB 隔离、Secure TSC、SMT 保护。
 
 > 来源：AMD64 Architecture Programmer's Manual, Volume 2: System Programming（24593—Rev. 3.45—July 2026），第 15 章，第 519–649 页。  
 > 翻译说明：指令助记符（如 VMRUN）、寄存器/位域名（如 EFER.SVME）、专用术语保留英文原文；正文译为中文。
@@ -3335,14 +3340,6 @@ IBS 虚拟化需要使用 AVIC（见第 585 页"高级虚拟中断控制器"第 
 
 启用 PMC 虚拟化时，VMCB 和 VMSA 状态保存区中分配以下字段以保存客户 PMC 寄存器值：
 
--   PERF_CTLn — PerfEvtSeln MSR，n = 0 到 5
--   PERF_CTRn — PerfCtrn MSR，n = 0 到 5
--   INSTR_RETIRED_CTR — IRPerfCount MSR
--   PERF_CTR_GLOBAL_STS — PerfCntGlobalStatus MSR
--   PERF_CNT_GLOBAL_CTL — PerfCntGlobalCtl MSR
-
 如果 hypervisor 未在 VMCB 中启用 PMC 虚拟化，但 SEV-ES 或 SEV-SNP 客户在 VMSA 中启用了它，则 VMSA 中每个 PERF_CTRn 位 22（PMC 启用）和 PERF_CNT_GLOBAL_CTL 位 5:0（全局 PMC 启用）必须为 0。如果这些位中任一不为 0，则 VMRUN 将以 VMEXIT_INVALID_PMC 错误代码失败。
 
 PMC 虚拟化需要使用 AVIC（见第 562 页"高级虚拟中断控制器"第 15.29 节）或 NMI 虚拟化（见第 535 页"NMI 虚拟化"第 15.21.10 节）来在客户中投递来自 PMC 硬件的虚拟化中断。没有虚拟化中断投递，客户中发生的 PMC 中断将不会投递给客户或 hypervisor。启用 AVIC 时，Performance Counter LVT 条目的消息类型应编程为 INTR 或 NMI。
-
-> 原帖后半部分需回复/点赞可见，未解锁
