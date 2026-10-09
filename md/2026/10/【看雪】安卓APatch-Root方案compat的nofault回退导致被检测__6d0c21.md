@@ -2,9 +2,9 @@
 title: 【看雪】安卓APatch Root方案compat的nofault回退导致被检测
 source: https://bbs.kanxue.com/thread-292954.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:57:38+08:00
-trace_id: dd42a0f6-00b5-4744-813d-948e1aa9e568
-content_hash: 089b8874acb32f282afe96d8725959e7a652450ee67272b967f02f2037ec5ca7
+clip_date: 2026-10-09T23:57:48+08:00
+trace_id: 69b6deed-553e-481d-a51b-47118a37e43c
+content_hash: 00f29e90f0db93dfc591bba88d70d501f9b15e9f503d414fe8bcd4bc7e41edce
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - 内核
 series: null
 feed_source: 看雪·Android安全
-ai_summary: KernelPatch 在 ≤6.7.0 内核上把 superkey 读取回退为会真缺页的普通读，使 APatch 暴露懒页映射与时延侧信道。
+ai_summary: KernelPatch 的 `compat_strncpy_from_user()` 在 ≤6.7.0 内核上回退到会真正触发缺页的 `strncpy_from_user()`，导致读取 superkey 指针时把懒分配页换入，形成可被检测的侧信道；KPM 模块从 syscall 调用侧短路消除该信号。
 ai_summary_style: key-points
 images_status:
   total: 1
   succeeded: 1
   failed_urls: []
-notion_page_id: 3f475244-d011-81dc-aea3-d27826527787
+notion_page_id: 3f475244-d011-81db-ab12-c01805dca1cc
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> KernelPatch 在 ≤6.7.0 内核上把 superkey 读取回退为会真缺页的普通读，使 APatch 暴露懒页映射与时延侧信道。
+> KernelPatch 的 `compat_strncpy_from_user()` 在 ≤6.7.0 内核上回退到会真正触发缺页的 `strncpy_from_user()`，导致读取 superkey 指针时把懒分配页换入，形成可被检测的侧信道；KPM 模块从 syscall 调用侧短路消除该信号。
 > 
-> - **根因：** `compat_strncpy_from_user()` 的版本门 `kver > VERSION(6,7,0)` 不满足时直接回退到普通 `strncpy_from_user()`，触发真实缺页并换入页面；6.8+ 才走带 `pagefault_disable()` 的 nofault 版本。
-> - **顺序缺陷：** KP 的 `before()` 先解引用 x0（superkey 指针）再判 cmd 范围，x1 取任何值都拦不住这次读；0.10/0.12 一代顺序相反，故不存在该问题。
-> - **三条检测口径：** 懒分配页是否被换入（0→1 即 KP）、范围内外 cmd 的累加时延比值 >2、页读取量对照（No-read 0 kB / Read 4 kB）。
-> - **关键靶点：** 只有 `x1 < 0` 是干净判据——原生 `truncate` 的长度检查在 `getname` 之前返回 `-EINVAL`，一个字节都不读 x0。
-> - **KPM 对策：** 用 `fp_hook()` 直接接管 `sys_call_table[45]` 的槽 0，对非白名单调用者在 `x1<0` 时原样返回 `-EINVAL` 且不读该页；L4 时延均衡与 G1–G3 守卫默认关闭。
+> - **根因：** KP 源码用 `kver > VERSION(6,7,0)` 版本门跳过 nofault 原语，而 `strncpy_from_user_nofault()` 在 6.1 已存在；差别仅是回退路径缺页被正常处理（分配零页、`min_flt` +1、VMA Referenced 置位），nofault 路径下 `pagefault_disable()` 返回 `-EFAULT` 且页表零变化。侧信道是"回退"造成的，非设计意图。
+> - **检测入口：** KP 自建 `__NR_supercall = 45`（arm64 即 truncate，魔法路径 `/system/bin/truncate`），`before()` 中 x0 为 superkey 指针、x1 低 16 位为 cmd；本机顺序是**先读 x0 再判 cmd**，0.10/0.12 一代顺序相反，所以只有 `x1 < 0` 是干净判据（原生 truncate 负 length 提前返回 `-EINVAL`，一个字节都不读 pathname）。
+> - **三条判定通道：** ①懒分配页是否被换入（`0→1`）；②范围内/外 cmd 时延比值 `>2` 判 KP（本机因门控在后恒 `≈1` 不成立）；③参数页读取量对照（`Read control` 应为 `0→4 kB`，Target 出现意外读即命中）。
+> - **模块对策：** L0 用 `fp_hook()` 直占 `sys_call_table[45]` 槽 0（KP 钩子在槽 0，晚装挂钩会落到其后）；L1 对 `x1 < 0` 且非白名单 uid 直接返回原生 `-EINVAL`，不建 PTE 不触发缺页；L4 及 G1/G2/G3 守卫默认全关，保持零系统级足迹。
+> - **身份过滤：** 依赖 KP 导出的 `current_uid()`（无需硬编码偏移），默认白名单 `{0}`；`x1` 高 32 位非 0 的管理器调用永不干预；`su` 走 execve 魔法路径不调用 `syscall(45)`，与判定无关。
 
 ## 主要被检测原因
 
@@ -273,7 +273,5 @@ if (x1 < 0 && 调用者不在受信任白名单)  return -EINVAL;
 【春秋NativeCheck】https://github.com/mingzun09/Chunqiu-Detector-Problem-solution/tree/main  
 【KernelPatch】https://github.com/bmax121/KernelPatch/tree/352de3747693d403eb1a4bd2c98dc04aeb01955a  
 【APatch及各分支版本】https://github.com/bmax121/APatch
-
-> 原帖后半部分需回复/点赞可见，未解锁
 
 [#基础理论](https://bbs.kanxue.com/forum-161-1-117.htm) [#协议分析](https://bbs.kanxue.com/forum-161-1-120.htm)
