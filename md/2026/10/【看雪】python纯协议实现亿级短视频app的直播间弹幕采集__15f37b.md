@@ -2,35 +2,35 @@
 title: 【看雪】python纯协议实现亿级短视频app的直播间弹幕采集
 source: https://bbs.kanxue.com/thread-293161.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-07T18:22:17+08:00
-trace_id: ae909974-db62-4523-8f0f-3534ee01e446
-content_hash: 854e25bce1d62afaa504d6ab7bec66e685b12e3e083213bf5d28c12a2481a832
+clip_date: 2026-10-09T19:00:50+08:00
+trace_id: b04fa5f9-d272-4d34-a19a-bda8c8229409
+content_hash: b047be6658b0a1744e63f211b56b423286481a88585abb66810a7da7e873daa2
 status: synced
 tags:
   - 看雪
-  - Android逆向
   - 协议分析
+  - 设备指纹
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 通过还原直播握手 X-Cylons 与设备注册六个安全头，实现纯 Python 注册新设备并连接直播间采集弹幕。
+ai_summary: "**通过还原 X-Cylons 与设备注册六个安全头，用纯 Python 注册新设备身份、连接直播间并解析弹幕。**"
 ai_summary_style: key-points
 images_status:
   total: 3
   succeeded: 3
   failed_urls: []
-notion_page_id: 3f275244-d011-81a6-818f-ee08fa049c3e
+notion_page_id: 3f475244-d011-8182-8774-ecc3d981b390
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过还原直播握手 X-Cylons 与设备注册六个安全头，实现纯 Python 注册新设备并连接直播间采集弹幕。
+> **通过还原 X-Cylons 与设备注册六个安全头，用纯 Python 注册新设备身份、连接直播间并解析弹幕。**
 > 
-> - **执行链：** 先注册获取 device_id/install_id，再构造直播 URL 并计算 X-Cylons，完成 WebSocket 101 与 gzip/protobuf 弹幕解析；共接通 7 个 X 字段。
-> - **身份依赖：** 仅重算 X-Cylons 无法使用任意 iid/device_id；必须来自服务器认可的注册身份，否则握手业务状态返回 415/417，且注册 body 需过 ttEncrypt 并由 X-SS-STUB 绑定最终密文。
-> - **Medusa：** mode 5/7 由 SDK 配置状态而非 URL 决定；明文为 protobuf，应用密钥来自 license，请求摘要输入含原始 query、最终密文 body 与签名时间；mode 5 的 16 个摘要核心已独立还原。
-> - **直播解析：** 直播 query 81 项 77 键，含重复键，必须保序；握手后一次 read 可能夹带首帧，需保留 `\r\n\r\n` 后数据；按帧重组、gzip 解压、protobuf 区分 WebcastChatMessage 与 MemberMessage。
-> - **验证与边界：** 保存 154 组 X-Cylons、48 组手机原生加 1024 组 ARM64 Medusa 核心、92 组尾部、20 组外层分支等对照；mode 7、Perseus 及真实 Android 采集时序尚未完成。
+> - **执行链：** 脚本自行生成设备信息并算出注册六头（X-Khronos/X-Argus/X-Gorgon/X-Helios/X-Ladon/X-Medusa），再用服务器返回的 device_id、install_id 拼直播 URL 并重算 X-Cylons。
+> - **身份依赖：** 只改 iid 换签名仍会握手失败（业务状态 415/417），iid 必须是服务器认可的注册身份；注册 body 需 ttEncrypt 加密，X-SS-STUB 绑定的是最终密文字节而非 JSON 明文。
+> - **Medusa：** 模式由 SDK 配置状态位决定而非请求路径；mode 5 含 16 种摘要核心、尾部运行状态与 4 种外层封装，靠 48 组原生 + 1024 组 ARM64 向量验证，mode 7 仅完成部分分支。
+> - **易错点：** X-Cylons 参与计算的是原始 query 字节（不 decode、不排序）与取时时间，Host/UA 不变；仅改一个字符会扩散到解码后的多个字节，不能据此判断字节含义。
+> - **直播解析：** query 81 项含重复键须按固定顺序输出；握手后一次 read 可能已带回首帧，须保留 `\r\n\r\n` 之后的字节，再按帧重组 → 取 payload → gzip 解压 → protobuf 解析，ChatLike 不计入弹幕。
 
 版本：20260923，40.6.0
 
@@ -630,4 +630,4 @@ Medusa 的难点也不只是算法本身。找到计算入口、匹配上一份�
 
 注：文中数据均来自本次分析和测试记录，仅对应所分析的版本。protobuf 编码规则可参考官方文档 (https://protobuf.dev/programming-guides/encoding/)。
 
-[回复或点赞可查看完整内容](#quick_reply_form)
+> 原帖后半部分需回复/点赞可见，未解锁
