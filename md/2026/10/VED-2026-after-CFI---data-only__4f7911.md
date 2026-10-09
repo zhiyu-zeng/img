@@ -5,7 +5,7 @@ source_host: hardenedvault.net
 clip_date: 2026-10-07T10:18:46+08:00
 trace_id: a8f7417f-aa72-40f3-b829-d577791d2f8d
 content_hash: f1145bcd11b7b95fad37f85bcc2317cdc0036495dc893e9f4fe02fac89c9501b
-status: summarized
+status: synced
 tags:
   - 内核
   - 漏洞分析
@@ -17,7 +17,7 @@ images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3f475244-d011-8107-82b6-de00ecfa37b4
 ioc:
   cves:
     - CVE-2021-26708
