@@ -2,9 +2,9 @@
 title: 【看雪】一加ACE6至尊内核竟包含反作弊驱动？一加官方赛事机与和平精英反作弊达成合作？
 source: https://bbs.kanxue.com/thread-293135.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:14:41+08:00
-trace_id: 5940e832-3559-4fdf-892b-0ca3a6d2e8a9
-content_hash: b449a760043d7e26349cfa460686606ec886a8c0c4c5dd1808f760bf1e93e32a
+clip_date: 2026-10-10T00:06:02+08:00
+trace_id: 063be00c-cde1-4fb2-bc1c-f33487ddbca1
+content_hash: 4aaafb2c97324df17713ec11ea01aab077f569a289d9c32c762ee07bbba643d0
 status: synced
 tags:
   - 看雪
@@ -12,13 +12,13 @@ tags:
   - 风控对抗
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 一加内核模块 inte.ko 为《和平精英》做完整性检测：SHA-256 基线比对 sys_call_table、kretprobe 挂 load_module 查模块白名单，只检测不阻断。
+ai_summary: 一加 Ace 6 Ultra 内核 `inte.ko` 为《和平精英》反外挂做内核完整性度量：哈希比对 sys_call_table 劫持与白名单 .ko，只检测上报不阻断。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-811e-b854-f24d217895f2
+notion_page_id: 3f475244-d011-81c6-a377-cd5e7c174575
 ioc:
   cves:
     - CVE-2021-0948
@@ -31,13 +31,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 一加内核模块 inte.ko 为《和平精英》做完整性检测：SHA-256 基线比对 sys_call_table、kretprobe 挂 load_module 查模块白名单，只检测不阻断。
+> 一加 Ace 6 Ultra 内核 `inte.ko` 为《和平精英》反外挂做内核完整性度量：哈希比对 sys_call_table 劫持与白名单 .ko，只检测上报不阻断。
 > 
-> - **模块划分：** `oplus_kernel_security_check.c` 单独编译为 inte.ko，同目录其余文件编成 oplus_secure_guard_new.ko，实际走 GKI Kleaf/bazel 构建，目录里的 Makefile/Kbuild 是遗留配置。
-> - **表劫持检测：** 用只设 symbol_name 的临时 kprobe 偷 `kallsyms_lookup_name` 地址定位 sys_call_table，整表哈希作基线存入 `__ro_after_init`，之后每小时复核；只覆盖指针数组，inline patch / ftrace 不在范围。
-> - **模块校验：** kretprobe 挂 `load_module`，在模块 init 执行前对 ELF 整文件按 4KB 分块 SHA-256（超 100ms 放弃），手抄 `struct load_info` 取 hdr/len，解析 .modinfo 得模块名与白名单比对。
-> - **上报路径：** 仅异常写事件——`/proc/inte_systbl` 输出 `<毫秒>:true`，`/proc/inte_ko` 直接输出模块文件名；各为 10 条环形队列且读取不消费；白名单由 euid 1000 的 `oplus_kohashpro` 经 `/proc/inte_ko` 下发。
-> - **已知局限：** 只检测不阻断，1 小时窗口可被瞬时改表逃逸；boot_stage≠1 或模块名解析失败时直接跳过检测；bootloader 解锁（AVB orange）则整个防护模块空转。
+> - **模块构成：** `oplus_kernel_security_check.c` 单独编译为 `inte.ko`，同目录其余文件编成 `oplus_secure_guard_new.ko`；构建走 GKI Kleaf/Bazel，目录内 Makefile 为遗留配置。
+> - **检测一·系统调用表：** 用临时 kprobe 偷 `kallsyms_lookup_name` 地址定位 `sys_call_table`，加载时算 SHA-256 存入 `__ro_after_init` 基线，之后每 1 小时重算比对，不一致才写 `/proc/inte_systbl` 事件 `<毫秒>:true`。
+> - **检测二·内核模块：** kretprobe 挂 `load_module`，在模块 init 执行前对 ELF 整文件 4KB 分块算哈希（100ms 超时），手工解析 `.modinfo` 取模块名拼 `.ko`，查用户态下发的白名单（`[N][filename[40]][sha256[32]]`）；不在表或哈希不符才写 `/proc/inte_ko`。
+> - **门控与局限：** 需守护进程 `oplus_kohashpro` 写 `/proc/inte_status=1` 才开始检测；正常无异常不写事件，但 seq_file 读取不消费、环形队列仅 10 条；检测不覆盖 inline hook/ftrace，表基线存在信任锚盲区。
+> - **关联体系：** `oplus_secure_guard_new.ko` 另做 set*uid 提权、cred 篡改、非 init 重载 sepolicy、堆喷射、/data 执行检测，经 generic netlink 上报；bootloader 解锁（orange）则整体空转。
 
 **分析对象**:`vendor/oplus/kernel/secureguard/gki2.0/rootguard_new/oplus_kernel_security_check.c`  
 **仓库**:OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_mt6993(分支 `oneplus/mt6993_b_16.0_ace_6_ultra`,机型一加 Ace 6 Ultra / 平板,联发科天玑 9400 平台,Android 16 / GKI 2.0 内核)  
@@ -340,5 +340,3 @@ inte.ko 创建 3 个 proc 节点(第 749–774 行),owner 强制 root(`proc_set_
 如何处理呢，既然没有异常就不写入文件进行标记，那么可以通过模块使其保持干净状态，无法写入或者写就就秒删，也可以直接让系统服务读取文件被hook为文件不存在，综上，对于LKM内核态有着降维打击，但是在内核与系统再到游戏的桥梁其实十分脆弱
 
 -   以上内容均基于对公开源代码的解读，实际请具体分析
-
-> 原帖后半部分需回复/点赞可见，未解锁
