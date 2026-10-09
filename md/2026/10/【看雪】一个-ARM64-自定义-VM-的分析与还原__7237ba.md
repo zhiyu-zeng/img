@@ -2,9 +2,9 @@
 title: 【看雪】一个 ARM64 自定义 VM 的分析与还原
 source: https://bbs.kanxue.com/thread-293114.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:01:37+08:00
-trace_id: 1a524f60-cd06-4de0-bea1-4f90461a9014
-content_hash: eebf10238f7c5cbed27366979ef41519cafe3a2f057c72cea8770bf1f1dc32c3
+clip_date: 2026-10-10T00:03:26+08:00
+trace_id: b11fae65-9e1a-4f44-acfd-9b5f24391600
+content_hash: b3e5ddb1d19e6891c831879d6f4f4d3b658ac6b4ec4a9ea1cb9a2aaa62c79741
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - 模拟执行
 series: null
 feed_source: 看雪·逆向工程
-ai_summary: 分析 ARM64 自定义 VM，需先绕过 OLLVM 控制流平坦化，逐层恢复 VM 状态、ISA、HOSTCALL 与反编译管线。
+ai_summary: 面对 ARM64 上叠加控制流平坦化的自定义 register VM，逐层恢复 PC、寄存器、descriptor、ISA 与 HOSTCALL，并用自研 Clean VM 验证语义，最终实现 C-like 反编译器。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-81d9-aa73-f8609c3b1881
+notion_page_id: 3f475244-d011-81a4-8c61-c3b4794349f7
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 分析 ARM64 自定义 VM，需先绕过 OLLVM 控制流平坦化，逐层恢复 VM 状态、ISA、HOSTCALL 与反编译管线。
+> 面对 ARM64 上叠加控制流平坦化的自定义 register VM，逐层恢复 PC、寄存器、descriptor、ISA 与 HOSTCALL，并用自研 Clean VM 验证语义，最终实现 C-like 反编译器。
 > 
-> - **识别特征：** 大函数反复从外部 buffer 取变长 opcode，按 index*8 访问寄存器区，尾部更新 PC，可判定为寄存器 VM。
-> - **关键陷阱：** CFF dispatcher 与 VM dispatcher 叠加；LDR/BR 表项可能来自 flattening state 或 R_AARCH64_RELATIVE，不可直接当 opcode table。
-> - **恢复方法：** 从 native dataflow 提取 code_base、PC、opcode、descriptor、寄存器、FLAGS；descriptor 决定 operand 模式/宽度，窄写入须保留高 32 位。
-> - **验证手段：** 自写 Clean VM 跑真实 bytecode，统一 trace；opcode 命名需 native handler、descriptor、bytecode、dataflow、emulator 五重证据。
-> - **反编译管线：** 严格区分 JMP 与 CALL，处理 CALL_REG 符号传播；经 CFG、SSA、结构化、类型恢复，类型提升须所有 callsite 一致证据，宁保守勿过度推断。
+> - **识别特征：** 大函数读外部 buffer、cursor 按 4/5/7/11 等不同长度推进、频繁 `base + index*8` 访问 → 判定为变长指令 register VM。
+> - **第一个坑：** `LDR table[idx]; BR` 常是 CFF dispatcher 而非 opcode 表；判据是 index 来源是否读 bytecode、是否更新 VM PC，判错会导致整套 opcode→handler 错位。
+> - **PC 与跳转表恢复：** 用 ELF `R_AARCH64_RELATIVE` 重定位补全静态为 0 的表项；PC 需三条证据（参与 code 地址计算、handler 增量匹配指令长度、branch 直接覆盖）。
+> - **语义陷阱：** 窄写入只改低 32 位保留高位；LOAD/STORE 可能只是 operand 提取，真实语义或为带宽度控制的有符号乘法；opcode 命名需 handler、descriptor、bytecode、dataflow、emulator 五重证据。
+> - **反编译原则：** Clean VM 先置 fallthrough PC 再执行；JMP 属 CFG、CALL 属 callgraph 必须分离；phi 在结构化前不可删；类型恢复坚持证据优先，宁可输出 `uint64_t *`。
 
 ## 0x00 前言
 
@@ -3274,5 +3274,3 @@ VM 改变的是程序的执行机器。
 ```
 
 这个事实。
-
-> 原帖后半部分需回复/点赞可见，未解锁
