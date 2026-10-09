@@ -2,9 +2,9 @@
 title: 【看雪】一个 ARM64 自定义 VM 的分析与还原
 source: https://bbs.kanxue.com/thread-293114.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-01T00:54:18+08:00
-trace_id: 4ee1d524-07bc-49d3-bace-daf2f11ad275
-content_hash: ec77195790f6d799934451bc179f3e484a0ea99033a4118976cd738fa42f5d21
+clip_date: 2026-10-09T19:01:37+08:00
+trace_id: 1a524f60-cd06-4de0-bea1-4f90461a9014
+content_hash: eebf10238f7c5cbed27366979ef41519cafe3a2f057c72cea8770bf1f1dc32c3
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - 模拟执行
 series: null
 feed_source: 看雪·逆向工程
-ai_summary: ARM64 自定义 VM 逆向需先把它当作未知 CPU，逐层恢复 PC、寄存器、descriptor、ISA、HOSTCALL，再复用 CFG/SSA 做反编译。
+ai_summary: 分析 ARM64 自定义 VM，需先绕过 OLLVM 控制流平坦化，逐层恢复 VM 状态、ISA、HOSTCALL 与反编译管线。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3eb75244-d011-816a-a068-f0c64fa0c3cd
+notion_page_id: 3f475244-d011-81d9-aa73-f8609c3b1881
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> ARM64 自定义 VM 逆向需先把它当作未知 CPU，逐层恢复 PC、寄存器、descriptor、ISA、HOSTCALL，再复用 CFG/SSA 做反编译。
+> 分析 ARM64 自定义 VM，需先绕过 OLLVM 控制流平坦化，逐层恢复 VM 状态、ISA、HOSTCALL 与反编译管线。
 > 
-> - **核心误判：** 外围 OLLVM CFF dispatcher 与 VM dispatcher 都会出现 table/index/间接跳转，不能看汇编形态；需追 index 来源、是否读 bytecode/VM register/更新 VM PC。
-> - **指令模型：** 该 VM 为变长指令，opcode+descriptor 共同决定语义；descriptor 含 operand mode、源/目标宽度、寄存器/立即数和长度；窄写入只改低 8/16/32 位，高 bits 保留。
-> - **验证闭环：** 另写不调用原解释器的 Clean VM，用真实 bytecode 跑通；opcode 命名要求 native handler、descriptor、bytecode、dataflow、Clean VM 结果五个证据，避免把 operand extraction 误判为 LOAD/STORE。
-> - **调用与 ABI：** JMP/Jcc 属 CFG，CALL 属调用图；CALL_REG 需符号传播；HOSTCALL 是独立 Host ABI，要恢复 service id、参数来源、返回值位置和指针/长度语义。
-> - **后端架构：** 最终拆为 VM Backend（container、opcode map、descriptor、ISA、HOSTCALL）和通用反编译器（function discovery、CFG、SSA、structurer、类型/对象恢复）；结构化和类型恢复宁可保守，避免漂亮但错误。
+> - **识别特征：** 大函数反复从外部 buffer 取变长 opcode，按 index*8 访问寄存器区，尾部更新 PC，可判定为寄存器 VM。
+> - **关键陷阱：** CFF dispatcher 与 VM dispatcher 叠加；LDR/BR 表项可能来自 flattening state 或 R_AARCH64_RELATIVE，不可直接当 opcode table。
+> - **恢复方法：** 从 native dataflow 提取 code_base、PC、opcode、descriptor、寄存器、FLAGS；descriptor 决定 operand 模式/宽度，窄写入须保留高 32 位。
+> - **验证手段：** 自写 Clean VM 跑真实 bytecode，统一 trace；opcode 命名需 native handler、descriptor、bytecode、dataflow、emulator 五重证据。
+> - **反编译管线：** 严格区分 JMP 与 CALL，处理 CALL_REG 符号传播；经 CFG、SSA、结构化、类型恢复，类型提升须所有 callsite 一致证据，宁保守勿过度推断。
 
 ## 0x00 前言
 
@@ -3275,4 +3275,4 @@ VM 改变的是程序的执行机器。
 
 这个事实。
 
-[回复或点赞可查看完整内容](#quick_reply_form)
+> 原帖后半部分需回复/点赞可见，未解锁
