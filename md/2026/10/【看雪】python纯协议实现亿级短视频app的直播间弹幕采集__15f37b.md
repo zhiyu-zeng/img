@@ -2,35 +2,35 @@
 title: 【看雪】python纯协议实现亿级短视频app的直播间弹幕采集
 source: https://bbs.kanxue.com/thread-293161.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:00:50+08:00
-trace_id: b04fa5f9-d272-4d34-a19a-bda8c8229409
-content_hash: b047be6658b0a1744e63f211b56b423286481a88585abb66810a7da7e873daa2
+clip_date: 2026-10-10T00:14:08+08:00
+trace_id: 17ca057f-7956-4b6c-9326-929255d3d8b1
+content_hash: 634c25646d50c70aa343165a69f96b27b91bb2d217a79f998387d152fe3a7740
 status: synced
 tags:
   - 看雪
+  - Android逆向
   - 协议分析
-  - 设备指纹
 series: null
 feed_source: 看雪·Android安全
-ai_summary: "**通过还原 X-Cylons 与设备注册六个安全头，用纯 Python 注册新设备身份、连接直播间并解析弹幕。**"
+ai_summary: 短视频 App 的直播间弹幕可纯 Python 实现：先逆向设备注册签名，再算出直播握手的 X-Cylons，用服务器认可的 DID/IID 建连即可持续收弹幕。
 ai_summary_style: key-points
 images_status:
   total: 3
   succeeded: 3
   failed_urls: []
-notion_page_id: 3f475244-d011-8182-8774-ecc3d981b390
+notion_page_id: 3f475244-d011-81f9-ad1f-e55e343f314e
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> **通过还原 X-Cylons 与设备注册六个安全头，用纯 Python 注册新设备身份、连接直播间并解析弹幕。**
+> 短视频 App 的直播间弹幕可纯 Python 实现：先逆向设备注册签名，再算出直播握手的 X-Cylons，用服务器认可的 DID/IID 建连即可持续收弹幕。
 > 
-> - **执行链：** 脚本自行生成设备信息并算出注册六头（X-Khronos/X-Argus/X-Gorgon/X-Helios/X-Ladon/X-Medusa），再用服务器返回的 device_id、install_id 拼直播 URL 并重算 X-Cylons。
-> - **身份依赖：** 只改 iid 换签名仍会握手失败（业务状态 415/417），iid 必须是服务器认可的注册身份；注册 body 需 ttEncrypt 加密，X-SS-STUB 绑定的是最终密文字节而非 JSON 明文。
-> - **Medusa：** 模式由 SDK 配置状态位决定而非请求路径；mode 5 含 16 种摘要核心、尾部运行状态与 4 种外层封装，靠 48 组原生 + 1024 组 ARM64 向量验证，mode 7 仅完成部分分支。
-> - **易错点：** X-Cylons 参与计算的是原始 query 字节（不 decode、不排序）与取时时间，Host/UA 不变；仅改一个字符会扩散到解码后的多个字节，不能据此判断字节含义。
-> - **直播解析：** query 81 项含重复键须按固定顺序输出；握手后一次 read 可能已带回首帧，须保留 `\r\n\r\n` 之后的字节，再按帧重组 → 取 payload → gzip 解压 → protobuf 解析，ChatLike 不计入弹幕。
+> - **执行链与依赖：** 注册需 6 个头（X-Khronos/Argus/Gorgon/Helios/Ladon/Medusa），直播握手需 X-Cylons；注册返回的 `device_id` 进直播 URL 的 `device_id`，`install_id` 进 `iid`，故签名算对仍需有效注册身份。
+> - **X-Cylons 结构：** 固定 24 个 Base64 字符即 18 字节，由固定段、原始 query 摘要段、时间相关段混合而成；参与计算的是问号后、fragment 前的原始字节（不 decode、不排序），Host/UA 改动不影响；已用 154 组受控向量核对，整秒取时，亚秒变化未还原。
+> - **请求头差异：** 各头算法不同（编码/校验/摘要/加密），不能按名互套；同一版本注册样本无 X-Perseus，主动调用注册入口可能落入 mode 7，mode 由 SDK 配置状态而非 URL 决定。
+> - **Medusa：** 明文为 protobuf（mode 5 含 16 个摘要核心、摘要尾部状态、4 种外层分支），请求摘要输入为原始 query＋最终密文 body＋签名时间；X-SS-STUB 绑定的是加密封装后的最终 body。
+> - **直播侧要点：** query 共 81 项、含 4 个重复键，须按原顺序输出；握手校验 HTTP 101 与业务状态；读到头部结束时 `\r\n\r\n` 后的残留字节必须保留，否则丢首帧；payload 经 gzip＋protobuf 解包后按 method 取 WebcastChatMessage 等。
 
 版本：20260923，40.6.0
 
@@ -629,5 +629,3 @@ Medusa 的难点也不只是算法本身。找到计算入口、匹配上一份�
 对我来说，这个项目最有价值的部分，是把“抓到一条能用的请求”推进到了“知道这条请求为什么能用”。从设备注册、身份获取，到直播握手和消息解析，各层的输入、输出和依赖关系都有了依据。以后遇到版本变化或者请求失败，也能沿着这条链定位，而不是重新换一套抓包参数碰运气。
 
 注：文中数据均来自本次分析和测试记录，仅对应所分析的版本。protobuf 编码规则可参考官方文档 (https://protobuf.dev/programming-guides/encoding/)。
-
-> 原帖后半部分需回复/点赞可见，未解锁
