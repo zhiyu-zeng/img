@@ -2,9 +2,9 @@
 title: 【看雪】SoulFrog刨析买断制游戏通杀
 source: https://bbs.kanxue.com/thread-293140.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-04T13:46:38+08:00
-trace_id: 163c2ec5-afe4-4f4f-9687-14c17a882327
-content_hash: 383b3a4b5937eb7d88de5c7a089d988e710c339f6d72c17c31d7d56f23860727
+clip_date: 2026-10-09T19:00:23+08:00
+trace_id: a955af9b-d589-40fc-b7a8-0f46704b1664
+content_hash: 50f3e9cd42607f6db571f5f82bb5a655db0762368bde6070f6c283c841bd9abd
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - Hook
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 通过 Xposed Hook 好游快爆买断制 SDK 的校验入口，反射触发成功回调，实现免付费进入游戏的通杀方案。
+ai_summary: 通过 Hook `HykbPaidChecker.checkLicense`，强制触发 listener 的 `onAllowEnter()`，可绕过买断制游戏校验并伪造用户信息。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3ef75244-d011-812e-995b-fea79c6328fa
+notion_page_id: 3f475244-d011-8121-a752-c0a95424a658
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过 Xposed Hook 好游快爆买断制 SDK 的校验入口，反射触发成功回调，实现免付费进入游戏的通杀方案。
+> 通过 Hook `HykbPaidChecker.checkLicense`，强制触发 listener 的 `onAllowEnter()`，可绕过买断制游戏校验并伪造用户信息。
 > 
-> - **校验入口：** 核心方法为静态的 `HykbPaidChecker.checkLicense(activity, appId, publicKey, orientation, listener)`，其中 `listener` 是 `HykbCheckListener` 回调对象，也是突破点。
-> - **回调结构：** 包名 `com.m3839.sdk.paid.HykbCheckListener`，仅含两个方法——`onAllowEnter()` 表示校验通过允许进入，`onReject(int code, String errorMsg)` 返回失败码与信息。
-> - **Hook 做法：** 遍历方法名匹配 `checkLicense`，取参数列表最后一个（即 listener），反射调用其 `onAllowEnter()`，再返回 null 短路原始校验逻辑。
-> - **配套伪造：** 同时 Hook `getUser`，当返回用户信息为空时，反射构造一个假用户对象返回，弥补校验通过后的用户态缺失。
-> - **适用范围：** 对好游快爆、TapTap 的「本体验证 + DLC」买断制游戏版本通杀，示例含鬼谷八荒、大侠立志传、破门而入、打造世界、潜水员戴夫；另有支付内购、激励广告、去水印等模块，其中激励广告通杀代码尚未开源。
+> - **校验入口：** `HykbPaidChecker.checkLicense(activity, appId, publicKey, orientation, listener)` 为静态方法，listener 是核心回调对象。
+> - **回调行为：** `HykbCheckListener` 含 `onAllowEnter()` 表示校验成功、允许进入游戏，`onReject(code,errorMsg)` 表示失败；`orientation` 0 横屏、1 竖屏，SDK1441+ 支持。
+> - **Hook 逻辑：** 加载 `com.m3839.sdk.paid.HykbCheckListener` 并反射取 `onAllowEnter`；遍历 Hook `checkLicense`，取最后一个参数 listener，反射调用 `onAllowEnter()`，返回 null。
+> - **补充伪造：** 同时 Hook `getUser`，返回用户信息为空时反射构造假用户对象返回。
+> - **开源与范围：** SoulFrog 分 Xposed 版（master）和 LibXposed 版（libxposed）；已列支持爱剪辑、ES 文件浏览器、腾讯视频去水印、TapTap/好游快爆买断制游戏等，激励广告通杀代码暂未开放。
 
 > 本文仅作 **技术研究学习**，请勿用于破解、绕过付费验证等侵权行为，任何违规使用产生的法律责任由使用者自行承担。
 
@@ -130,4 +130,4 @@ SoulFrog有不懂的想了解具体的hook点思路可以评论咨询我，有�
 | 打造 世界 | (本体验证+DLC) | com.dekovir.CraftTheWorld3839 |
 | 潜水员 戴夫 | (本体验证+DLC) | com.xd.dave.tap.cn |
 
-[回复或点赞可查看完整内容](#quick_reply_form)
+> 原帖后半部分需回复/点赞可见，未解锁
