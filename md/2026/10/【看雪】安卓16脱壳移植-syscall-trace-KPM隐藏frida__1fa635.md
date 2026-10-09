@@ -2,23 +2,23 @@
 title: 【看雪】安卓16脱壳移植 syscall-trace KPM隐藏frida
 source: https://bbs.kanxue.com/thread-293142.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:06:18+08:00
-trace_id: af299bc0-2814-47ec-bfa4-cafe884ff7e5
-content_hash: da47294e50e1e1d73b1ec33535039cc245ffa8d12ff358878fcfd225b4ec11ad
+clip_date: 2026-10-10T00:07:09+08:00
+trace_id: 7eb8cfc6-c9bb-4156-ba4b-5d4d621ebaf1
+content_hash: b1af0ac87fd12b61c0c04adb07d62cc977779f50484752e21f47764ccd78f192
 status: synced
 tags:
   - 看雪
+  - Android逆向
   - 脱壳与加固
-  - Frida
 series: null
 feed_source: 看雪·Android安全
-ai_summary: "**TL;DR：** 在 Pixel 6a 上自编译刷入 LineageOS 23.2 并用 APatch 拿 root，落地 eBPF syscall-trace 脱壳追踪、R0DUMP 脱壳移植与 KPM 隐藏 Frida，形成可复用的安卓脱壳系统。"
+ai_summary: Android 16 脱壳分析工具链落地：用 eBPF syscall-trace 追踪到 so 级系统调用、把 r0dump 移植进 LineageOS 23.2，再用 KPM 从内核侧覆写数据隐藏 Frida 特征。
 ai_summary_style: key-points
 images_status:
   total: 83
   succeeded: 83
   failed_urls: []
-notion_page_id: 3f475244-d011-815c-bcd8-d3e8cd8fea8b
+notion_page_id: 3f475244-d011-81d5-99ab-ece6fcec2f6e
 ioc:
   cves: []
   cwes: []
@@ -37,13 +37,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> **TL;DR：** 在 Pixel 6a 上自编译刷入 LineageOS 23.2 并用 APatch 拿 root，落地 eBPF syscall-trace 脱壳追踪、R0DUMP 脱壳移植与 KPM 隐藏 Frida，形成可复用的安卓脱壳系统。
+> Android 16 脱壳分析工具链落地：用 eBPF syscall-trace 追踪到 so 级系统调用、把 r0dump 移植进 LineageOS 23.2，再用 KPM 从内核侧覆写数据隐藏 Frida 特征。
 > 
-> - **环境链路：** 解锁 bootloader → VMware/Ubuntu 编译 lineage-23.2（bluejay）→ 从 OTA 提取 blobs 与预编译内核省磁盘 → recovery sideload → APatch patch boot.img 取 root。
-> - **eBPF 硬门槛：** 需 CONFIG_BPF、BPF_SYSCALL、BPF_JIT、BTF 及 `/sys/kernel/btf/vmlinux`、raw_syscalls tracepoint 全满足；内核侧只抓寄存器与一段栈，展栈等重活全交用户态。
-> - **stracer 设计：** 用 zygote maps + mmap/munmap/mprotect 增量 + 活进程刷新维护"影子表"，解决闪退后无法读 maps 与 fork 早期 uid 盲窗；openat 返回走小记录，避免 ringbuf 被高频事件压垮。
-> - **R0DUMP 移植坑：** 需补 libcore 四个 patch、登记编译源、加 `@hide`/`@SystemApi(MODULE_LIBRARIES)` 并更新 module-lib API，还要把 helper 与 mcp_bridge 加进 PRODUCT_PACKAGES 与白名单才能打包。
-> - **Frida 特征分类：** 名称/内容类（映射名、符号、socket、内存字符串）源码改名+KPM 抹除后全量扫 676MB 零命中；数量与关系类（映射/线程/fd 数、端口与连接、被改指令与 setArgV0 指针）只能内核覆写或换注入方式；spawn 失败根因是 boot-image-methods.art 不在 whitelist。
+> - **三件套方案：** 解锁 BL 后编译刷入 LineageOS 23.2（Pixel 6a/bluejay，lunch target `lineage_bluejay-bp4a-userdebug`），用 APatch patch boot.img 拿 root（需内核 3.18–6.12 且 `CONFIG_KALLSYMS=y`），再叠加 syscall-trace、r0dump 脱壳、KPM 藏 Frida。
+> - **eBPF 门槛与 stracer 架构：** 六条硬性前提——uid=0、`CONFIG_BPF/_SYSCALL/_JIT/_EVENTS` 与 `CONFIG_PERF_EVENTS` 全为 y、`CONFIG_DEBUG_INFO_BTF=y` 且 `/sys/kernel/btf/vmlinux` 存在、有 `raw_syscalls` tracepoint、能 grep 到 `bpf_probe_read_user`、SELinux 可转 Permissive。内核侧只抓寄存器+一段栈，用户态靠"影子表"（zygote maps 种子 + mmap/munmap/mprotect 增量 + 活进程整表刷新）做地址归属，展栈按 DWARF→帧指针→栈回扫三级回退。
+> - **r0dump 移植的坑：** patch 不含 libcore 改动，需补 4 个 patch 并登记进 `non_openjdk_java_files.bp`，再加 `@hide`、`@SystemApi(MODULE_LIBRARIES)` 并跑 `m art.module.public.api...update-current-api`；`r0dump_file_helper`、`r0dump_mcp_bridge` 不属默认 `PRODUCT_PACKAGES`，要在 `vendor/lineage/config/r0dump.mk` 里声明并加 artifact 白名单。
+> - **避开内核自编：** Tensor 内核走 Kleaf/Bazel，可从官方 OTA 用 payload-dumper-go 拆出 boot/dtbo/vendor_boot 及 .ko/dtb，注释掉 `TARGET_KERNEL_PLATFORM_SOURCE` 即可跳过自动内核编译。
+> - **隐藏 Frida 两类特征：** 名称与字符串类（maps 里的 `/memfd:frida-agent-*.so`、线程名、`@/frida-zymbiote-<hex>` socket、内存明文标识）可由源码改名等长重写 + KPM 删行完全抹除；数量与关系类（映射/fd/线程条数、rwx 匿名段、27042 端口与连接、被改写指令字节）改不掉，只能内核侧覆写或换注入方式。另修 frida spawn 失败：Android 16 把启动镜像方法段放进 `/memfd:/boot-image-methods.art`，需加入 `is_boot_heap` 白名单。
 
 ## 前言
 
@@ -1998,7 +1998,5 @@ return "boot.art" in m.path || "boot-framework.art" in m.path
 编译好的产物下载  
 https://wwbwo.lanzoum.com/i6dnx4b58fji  
 密码:666
-
-> 原帖后半部分需回复/点赞可见，未解锁
 
 [#系统相关](https://bbs.kanxue.com/forum-161-1-126.htm) [#源码框架](https://bbs.kanxue.com/forum-161-1-127.htm) [#工具脚本](https://bbs.kanxue.com/forum-161-1-128.htm)
