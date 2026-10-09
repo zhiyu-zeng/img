@@ -2,35 +2,33 @@
 title: 【看雪】酷狗音乐AI逆向-10分钟通杀所有IOS加密算法MCP
 source: https://bbs.kanxue.com/thread-293076.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:58:53+08:00
-trace_id: a8077efe-e3a4-4f34-ae5f-82512592bc7b
-content_hash: 154887c947668b2de518992171193f715d7b12dc17d96b6f18c70297bc226b78
+clip_date: 2026-10-10T00:01:47+08:00
+trace_id: 433dbb3b-7256-4516-9a9f-af4717f922c3
+content_hash: 1b1d999d33d087648aa34e8d03b528c594d675626065629a2be860593ad6e4c8
 status: synced
 tags:
   - 看雪
-  - iOS逆向
-  - AI辅助逆向
 series: null
 feed_source: 看雪·iOS安全
-ai_summary: 酷狗音乐 iOS 加密算法可借 AI + 越狱插件在约 10 分钟内自动完成分析与脚本交付，全程无需人工定位。
+ai_summary: 用 IDH 越狱插件把酷狗音乐算法日志接入 MCP，AI 一句话提示、约 10 分钟即可完成 iOS 登录加密算法逆向并交付脚本与报告。
 ai_summary_style: key-points
 images_status:
   total: 4
   succeeded: 4
   failed_urls: []
-notion_page_id: 3f475244-d011-81e5-8254-e0a4b2ab04a9
+notion_page_id: 3f475244-d011-810c-b673-f85f6036bf48
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 酷狗音乐 iOS 加密算法可借 AI + 越狱插件在约 10 分钟内自动完成分析与脚本交付，全程无需人工定位。
+> 用 IDH 越狱插件把酷狗音乐算法日志接入 MCP，AI 一句话提示、约 10 分钟即可完成 iOS 登录加密算法逆向并交付脚本与报告。
 > 
-> - **核心概念：** 作者把"无需多余配置、直接与 AI 对话完成逆向"的方式称为"氛围逆向"（vibe reversing）。
-> - **工具链：** 越狱端安装开源插件 IOSDecryptHub（越狱源 ios.decrypthub.com），电脑端 `pip install ios-decrypt-hub` 后执行 `idh connect 192.168.200.162:8088` 接入 MCP。
-> - **注入确认：** 开启酷狗音乐的注入并启动 App，出现悬浮窗即表示注入成功；随后打开插件的 Web 面板查看状态。
-> - **提示词：** 把任务直接交给 AI，例如“调用 MCP 分析 iPhone 上酷狗音乐 APP 的登录算法，我已登录，可以直接看日志”，由 AI 读取日志自动吐出的算法。
-> - **结果：** 约十分钟后 AI 交付可用的逆向脚本和分析报告；原帖后半部分需回复/点赞才能查看。
+> - **前置工具：** 安装开源越狱插件 IOSDecryptHub（越狱源 ios.decrypthub.com），开启对酷狗音乐的注入，APP 内出现悬浮窗即注入成功，再从 web 面板确认状态正常。
+> - **MCP 配置：** 执行 `pip install ios-decrypt-hub`，再用 `idh connect 192.168.200.162:8088` 连接设备；随后把分析工作交给 AI。
+> - **核心提示词：** 只需一句「调用 MCP 分析 iPhone 上酷狗音乐 APP 的登录算法，我已经完成了登录，可以直接看日志」，AI 即可自动读日志、还原算法。
+> - **结果产出：** 约十分钟后交付可用的加密算法脚本与分析报告，官方称可通杀该 APP 的所有算法且完全可复现。
+> - **理念与作者：** 作者把这种「无需多余配置、直接对话完成逆向」的方式称为氛围逆向（vibe reversing），完整对话记录分享在公众号「R逆向」。
 
 ## 氛围逆向
 
@@ -67,11 +65,7 @@ idh connect 192.168.200.162:8088
 
 ## 十分钟之后，完成逆向，交付给我脚本和报告
 
-IOS逆向如此简单  
+IOS逆向如此简单
 
 ![图片描述](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/02c833f9e10b8aed.webp)
-
 ![图片描述](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/09/3e4850c6d66a7600.webp)
-  
-
-> 原帖后半部分需回复/点赞可见，未解锁
