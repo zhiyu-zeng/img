@@ -2,9 +2,9 @@
 title: 【看雪】Android 某6零免费版 DexVMP 恢复工作流框架：还原成可运行的正常程序,仅供学习研究
 source: https://bbs.kanxue.com/thread-292951.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:51:51+08:00
-trace_id: 7e9d81fd-d4e6-494d-8154-3a55dd8d6fe7
-content_hash: bb7dbd35f24d5ae097fbea681697df5ca2bbbc885a1fb0126fd0dc4640170c36
+clip_date: 2026-10-09T23:57:13+08:00
+trace_id: fce1ae26-1e26-42d6-bbbf-4e0aa98004e6
+content_hash: 6f0b26fcd1d7d04c2663314a8177ae9efebb16a6ef2e414beea95885356890ac
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - Android逆向
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 一套针对某6零免费版 DexVMP 加固样本的分阶段、可追溯恢复工作流，通过 SHA-256 证据链把脱壳拆成可暂停、可复核的步骤，证据不足即停。
+ai_summary: TL;DR：一套以 SHA-256 证据链驱动的某6零免费版 DexVMP 恢复工作流，把脱壳拆成可暂停、可复核、可追溯的阶段，证据不足即 BLOCKED，不做一键黑盒。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-811d-b95c-dd73fbc1b319
+notion_page_id: 3f475244-d011-8147-808d-c64b0009ed3d
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 一套针对某6零免费版 DexVMP 加固样本的分阶段、可追溯恢复工作流，通过 SHA-256 证据链把脱壳拆成可暂停、可复核的步骤，证据不足即停。
+> TL;DR：一套以 SHA-256 证据链驱动的某6零免费版 DexVMP 恢复工作流，把脱壳拆成可暂停、可复核、可追溯的阶段，证据不足即 BLOCKED，不做一键黑盒。
 > 
-> - **核心机制：** 由 `vmpwf` 驱动，案件数据存于 `cases/<package>/<case-id>/`，含 input/dump/fix/ida/simulation/repack/reports/logs 及 `case.json`、`checkpoint.json`、`questions.json`、`events.jsonl`、`artifacts.json` 状态文件。
-> - **运行时取证：** 用 Frida spawn-gating 在 `JNI_OnLoad` 与反调试初始化前加载 agent，采集 `loadStart`、`loadSize`、私有 `soinfo`、program headers 与解密动态表；外层 `libjiagu` 映射或 APK 内 SO 资产不算私有 linker 证据。
-> - **表提取与验证：** IDA Pro MCP 从当前 fixed SO 导出 dispatcher/handler 表，需完整覆盖 0..255 且 SO 哈希一致；再用 Unicorn 对同一份 SO 做 AArch64 原生确认，要求 256/256 匹配、零非法内存、零未知外部调用。
-> - **DEX 恢复前置：** 仅当 inventory 中 `method_records > 0` 才进入方法级恢复；每个方法须引用合法、opcode 闭合、宽度完整、最终 PC 等于 `insns_size`；记录为 0 时须明确报告无可恢复方法，不得伪造 `vmp_repaired=true`。
-> - **验收与边界：** 独立运行 dexdump、JADX、Apktool、zipalign、apksigner 并记录真实退出码；重打包按当前 revision 生成 adapter，不按文件名批量删壳。遇未知偏移、ABI 不匹配等进入 `BLOCKED`，补充信息后用 `vmpwf resume` 从阶段边界恢复，不得手改 checkpoint。仅适用免费版学习研究，付费版不提供支持。
+> - **流程主线：** APK/运行时 DEX → spawn-gating dump 私有 linker → SoFixer 修复 → IDA Pro MCP 导出 dispatcher/handler 表 → Unicorn 确认 → 有 method records 时恢复 DEX → dexdump/JADX/Apktool 独立验收。
+> - **取证时序：** 必须用 Frida spawn-gating，在 JNI_OnLoad 与反调试初始化前采集 `loadStart`、`loadSize`、私有 soinfo、program headers 等；仅复制外层 libjiagu 映射或 APK 资产不算私有 linker 证据。
+> - **恢复前置条件：** 只有 `method_records>0` 才进入方法级恢复；每个方法须引用合法、宽度连续覆盖、最终 PC 等于 `insns_size`，记录为 0 时不得伪造 `vmp_repaired=true`。
+> - **双重验证：** IDA 只分析当前 revision 的 exact fixed SO 并区分 `image_base` 与 `pointer_base`；Unicorn 用同一份 SO 要求 256/256 匹配、零非法内存、零未知外部调用。
+> - **失败与边界：** 未知偏移、多 dispatcher 候选、root/ABI 不匹配等应写入结构化问题进入 `BLOCKED`，补最小信息后用 `vmpwf resume` 从阶段边界恢复，禁止手改 checkpoint。
 
 ## 前言
 
@@ -241,7 +241,5 @@ fixture 只能证明框架编排和文件合同，不能当作当前 APK 的语�
 只要链条中有一步无法由当前证据唯一确定，就保留原始产物并进入 `BLOCKED` ，等待补充最小信息后从阶段边界恢复。对于学习研究来说，这比得到一个无法解释、无法复现的“一键结果”更有价值。
 
 这套框架实测可以还原所有免费的程序，谢谢大家观看
-
-> 原帖后半部分需回复/点赞可见，未解锁
 
 [#逆向分析](https://bbs.kanxue.com/forum-161-1-118.htm) [#脱壳反混淆](https://bbs.kanxue.com/forum-161-1-122.htm)
