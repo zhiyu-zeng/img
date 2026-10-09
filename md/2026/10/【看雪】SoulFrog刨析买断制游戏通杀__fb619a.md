@@ -2,9 +2,9 @@
 title: 【看雪】SoulFrog刨析买断制游戏通杀
 source: https://bbs.kanxue.com/thread-293140.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:00:23+08:00
-trace_id: a955af9b-d589-40fc-b7a8-0f46704b1664
-content_hash: 50f3e9cd42607f6db571f5f82bb5a655db0762368bde6070f6c283c841bd9abd
+clip_date: 2026-10-10T00:06:37+08:00
+trace_id: 9525cfaa-54a5-4c45-90e3-d0c6d71cf224
+content_hash: 7e18d71cdfb866073efa885617d5623ec2d2397eea683ed2721918ae33f9d3ba
 status: synced
 tags:
   - 看雪
@@ -12,25 +12,25 @@ tags:
   - Hook
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 通过 Hook `HykbPaidChecker.checkLicense`，强制触发 listener 的 `onAllowEnter()`，可绕过买断制游戏校验并伪造用户信息。
+ai_summary: 通过 Hook 好游快爆等平台的买断制校验 SDK，直接反射调用成功回调 `onAllowEnter()`，即可通杀本体验证与 DLC 校验。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-8121-a752-c0a95424a658
+notion_page_id: 3f475244-d011-817b-b391-f99b129b16ea
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 通过 Hook `HykbPaidChecker.checkLicense`，强制触发 listener 的 `onAllowEnter()`，可绕过买断制游戏校验并伪造用户信息。
+> 通过 Hook 好游快爆等平台的买断制校验 SDK，直接反射调用成功回调 `onAllowEnter()`，即可通杀本体验证与 DLC 校验。
 > 
-> - **校验入口：** `HykbPaidChecker.checkLicense(activity, appId, publicKey, orientation, listener)` 为静态方法，listener 是核心回调对象。
-> - **回调行为：** `HykbCheckListener` 含 `onAllowEnter()` 表示校验成功、允许进入游戏，`onReject(code,errorMsg)` 表示失败；`orientation` 0 横屏、1 竖屏，SDK1441+ 支持。
-> - **Hook 逻辑：** 加载 `com.m3839.sdk.paid.HykbCheckListener` 并反射取 `onAllowEnter`；遍历 Hook `checkLicense`，取最后一个参数 listener，反射调用 `onAllowEnter()`，返回 null。
-> - **补充伪造：** 同时 Hook `getUser`，返回用户信息为空时反射构造假用户对象返回。
-> - **开源与范围：** SoulFrog 分 Xposed 版（master）和 LibXposed 版（libxposed）；已列支持爱剪辑、ES 文件浏览器、腾讯视频去水印、TapTap/好游快爆买断制游戏等，激励广告通杀代码暂未开放。
+> - **核心入口：** 静态方法 `HykbPaidChecker.checkLicense(activity, appId, publicKey, orientation, listener)`，其中 listener 是关键回调对象。
+> - **绕过手法：** Hook 该方法后取最后一个参数（`HykbCheckListener` 实例），反射调用其 `onAllowEnter()` 强制返回成功，方法本身返回 null。
+> - **回调定义：** 接口包名为 `com.m3839.sdk.paid.HykbCheckListener`，含 `onAllowEnter()`（放行）与 `onReject(int code, String errorMsg)`（拒绝）两个方法。
+> - **配套伪造：** 同时 Hook `getUser`，当用户名信息为空时反射构造假用户对象返回，避免空值导致后续逻辑异常。
+> - **覆盖范围：** 模块号称对好游快爆、TapTap 等多款买断制游戏（含 DLC）版本通杀，并支持支付免跳转、激励广告、会员功能、去水印等场景；激励广告通杀代码暂未开源。
 
 > 本文仅作 **技术研究学习**，请勿用于破解、绕过付费验证等侵权行为，任何违规使用产生的法律责任由使用者自行承担。
 
@@ -129,5 +129,3 @@ SoulFrog有不懂的想了解具体的hook点思路可以评论咨询我，有�
 | 破门 而入 | (本体验证+DLC) | com.khg.actionsquad.gamet |
 | 打造 世界 | (本体验证+DLC) | com.dekovir.CraftTheWorld3839 |
 | 潜水员 戴夫 | (本体验证+DLC) | com.xd.dave.tap.cn |
-
-> 原帖后半部分需回复/点赞可见，未解锁
