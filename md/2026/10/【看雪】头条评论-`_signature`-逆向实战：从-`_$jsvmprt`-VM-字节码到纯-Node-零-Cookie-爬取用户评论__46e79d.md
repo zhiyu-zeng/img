@@ -2,23 +2,23 @@
 title: 【看雪】头条评论 `_signature` 逆向实战：从 `_$jsvmprt` VM 字节码到纯 Node 零 Cookie 爬取用户评论
 source: https://bbs.kanxue.com/thread-293096.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:57:05+08:00
-trace_id: 1a6a592c-1f89-4512-a4a4-7c68b358f8b4
-content_hash: 0246b53e76d86a25f46ef04b9e154773c7fabe7726c2a6c698a138a8f867e1c1
+clip_date: 2026-10-10T00:02:22+08:00
+trace_id: 70a490d7-0f07-4223-bc34-4be7bb758d96
+content_hash: 8c388201ee7e1a6171443f9167aa0ce6a80fff581c877583d346f3ea1068dbfb
 status: synced
 tags:
   - 看雪
   - 协议分析
-  - 风控对抗
+  - Hook
 series: null
 feed_source: 看雪·逆向工程
-ai_summary: 头条评论 `_signature` 藏在 `_$jsvmprt` VM 字节码；补环境重放原脚本可纯 Node 零 Cookie 爬评论，消融测试证明 cookie 链非必需。
+ai_summary: 纯 Node 还原某资讯平台评论接口 `_signature`：识别出 acrawler SDK 是自研 VM 字节码后改走「补环境重放原脚本」，并用消融测试砍掉整条 cookie 反爬链。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-8170-b0b2-f0b2c48ddbf9
+notion_page_id: 3f475244-d011-818f-b3ec-fdc06a4d275a
 ioc:
   cves: []
   cwes: []
@@ -31,13 +31,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 头条评论 `_signature` 藏在 `_$jsvmprt` VM 字节码；补环境重放原脚本可纯 Node 零 Cookie 爬评论，消融测试证明 cookie 链非必需。
+> 纯 Node 还原某资讯平台评论接口 `_signature`：识别出 acrawler SDK 是自研 VM 字节码后改走「补环境重放原脚本」，并用消融测试砍掉整条 cookie 反爬链。
 > 
-> - **签名入口：** 评论接口 `/article/v4/tab_comments`，`_signature` 由 `byted_acrawler.sign({url})` 生成；算法在 `_$jsvmprt` VM 字节码中，非混淆，手写还原与单值分析均失败。
-> - **可行路线：** 用 Node `vm` 补 window/document/navigator/canvas 等环境，原样执行 71KB acrawler 并调 `sign()`；无需真实渲染，`sign` 仅认 `{url}` 或 `("", nonce)`。
-> - **消融测试：** 仅 `_signature`、加 Node 版 `__ac_signature`、完整浏览器 cookie 三组均 HTTP 200 + 20 条评论，证明 ttwid 等 cookie 链对评论接口非必需。
-> - **爬取数据：** 主评论 429 条，按 `offset` 分页，每页重签且签名秒级有效；字段坑：正文 `comment.text`，回复作者 `.user.name/.screen_name`、正文 `.content`；回复接口可拉满 146 条。
-> - **静态还原：** 字节码魔数 `HNOJ@?RC`，字符串 XOR 密钥 r=2，opcode 公式 `op=13*j%241`，操作数长度按原字节 `j` 查表；识别 XTEA 变种 + SDBM + 自定义 base64，128 位密钥未抠出。
+> - **保护定性：** `_$jsvmprt("484e4f…",[…])` 是自研栈式 JS 虚拟机 + hex 字节码，属编译产物而非混淆，外层无任何明文哈希，手写还原与单值结构分析两条路均死。
+> - **可行路线：** `vm.createContext` 伪造 window/global/navigator/canvas 等 33 个探测对象后原样执行 71KB 脚本，直接调 `sign({url})`；坑包括 global 未定义、误设 `exports/module/define` 被判成 Node、`getElementsByTagName` 须返回含元素数组、`sign` 不接受非空裸字符串。
+> - **消融测试：** 仅 `_signature`、加 Node 自造 `__ac_signature`、加完整浏览器 cookie 三组结果一致（HTTP 200 + 20 条评论），证明评论接口零 cookie、零 ttwid，服务端只校验 MAC 与格式而不验指纹真实性。
+> - **字节码格式：** 头部含魔数 `HNOJ@?RC`、XOR 密钥 r（样本=2）、代码区长度 21922B/11262 条指令与 682 条映射加密字符串池；opcode 解码为 `op = 13*j % 241`（13 与质数 241 互质构成双射），操作数长度须用原始字节 `j` 查 F 的 6 张表而非 `op`。
+> - **算法骨架：** 逆出 XTEA 变种（轮数 `6+52/len`、`(sum>>>2)&3` 选密钥、CBC 链式）、SDBM 家族（乘数 65599）与 30 位→5 字符的自定义 base64；剩 128 位内嵌密钥未抠出，故仍依赖原脚本，且 `_signature` 秒级时效、每页需重签。
 
 > 摘要：本文按时间顺序，完整记录一条"还原 `_signature` 并爬取评论"的逆向全过程。目标接口的签名藏在 **acrawler SDK** 里，而 acrawler 的算法本体是一台 **自研 JS 虚拟机 `_$jsvmprt` 解释的字节码**——不是混淆，是编译产物，肉眼不可读。两条常规路线（手写还原算法 / 分析签名值）全部走不通后，最终靠 **补环境 + 原脚本重放**，把 71KB 的 SDK 原样塞进 Node 的 `vm` 沙箱里跑起来，直接调用它的 `sign()` 产出有效签名。中途一个 **消融测试** 把整个任务砍掉了大半：实测评论接口 **只认 `_signature` 、零 cookie、零 ttwid**。本文把走通的、走不通的、以及补环境时踩的每一个坑，一五一十都写出来。全文分两半： **上半场** （§0~§10）讲怎么靠「补环境 + 消融测试」把评论爬下来； **下半场** （§11）回头把 VM 字节码拆开，还原出签名算法骨架
 
@@ -525,5 +525,3 @@ for (t = 0; t < a.length; t++) o[t] = a[t];        // 参数绑到数字键
 而贯穿全程的一条主线是： **先定位「生成代码」而非「分析值」，再判断「最小依赖」而非「整条反爬链」**。前者告诉你往哪走，后者告诉你不用走多远。很多时候，消融测试省下的工作量，比任何一步逆向都大。
 
 最后留一句给同行：字节系这类 `_$jsvmprt` 保护的 SDK， **别手写还原哈希**——那是拿头撞虚拟机。想「跑通」，补环境跑原脚本 + 消融测试定最小依赖，是性价比最高的路；想「看懂」，就拆 VM——破解字节码格式 → 反推 opcode 解码公式 → 建语义表反汇编 → 打通作用域链 → 识别算法家族，这条静态路也能走到算法骨架。两条路不冲突，一个务实，一个求真。每一层死路都会告诉你下一层该看哪里：手写还原的死路指向字节码，分析值的死路指向生成代码，而"要整套 cookie"的假设，被一次消融测试证伪。
-
-> 原帖后半部分需回复/点赞可见，未解锁
