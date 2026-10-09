@@ -2,9 +2,9 @@
 title: 【看雪】jcc记牌器java层和native层分析
 source: https://bbs.kanxue.com/thread-292938.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:53:20+08:00
-trace_id: bb15f03a-e315-40a2-9a9a-526ca30db52e
-content_hash: e27d42a1ee0fe4f3978094e6cd96c902e2f33ee5a6e4da23735319e3a364c045
+clip_date: 2026-10-09T23:55:26+08:00
+trace_id: fb045c3f-3c91-4ec9-ba45-46bc18f939bf
+content_hash: 8f222ea620735b6c5a73c2c0c08fb72bba80234fb580a7bb238b7fbd5805df6d
 status: synced
 tags:
   - 看雪
@@ -12,13 +12,13 @@ tags:
   - 游戏安全
 series: null
 feed_source: 看雪·Android安全
-ai_summary: 该记牌器为双进程架构：Java 侧只做 UI/root/授权/诊断，游戏读取与操作由注入目标进程的 libdemo.so 完成；概率钩子只读，不篡改随机结果。
+ai_summary: 对《jcc记牌器》APK 做 Java 层与 native 层完整分析，结论是它靠注入游戏进程只读取数据、并用游戏原生输入接口操作，全程不篡改任何随机概率。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-813a-a963-c533b12202d3
+notion_page_id: 3f475244-d011-81bb-bbe0-eaca20d26d2b
 ioc:
   cves: []
   cwes: []
@@ -31,13 +31,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 该记牌器为双进程架构：Java 侧只做 UI/root/授权/诊断，游戏读取与操作由注入目标进程的 libdemo.so 完成；概率钩子只读，不篡改随机结果。
+> 对《jcc记牌器》APK 做 Java 层与 native 层完整分析，结论是它靠注入游戏进程只读取数据、并用游戏原生输入接口操作，全程不篡改任何随机概率。
 > 
-> - **注入链路：** 经 su 提权，处理 SELinux context 与 mount namespace 逃逸，用 libinject.so 以 memfd 无文件方式注入 libdemo.so，最终以 IPC v2 是否 READY 判定注入成功。
-> - **IPC 协议：** Java 与 native 通过共享内存 + LocalSocket、JSON 帧通信；命令与推送分离，诊断另走共享内存页。
-> - **Native 分工：** libinject.so 负责 ptrace 注入，libdemo.so 是游戏内运行时；IL2CPP 方法用硬编码偏移表定位，装钩为自研 inline hook，借 eglSwapBuffers 画覆盖层、hook WriteInput 下发操作。
-> - **概率相关：** 核对 FRandom、装备随机、保底等钩子，均调用原函数并原值返回；指定海克斯/重铸是检测命中后下发合法操作，不是修改概率。
-> - **对手预测：** 每帧轮询 preMatchData，兜底 hook SelectHighScore，只读游戏已有配对结果；Java 侧仅按来源优先级与 matchId 选择显示。
+> - **双进程架构：** App 侧包名伪装成 `com.android.support`，只负责悬浮窗 UI、root、授权、诊断与 IPC；真正的游戏读取/预测/操作全在被注入游戏进程的 `libdemo.so` 里，Java 侧不做算法。
+> - **注入链路：** su 提权 + `setenforce 0` + mount namespace 逃逸（`nsenter --mount=/proc/1/ns/mnt`），由 `libinject.so`（基于 AndKittyInjector）用 memfd/dlopen_ext 无文件注入，成败最终以 IPC v2 握手（`isCppConnected()`）为准。
+> - **通信与渲染：** 共享内存 + LocalSocket 的 JSON 帧 IPC；覆盖层通过 hook `eglSwapBuffers` 直接画进游戏 GL 表面，自动操作则 hook `WriteInput` 构造游戏原生输入，因此不受触摸限制。
+> - **Native 实现：** IL2CPP 方法用硬编码偏移表（`0x566DD0`）定位而非按名解析，配自研 inline hook 引擎（非 Dobby/ShadowHook），字符串用 XOR 惰性解密，并有 `process_vm_readv` 自读探测防崩溃。
+> - **概率与操作结论：** 8 个随机相关钩子全部原值返回，全库唯一 `process_vm_writev` 只用于装钩和卖牌/换位；「指定海克斯/重铸」是检测命中后下发合法操作；对手预测实为每帧读 `preMatchData` 或钩 `SelectHighScore` 抄结果，不修改其返回值。
 
 | 项   | 值   |
 | --- | --- |
@@ -3131,4 +3131,6 @@ swap (%d,%d)->(%d,%d) ret=%d        swap skip: no move primitive
 
 顺带说明一个容易混淆的边界： **工具确实会修改游戏状态** （卖牌、换位、拿牌、刷新、重铸都是真操作），只是走的是游戏自己的操作接口，在引擎视角与玩家操作无异。这与「修改概率」是两回事——前者是操作，后者是篡改随机源，本样本做的是前者。
 
-> 原帖后半部分需回复/点赞可见，未解锁
+## 附件
+
+- [libdemo.so](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/attach/2026/10/ec0311d4ac95ef1c.so) （5.33MB，20次下载）
