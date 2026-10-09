@@ -5,7 +5,7 @@ source_host: mp.weixin.qq.com
 clip_date: 2026-10-05T19:10:00+08:00
 trace_id: 088437bb-5e38-4498-a947-ec633104b8e1
 content_hash: 1d17c8fb6fe92fb3e53186635a5e3bc42f0a8e33d2973f262aae6815fad213db
-status: summarized
+status: synced
 tags:
   - 微信
   - Frida
@@ -18,7 +18,7 @@ images_status:
   total: 19
   succeeded: 19
   failed_urls: []
-notion_page_id: null
+notion_page_id: 3f475244-d011-8120-897c-e4a803e81f64
 ioc:
   cves: []
   cwes: []
