@@ -2,9 +2,9 @@
 title: 【看雪】Kasada KPSDK：协议采集
 source: https://bbs.kanxue.com/thread-293027.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-10T00:22:47+08:00
-trace_id: 083fd6c4-e375-4fd4-a718-404eeac711ef
-content_hash: 9ccec10b559647e6192bccd58340d57c6d3503b9535fd4f4ef875455501f3bea
+clip_date: 2026-10-10T01:17:24+08:00
+trace_id: d0832494-318c-4056-b389-7313187dbca3
+content_hash: 011496f7d00ccb21185f6b66b76e215667fd709aacdd34609da7df3ad1d10348
 status: synced
 tags:
   - 看雪
@@ -18,7 +18,7 @@ images_status:
   total: 1
   succeeded: 1
   failed_urls: []
-notion_page_id: 3f475244-d011-816d-9d33-d6a8f276cc6d
+notion_page_id: 3f475244-d011-81df-a06d-d5b27444275d
 ioc: null
 ---
 
