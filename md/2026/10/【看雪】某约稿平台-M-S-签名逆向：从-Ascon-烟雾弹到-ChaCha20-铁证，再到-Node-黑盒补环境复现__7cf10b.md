@@ -2,35 +2,35 @@
 title: 【看雪】某约稿平台 M-S 签名逆向：从 "Ascon" 烟雾弹到 ChaCha20 铁证，再到 Node 黑盒补环境复现
 source: https://bbs.kanxue.com/thread-293164.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T19:10:24+08:00
-trace_id: 30d6c0eb-fd40-4c59-b553-0d830ccc9cdf
-content_hash: 677af5508d20ed0e166cf2c9e268de51635046091d3d9524654cc238378af9b1
+clip_date: 2026-10-10T00:17:23+08:00
+trace_id: dc145bc1-4d8d-4a61-8742-3cb3b96fb03d
+content_hash: 10f2f6fdd819e299805a17aeacf427a0afff5e9a22d6b95b22da62212af719cb
 status: synced
 tags:
   - 看雪
-  - 协议分析
-  - 密码学
+  - Android逆向
+  - Frida
 series: null
 feed_source: 看雪·逆向工程
-ai_summary: 某约稿平台请求头 `M-S` 签名由 Rust 编译的 WASM 生成，内部实为 ChaCha20 流加密，最终用 Node 补环境黑盒复现成功，无需浏览器与登录态。
+ai_summary: 目标站点的 `M-S` 签名由 Rust 编译的 WebAssembly 生成，内部为 ChaCha20 流加密；只需在 Node 里 mock 少量浏览器环境，即可黑盒复现签名，无需还原 wasm 内部逻辑。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-812d-a63b-c3007e7a2840
+notion_page_id: 3f475244-d011-8146-b55b-e56572aebd75
 ioc: null
 ---
 
 > 💡 **AI 总结（key-points）**
 >
-> 某约稿平台请求头 `M-S` 签名由 Rust 编译的 WASM 生成，内部实为 ChaCha20 流加密，最终用 Node 补环境黑盒复现成功，无需浏览器与登录态。
+> 目标站点的 `M-S` 签名由 Rust 编译的 WebAssembly 生成，内部为 ChaCha20 流加密；只需在 Node 里 mock 少量浏览器环境，即可黑盒复现签名，无需还原 wasm 内部逻辑。
 > 
-> - **定位手段：** 用改版 Firefox 工具 RuyiTrace 记录每次 DOM/BOM/WebAPI 调用，以 NDJSON 日志替代读混淆代码；grep `setRequestHeader` 直接拿到 `M-S`/`M-T` 真实样本，再由签名值首次出现处回溯到 `TextDecoder.decode` 与 wasm-bindgen 胶水层。
-> - **算法定性：** wasm 中 `js-.example-ascon` 字符串是烟雾弹，真正铁证是四个 i32 常量 `0x61707865`/`0x3320646e`/`0x79622d32`/`0x6b206574`，拼出 ChaCha20 初始化常量 `"expand 32-byte k"`；字符串 `expa` 在二进制中出现 0 次，说明魔数比字符串更可信。
-> - **环境依赖清单（补环境成败关键）：** 取 `link[rel*='icon']` 的 href 作指纹；`navigator.webdriver` 必须用 `Object.defineProperty` 设不可写，使 `Reflect.set` 返回 false 才放行；`crypto.getRandomValues` 每次 32 字节随机数（故签名不固定）；`process`/`node`/`require` 一律返回 0 以逼它走浏览器路径；mock 只放在 imports 边界，不污染 global。
-> - **签名输入：** `M-T = Math.floor(Date.now()/1000)`；签名只对 `encodeURI(config.url)` 的**路径**运算，不含 axios 的 query 参数，带上 `?topic_count=4` 即签错。
-> - **长度假警报：** `M-S 字符数 = (53 + url_len) / 3 * 4`，22 字节路径得 100 字符、40 字节得 124 字符，先前"少算 18 字节"的怀疑源于拿不同接口样本作基准。
+> - **工具选型：** 用改版 Firefox（RuyiTrace）记录 JS 运行时的 DOM/BOM/WebAPI 调用日志（本次主进程 24 万行），把"读混淆代码猜行为"变成"查运行时日志"。
+> - **算法定性：** 字符串 `ascon` 是烟雾弹；WAT 中精确命中四常量 `0x61707865 / 0x3320646e / 0x79622d32 / 0x6b206574`，即 `"expand 32-byte k"`，证实为 ChaCha20。
+> - **环境依赖：** 读取 `link[rel*='icon']` 的 href 作物指纹、`Reflect.set(navigator,"webdriver",true)` 须返回 false、`crypto.getRandomValues` 取 32 字节随机数（故同一 URL 每次签名不同）。
+> - **四个补环境坑：** navigator.webdriver 须用 defineProperty 设为不可写；不污染 global；令 `process/require/node/versions` 相关 import 返回 0 逼走浏览器路径；签名输入只用 path，不带 query。
+> - **验证与边界：** 带签名请求返回 200；两份字节不同的 wasm 产出相同固定片段；签名长度 = (53 + url_len)/3*4，未完成 key 派生（18 字节非标准 32 字节）与纯算法重构。
 
 > 目标站点： `http://www.example.com` · 目标参数：请求头 `M-S` （签名）与 `M-T` （时间戳）· 内部算法：ChaCha20 流加密 · 最终方案：Node.js 补环境 + WASM 黑盒 · 时间：2026-10
 
@@ -598,5 +598,3 @@ M-S = vXo5ihXchvKJ__QbuN2YvZmbtJVVthTQv1mMSVVLjh2a0IDM2MDM2YDO5EURaVFOahDOtQEO3I
 -   **完整还原 ChaCha20 变体**：补齐 key 派生方式（18 字节 → 32 字节的 pad/derive 规则）、nonce 与 counter 布局、base64 封装顺序，写出不依赖原 wasm 的纯算法实现。难度中等，纯体力活。
 -   **通用化补环境脚本**：把这次的 wasm-bindgen 胶水层适配做成模板，遇到同类"Rust→wasm 签名"能直接套。
 -   **反自动化检测的完整清单**：这次看到的是 `webdriver` 只读检测 + favicon 指纹 + `process` 探测，站点还可能有 `instanceof Window` 等，值得系统整理成一份"wasm 环境检测特征库"。
-
-> 原帖后半部分需回复/点赞可见，未解锁
