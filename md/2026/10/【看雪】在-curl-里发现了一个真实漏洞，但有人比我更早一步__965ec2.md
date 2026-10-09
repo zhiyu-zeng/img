@@ -2,9 +2,9 @@
 title: 【看雪】在 curl 里发现了一个真实漏洞，但有人比我更早一步
 source: https://bbs.kanxue.com/thread-292983.htm
 source_host: bbs.kanxue.com
-clip_date: 2026-10-09T18:56:16+08:00
-trace_id: cfa889c4-191d-446e-a26c-bb43922e9952
-content_hash: 19351d144072199966f6ce0ca26c4a1b866c7d6736d9f67380c9ce5a5f575501
+clip_date: 2026-10-09T23:58:21+08:00
+trace_id: 2222ebc0-15fa-41de-9845-9ccc8fae916b
+content_hash: 811456d6d4155d50b56d8d3d9242091b8b73391ad31560142f673416c81c6eb1
 status: synced
 tags:
   - 看雪
@@ -12,13 +12,13 @@ tags:
   - 协议分析
 series: null
 feed_source: 看雪·二进制漏洞
-ai_summary: 发现 curl 连接池在 Kerberos 认证下缺少凭据校验：Bob 能复用 Alice 已认证的连接。作者写出可跑 PoC 并提交 HackerOne，却因该问题早已被他人报告修复而判定 Duplicate。
+ai_summary: 作者在 curl 8.5.0 中发现 Kerberos 连接复用缺少凭据校验的真实漏洞，提交后因最新版已修复而被判重复报告。
 ai_summary_style: key-points
 images_status:
   total: 0
   succeeded: 0
   failed_urls: []
-notion_page_id: 3f475244-d011-81b0-8559-f7544f7587c1
+notion_page_id: 3f475244-d011-819d-a40e-f7f2bbe9afb7
 ioc:
   cves:
     - CVE-2014-0015
@@ -33,13 +33,13 @@ ioc:
 
 > 💡 **AI 总结（key-points）**
 >
-> 发现 curl 连接池在 Kerberos 认证下缺少凭据校验：Bob 能复用 Alice 已认证的连接。作者写出可跑 PoC 并提交 HackerOne，却因该问题早已被他人报告修复而判定 Duplicate。
+> 作者在 curl 8.5.0 中发现 Kerberos 连接复用缺少凭据校验的真实漏洞，提交后因最新版已修复而被判重复报告。
 > 
-> - **研究入口：** curl 25 年 188 个 CVE 中连接池复用问题反复出现（CVE-2014-0015 NTLM 凭据未校验、CVE-2016-0755 Proxy NTLM、CVE-2022-22576 OAuth token），据此推测 Kerberos 可能同样缺失检查。
-> - **根因：** conncache 的 hash key 仅为 port+hostname，不含凭据；HTTP 设 PROTOPT_CREDSPERREQUEST 跳过凭据检查属合理设计；NTLM 在 `ConnectionExists()` 中对 user/passwd/state 有保护，Kerberos 虽有 `http_negotiate_state` 等字段却无任何校验——GSS context 绑定连接，Bob 可复用 Alice 的已认证连接。
-> - **PoC：** Linux 上搭 krb5-kdc（realm TESTLAB.LOCAL），建 alice/bob 与 HTTP/localhost keytab，用 Python gssapi 写记录连接 GSS context 的服务端；切换用户后 `curl --negotiate` 输出 "Re-using existing connection"。
-> - **缓解不完整：** `lib/http_negotiate.c` 中单轮往返（MIT Kerberos 默认）会触发 cleanup，多轮往返（Windows AD/IIS）不清理；且 cleanup 位于 output 层 `Curl_output_negotiate()`，连接已复用后才执行。
-> - **结局与教训：** HackerOne 报告被判 Duplicate——8.20.0 已由 commit 34fa034d9a（2026 年 2 月，Zhicheng Chen）修复，方向与作者建议一致；应先确认最新版本、盯 commit history、加快提交。
+> - **漏洞根因：** `ConnectionExists()` 只对 NTLM 校验用户名/密码/状态，Kerberos 的 `http_negotiate_state` 字段存在却从未被检查；连接池 hash key 仅由 host+port 组成。
+> - **PoC 验证：** 搭建 Kerberos KDC 与 python-gssapi 测试服务器，alice 认证后 kdestroy 切为 bob，curl 输出 `Re-using existing connection`，服务端 GSS context 仍归属 alice。
+> - **部分缓解：** `lib/http_negotiate.c` 中 `noauthpersist` 会在单轮握手（MIT 默认）清理上下文，但清理发生在 output 层而非连接匹配层，Windows AD 多轮场景仍受影响。
+> - **重复判定：** curl 8.20.0 已由 commit `34fa034d9a` 修复（2026 年 2 月，Zhicheng Chen 报告），修复思路与作者建议一致，报告被标记为 Duplicate。
+> - **经验教训：** 动手前先确认最新版本是否仍存在该问题、跟踪 git commit history、尽早完成 PoC 以抢占时间。
 
 > **本文说明**
 > 
@@ -933,7 +933,5 @@ Duplicate、误报、已经修复的漏洞——这些其实都是研究过程�
 没关系。
 
 * * *
-
-> 原帖后半部分需回复/点赞可见，未解锁
 
 [#漏洞分析](https://bbs.kanxue.com/forum-150-1-153.htm) [#Linux](https://bbs.kanxue.com/forum-150-1-161.htm)
