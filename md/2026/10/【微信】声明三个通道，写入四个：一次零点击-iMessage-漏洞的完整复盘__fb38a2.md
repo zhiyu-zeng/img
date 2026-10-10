@@ -2,8 +2,8 @@
 title: 【微信】声明三个通道，写入四个：一次零点击 iMessage 漏洞的完整复盘
 source: https://mp.weixin.qq.com/s/iP7DxjhP0HRD26uYh7LKrg
 source_host: mp.weixin.qq.com
-clip_date: 2026-10-10T10:44:30+08:00
-trace_id: 7b501f1f-15b0-4f87-a98e-c996e012611d
+clip_date: 2026-10-10T17:17:48+08:00
+trace_id: 44c8a8db-07ff-415d-be77-d30f4299729e
 content_hash: 073733a39eab3583c9b3655d91fe9261c2be39019f98fbbb142ca5c262dc8c80
 status: synced
 tags:
@@ -11,14 +11,14 @@ tags:
   - 漏洞分析
   - iOS逆向
 series: null
-feed_source: 公众号聚合·Doonsec
+feed_source: null
 ai_summary: Apple 的 OpenEXR 解码器按三通道 RGB（12 字节/像素）分配缓冲区，却按四通道 RGBA（16 字节/像素）写入，每像素多写 4 字节，经 iMessage 后台缩略图生成实现零点击堆溢出。
 ai_summary_style: key-points
 images_status:
   total: 1
   succeeded: 1
   failed_urls: []
-notion_page_id: 3f575244-d011-81ae-a869-d252e99fac3d
+notion_page_id: 3f575244-d011-815f-a809-d6b0837837e5
 ioc:
   cves:
     - CVE-2026-86869
