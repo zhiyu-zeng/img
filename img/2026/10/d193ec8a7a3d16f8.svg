@@ -1,0 +1,244 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 640" width="1120" height="640" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+   <defs>
+    <marker viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#5b6472">
+     </path>
+    </marker>
+    <marker viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#c0392b">
+     </path>
+    </marker>
+   </defs>
+   <rect width="1120" height="640" fill="#f7f8fa">
+   </rect>
+   <text x="30" y="34" font-size="19" font-weight="bold" fill="#1f2733">
+    
+    
+    
+    Next.js未认证请求的四条入口与缺陷落点（2026-10-14批次）
+   </text>
+   <rect x="30" y="270" width="150" height="96" rx="10" fill="#1f2733">
+   </rect>
+   <text x="105" y="310" font-size="14" fill="#ffffff" text-anchor="middle">
+    
+    
+    
+    未认证
+   </text>
+   <text x="105" y="332" font-size="14" fill="#ffffff" text-anchor="middle">
+    
+    
+    
+    HTTP请求
+   </text>
+   <g font-size="13">
+    <rect x="250" y="72" width="250" height="76" rx="9" fill="#ffffff" stroke="#2c7be5" stroke-width="1.6">
+    </rect>
+    <text x="375" y="98" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     App Router + Cache Components
+    </text>
+    <text x="375" y="120" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     use cache返回多个typed array
+    </text>
+    <rect x="250" y="192" width="250" height="76" rx="9" fill="#ffffff" stroke="#2c7be5" stroke-width="1.6">
+    </rect>
+    <text x="375" y="218" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     Server Action端点
+    </text>
+    <text x="375" y="240" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     Next-Action + multipart/form-data
+    </text>
+    <rect x="250" y="332" width="250" height="76" rx="9" fill="#ffffff" stroke="#2c7be5" stroke-width="1.6">
+    </rect>
+    <text x="375" y="358" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     GET /_next/image
+    </text>
+    <text x="375" y="380" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     需dangerouslyAllowSVG: true
+    </text>
+    <rect x="250" y="472" width="250" height="76" rx="9" fill="#ffffff" stroke="#2c7be5" stroke-width="1.6">
+    </rect>
+    <text x="375" y="498" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     next/og · ImageResponse
+    </text>
+    <text x="375" y="520" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     仅Node.js运行时；Edge不受影响
+    </text>
+   </g>
+   <g font-size="13">
+    <rect x="570" y="72" width="270" height="76" rx="9" fill="#fdeceb" stroke="#c0392b" stroke-width="1.6">
+    </rect>
+    <text x="705" y="94" fill="#8c2620" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     RSC Flight反序列化缺陷
+    </text>
+    <text x="705" y="114" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     react-server-dom-* 19.0.0–19.3.0
+    </text>
+    <text x="705" y="134" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     GHSA-673q / GHSA-xqc2 · 无CVE
+    </text>
+    <rect x="570" y="192" width="270" height="76" rx="9" fill="#fff6e5" stroke="#d98c00" stroke-width="1.6">
+    </rect>
+    <text x="705" y="214" fill="#8a5a00" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     解析开销导致CPU耗尽
+    </text>
+    <text x="705" y="234" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     同进程请求排队 · 全站不可用
+    </text>
+    <text x="705" y="254" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     GHSA-p3m5 / GHSA-h3gv · 无CVE
+    </text>
+    <rect x="570" y="332" width="270" height="76" rx="9" fill="#fdeceb" stroke="#c0392b" stroke-width="1.6">
+    </rect>
+    <text x="705" y="354" fill="#8c2620" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     librsvg use-after-free
+    </text>
+    <text x="705" y="374" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     sharp → libvips → librsvg + libxml2
+    </text>
+    <text x="705" y="394" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     CVE-2026-96889（VectorFreed）
+    </text>
+    <rect x="570" y="472" width="270" height="76" rx="9" fill="#fdeceb" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="6 4">
+    </rect>
+    <text x="705" y="494" fill="#8c2620" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     Satori输出编码缺陷（CWE-116）
+    </text>
+    <text x="705" y="514" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     可控文本 → 被当作SVG标记
+    </text>
+    <text x="705" y="534" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     CVE-2026-94545 · 注入原语
+    </text>
+   </g>
+   <rect x="900" y="72" width="190" height="336" rx="12" fill="#c0392b">
+   </rect>
+   <text x="995" y="215" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">
+    
+    
+    
+    未授权
+   </text>
+   <text x="995" y="240" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">
+    
+    
+    
+    远程代码执行
+   </text>
+   <text x="995" y="266" font-size="12" fill="#ffd9d5" text-anchor="middle">
+    
+    
+    
+    CVSS 4.0 9.5
+   </text>
+   <rect x="900" y="440" width="190" height="96" rx="12" fill="#d98c00">
+   </rect>
+   <text x="995" y="480" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="bold">
+    
+    
+    
+    拒绝服务
+   </text>
+   <text x="995" y="502" font-size="12" fill="#fff2d6" text-anchor="middle">
+    
+    
+    
+    CVSS 4.0 8.2
+   </text>
+   <g stroke="#5b6472" stroke-width="1.5" fill="none" marker-end="url(#a)">
+    <path d="M180,290 C215,250 215,140 250,110">
+    </path>
+    <path d="M180,306 C215,290 215,240 250,230">
+    </path>
+    <path d="M180,330 C215,340 215,360 250,370">
+    </path>
+    <path d="M180,346 C215,400 215,480 250,504">
+    </path>
+   </g>
+   <g stroke="#5b6472" stroke-width="1.5" fill="none" marker-end="url(#a)">
+    <path d="M500,110 L570,110">
+    </path>
+    <path d="M500,230 L570,230">
+    </path>
+    <path d="M500,370 L570,370">
+    </path>
+    <path d="M500,510 L570,510">
+    </path>
+   </g>
+   <g stroke="#c0392b" stroke-width="1.7" fill="none" marker-end="url(#ar)">
+    <path d="M840,110 L900,140">
+    </path>
+    <path d="M840,370 L900,300">
+    </path>
+   </g>
+   <path d="M760,472 C760,440 780,430 800,412" stroke="#c0392b" stroke-width="1.7" fill="none" stroke-dasharray="6 4" marker-end="url(#ar)">
+   </path>
+   <path d="M840,230 L900,470" stroke="#d98c00" stroke-width="1.7" fill="none" marker-end="url(#a)">
+   </path>
+   <text x="30" y="606" font-size="12" fill="#6b7480">
+    
+    
+    
+    虚线：9月已修复的Satori注入原语与10月的原生内存缺陷构成同一图像渲染链上的两个环节。资料来源见正文参考文献。
+   </text>
+  </svg>

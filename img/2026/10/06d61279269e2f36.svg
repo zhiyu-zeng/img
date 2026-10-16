@@ -1,0 +1,310 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 648" width="1120" height="648" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+   <defs>
+    <marker viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#5b6472">
+     </path>
+    </marker>
+   </defs>
+   <rect width="1120" height="648" fill="#f7f8fa">
+   </rect>
+   <text x="30" y="34" font-size="19" font-weight="bold" fill="#1f2733">
+    
+    
+    
+    按版本线与暴露面的处置流程
+   </text>
+   <text x="40" y="72" font-size="13" font-weight="bold" fill="#6b7480">
+    
+    
+    
+    第一步：确认next版本落在哪一区间
+   </text>
+   <g font-size="12.5">
+    <rect x="40" y="90" width="340" height="118" rx="10" fill="#ffffff" stroke="#c0392b" stroke-width="1.7">
+    </rect>
+    <text x="210" y="114" text-anchor="middle" font-weight="bold" fill="#8c2620">
+     
+     
+     
+     16.0.0 – 16.4.0
+    </text>
+    <text x="210" y="138" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     三条全部命中
+    </text>
+    <text x="210" y="158" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     use cache RCE · SVG RCE · DoS
+    </text>
+    <text x="210" y="184" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     升级至16.4.1 · P0
+    </text>
+    <rect x="400" y="90" width="340" height="118" rx="10" fill="#ffffff" stroke="#d98c00" stroke-width="1.7">
+    </rect>
+    <text x="570" y="114" text-anchor="middle" font-weight="bold" fill="#8a5a00">
+     
+     
+     
+     15.5.0 – 15.5.27
+    </text>
+    <text x="570" y="138" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     命中SVG RCE与DoS
+    </text>
+    <text x="570" y="158" text-anchor="middle" fill="#c0392b">
+     
+     
+     
+     不含use cache（16.x特性）
+    </text>
+    <text x="570" y="184" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     升级至15.5.28后必须复验sharp
+    </text>
+    <rect x="760" y="90" width="320" height="118" rx="10" fill="#ffffff" stroke="#5b6472" stroke-width="1.7">
+    </rect>
+    <text x="920" y="114" text-anchor="middle" font-weight="bold" fill="#1f2733">
+     
+     
+     
+     10.0.0–14.x及其他16.x
+    </text>
+    <text x="920" y="138" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     仅受SVG RCE影响
+    </text>
+    <text x="920" y="158" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     DoS自13.0.0起亦命中
+    </text>
+    <text x="920" y="184" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     迁移至15.5.28或16.4.1
+    </text>
+   </g>
+   <text x="40" y="248" font-size="13" font-weight="bold" fill="#6b7480">
+    
+    
+    
+    第二步：判定暴露面，决定临时措施能否顶上
+   </text>
+   <g font-size="12.5">
+    <polygon points="210,264 400,308 210,352 20,308" fill="#eaf2fd" stroke="#2c7be5" stroke-width="1.6">
+    </polygon>
+    <text x="210" y="300" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     启用Cache Components
+    </text>
+    <text x="210" y="320" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     且有use cache返回多个typed array？
+    </text>
+    <rect x="440" y="276" width="300" height="64" rx="10" fill="#fdeceb" stroke="#c0392b" stroke-width="1.7">
+    </rect>
+    <text x="590" y="302" text-anchor="middle" fill="#8c2620" font-weight="bold">
+     
+     
+     
+     无任何workaround
+    </text>
+    <text x="590" y="324" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     官方要求立即升级，含无此函数者
+    </text>
+    <polygon points="210,384 400,428 210,472 20,428" fill="#eaf2fd" stroke="#2c7be5" stroke-width="1.6">
+    </polygon>
+    <text x="210" y="420" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     dangerouslyAllowSVG或
+    </text>
+    <text x="210" y="440" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     Node运行时下的next/og？
+    </text>
+    <rect x="440" y="392" width="316" height="76" rx="10" fill="#fff6e5" stroke="#d98c00" stroke-width="1.7">
+    </rect>
+    <text x="598" y="414" text-anchor="middle" fill="#8a5a00" font-weight="bold">
+     
+     
+     
+     可临时缓解（仅覆盖本条）
+    </text>
+    <text x="598" y="436" text-anchor="middle" fill="#4a5568" font-family="Menlo, Consolas, monospace" font-size="11">
+     
+     
+     
+     sharp.block({
+    </text>
+    <text x="598" y="454" text-anchor="middle" fill="#4a5568" font-family="Menlo, Consolas, monospace" font-size="11">
+     
+     
+     
+     operation:['VipsForeignLoadSvg']})
+    </text>
+    <polygon points="210,500 400,548 210,596 20,548" fill="#eaf2fd" stroke="#2c7be5" stroke-width="1.4">
+    </polygon>
+    <text x="210" y="540" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     存在 'use server'
+    </text>
+    <text x="210" y="560" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     （任一Server Action）？
+    </text>
+    <rect x="440" y="516" width="316" height="64" rx="10" fill="#fdeceb" stroke="#c0392b" stroke-width="1.7">
+    </rect>
+    <text x="590" y="540" text-anchor="middle" fill="#8c2620" font-weight="bold">
+     
+     
+     
+     WAF无法可靠拦截
+    </text>
+    <text x="590" y="562" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     RSC载荷结构合法 · 只能升级
+    </text>
+   </g>
+   <g stroke="#5b6472" stroke-width="1.6" fill="none" marker-end="url(#f)">
+    <path d="M400,308 L440,308">
+    </path>
+    <path d="M400,428 L440,428">
+    </path>
+    <path d="M400,548 L440,548">
+    </path>
+   </g>
+   <g font-size="11.5" fill="#6b7480">
+    <text x="416" y="300">
+     
+     
+     
+     是
+    </text>
+    <text x="416" y="420">
+     
+     
+     
+     是
+    </text>
+    <text x="416" y="540">
+     
+     
+     
+     是
+    </text>
+   </g>
+   <rect x="770" y="264" width="310" height="316" rx="10" fill="#1f2733">
+   </rect>
+   <text x="925" y="292" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    
+    
+    
+    第三步：闭环验收
+   </text>
+   <g font-size="12.5" fill="#cdd8e6">
+    <text x="792" y="322">
+     
+     
+     
+     1. 运行时核验，而非看package.json
+    </text>
+    <text x="806" y="344" font-family="Menlo, Consolas, monospace" fill="#8fd3ff" font-size="12">
+     
+     
+     
+     npm ls sharp
+    </text>
+    <text x="806" y="364" font-family="Menlo, Consolas, monospace" fill="#8fd3ff" font-size="11.5">
+     
+     
+     
+     node -e "…sharp.versions()"
+    </text>
+    <text x="792" y="392">
+     
+     
+     
+     2. lockfile已提交，CI构建不回退
+    </text>
+    <text x="792" y="416">
+     
+     
+     
+     3. 三条入口逐一重放，无崩溃/5xx/CPU异常
+    </text>
+    <text x="792" y="440">
+     
+     
+     
+     4. 若用过sharp.block，正式升级后移除
+    </text>
+    <text x="792" y="470" fill="#ffb4ad" font-weight="bold">
+     
+     
+     
+     5. 补丁窗口期内暴露过的应用
+    </text>
+    <text x="792" y="492" fill="#ffb4ad">
+     
+     
+     
+     按"已失陷"处置：轮换全部密钥
+    </text>
+    <text x="792" y="514" fill="#ffb4ad">
+     
+     
+     
+     排查持久化与异常外联
+    </text>
+    <text x="792" y="536" fill="#ffb4ad">
+     
+     
+     
+     吊销活跃会话
+    </text>
+    <text x="792" y="566" fill="#8b95a3" font-size="11.5">
+     
+     
+     
+     升级不能清除已植入的后门
+    </text>
+   </g>
+   <text x="40" y="634" font-size="12" fill="#6b7480">
+    
+    
+    
+    注：上表区间取自各公告的patched/affected范围；16.0.0在SVG RCE条目中使用严格大于号，实际判定建议按16.0.0一并纳入。资料来源见正文参考文献。
+   </text>
+  </svg>

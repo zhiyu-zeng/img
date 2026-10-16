@@ -1,0 +1,160 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 500" width="1120" height="500" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+   <defs>
+    <marker viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#2c7be5">
+     </path>
+    </marker>
+    <marker viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+     <path d="M0,0 L10,5 L0,10 z" fill="#c0392b">
+     </path>
+    </marker>
+   </defs>
+   <rect width="1120" height="500" fill="#f7f8fa">
+   </rect>
+   <text x="30" y="34" font-size="19" font-weight="bold" fill="#1f2733">
+    
+    
+    
+    修复的版本传导链：升级next不等于升级librsvg
+   </text>
+   <g font-size="13">
+    <rect x="40" y="90" width="190" height="96" rx="10" fill="#ffffff" stroke="#2c7be5" stroke-width="1.8">
+    </rect>
+    <text x="135" y="120" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     next
+    </text>
+    <text x="135" y="142" fill="#8c2620" text-anchor="middle">
+     
+     
+     
+     16.4.0 → 16.4.1
+    </text>
+    <text x="135" y="162" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     修复动作落在依赖层
+    </text>
+    <rect x="290" y="90" width="190" height="96" rx="10" fill="#ffffff" stroke="#2c7be5" stroke-width="1.8">
+    </rect>
+    <text x="385" y="120" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     sharp（依赖声明）
+    </text>
+    <text x="385" y="142" fill="#8c2620" text-anchor="middle">
+     
+     
+     
+     0.35.4 → ≥0.35.5
+    </text>
+    <text x="385" y="162" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     15.5.28仍接受0.34.x
+    </text>
+    <rect x="540" y="90" width="230" height="96" rx="10" fill="#ffffff" stroke="#2c7be5" stroke-width="1.8">
+    </rect>
+    <text x="655" y="114" fill="#1f2733" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     @img/sharp-libvips-*
+    </text>
+    <text x="655" y="136" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     预构建二进制捆绑包
+    </text>
+    <text x="655" y="156" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     libvips + 依赖 + librsvg
+    </text>
+    <rect x="830" y="90" width="250" height="96" rx="10" fill="#fdeceb" stroke="#c0392b" stroke-width="1.8">
+    </rect>
+    <text x="955" y="114" fill="#8c2620" text-anchor="middle" font-weight="bold">
+     
+     
+     
+     librsvg / libxml2
+    </text>
+    <text x="955" y="136" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     修复版2.63.1 / 2.63.2
+    </text>
+    <text x="955" y="156" fill="#4a5568" text-anchor="middle">
+     
+     
+     
+     CVE-2026-96889实际落点
+    </text>
+   </g>
+   <g stroke="#2c7be5" stroke-width="1.8" fill="none" marker-end="url(#d)">
+    <path d="M230,138 L290,138">
+    </path>
+    <path d="M480,138 L540,138">
+    </path>
+    <path d="M770,138 L830,138">
+    </path>
+   </g>
+   <rect x="40" y="240" width="1040" height="120" rx="10" fill="#fff6e5" stroke="#d98c00" stroke-width="1.8">
+   </rect>
+   <text x="60" y="268" font-size="14" font-weight="bold" fill="#8a5a00">
+    
+    
+    
+    两个最常见的处置失效点
+   </text>
+   <g font-size="13" fill="#4a5568">
+    <text x="60" y="296">
+     
+     
+     
+     ① 15.5.28的依赖区间允许受影响的sharp 0.34.x，覆盖安装后包管理器常保留lockfile里的旧版本 —— 表面已升级，SVG RCE仍未修复。
+    </text>
+    <text x="60" y="322">
+     
+     
+     
+     ② 只更新操作系统的librsvg无效：sharp预构建走 @img/sharp-libvips-* 自带副本，应用继续加载旧的缺陷库。
+    </text>
+    <text x="60" y="346">
+     
+     
+     
+     结论：验收标准必须是依赖树实际解析结果，而非package.json中的next版本号。
+    </text>
+   </g>
+   <rect x="40" y="390" width="1040" height="84" rx="10" fill="#1f2733">
+   </rect>
+   <text x="60" y="416" font-size="13" font-weight="bold" fill="#ffffff">
+    
+    
+    
+    核验命令
+   </text>
+   <text x="60" y="440" font-size="13" fill="#b9c6d8" font-family="SFMono-Regular, Menlo, Consolas, monospace">
+    
+    
+    
+    npm ls sharp @img/sharp-libvips-linux-x64
+   </text>
+   <text x="60" y="462" font-size="13" fill="#b9c6d8" font-family="SFMono-Regular, Menlo, Consolas, monospace">
+    
+    
+    
+    node -e "console.log(require('sharp').versions())"   # 运行时结果比lockfile更可信
+   </text>
+   <path d="M385,186 C385,210 300,215 200,240" stroke="#c0392b" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#dx)">
+   </path>
+  </svg>

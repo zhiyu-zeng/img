@@ -1,0 +1,232 @@
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 400" width="1120" height="400" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+   <rect width="1120" height="400" fill="#f7f8fa">
+   </rect>
+   <text x="30" y="34" font-size="19" font-weight="bold" fill="#1f2733">
+    
+    
+    
+    2026年8—10月：同一攻击面上的连续发现
+   </text>
+   <line x1="70" y1="210" x2="1060" y2="210" stroke="#b9c0ca" stroke-width="2.5">
+   </line>
+   <g font-size="12.5">
+    <circle cx="130" cy="210" r="7" fill="#5b6472">
+    </circle>
+    <text x="130" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     07-13
+    </text>
+    <rect x="60" y="240" width="150" height="90" rx="8" fill="#ffffff" stroke="#b9c0ca">
+    </rect>
+    <text x="135" y="262" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     确立月度
+    </text>
+    <text x="135" y="280" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     安全发布流程
+    </text>
+    <text x="135" y="306" text-anchor="middle" fill="#8b95a3">
+     
+     
+     
+     首批计划内发布
+    </text>
+    <circle cx="320" cy="210" r="8" fill="#c0392b">
+    </circle>
+    <text x="320" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     08-25
+    </text>
+    <rect x="240" y="56" width="170" height="116" rx="8" fill="#fdeceb" stroke="#c0392b">
+    </rect>
+    <text x="325" y="78" text-anchor="middle" fill="#8c2620" font-weight="bold">
+     
+     
+     
+     16.3.3 / 15.5.24
+    </text>
+    <text x="325" y="100" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     CVE-2026-75604
+    </text>
+    <text x="325" y="118" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     Windows路径穿越
+    </text>
+    <text x="325" y="140" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     AVIF优化RCE
+    </text>
+    <text x="325" y="160" text-anchor="middle" fill="#8b95a3">
+     
+     
+     
+     提前一天 · 禁用AVIF
+    </text>
+    <circle cx="520" cy="210" r="8" fill="#c0392b">
+    </circle>
+    <text x="520" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     09-22
+    </text>
+    <rect x="440" y="240" width="170" height="112" rx="8" fill="#fdeceb" stroke="#c0392b">
+    </rect>
+    <text x="525" y="262" text-anchor="middle" fill="#8c2620" font-weight="bold">
+     
+     
+     
+     16.3.6 / 15.5.26
+    </text>
+    <text x="525" y="284" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     CVE-2026-94545
+    </text>
+    <text x="525" y="302" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     next/og ImageResponse
+    </text>
+    <text x="525" y="320" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     Satori转义缺陷
+    </text>
+    <text x="525" y="340" text-anchor="middle" fill="#8b95a3">
+     
+     
+     
+     librsvg细节09-23公开
+    </text>
+    <circle cx="710" cy="210" r="7" fill="#5b6472">
+    </circle>
+    <text x="710" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     09-30
+    </text>
+    <rect x="640" y="56" width="150" height="112" rx="8" fill="#ffffff" stroke="#b9c0ca">
+    </rect>
+    <text x="715" y="80" text-anchor="middle" fill="#4a5568" font-weight="bold">
+     
+     
+     
+     16.3.7 / 15.5.27
+    </text>
+    <text x="715" y="102" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     9项例行修复
+    </text>
+    <text x="715" y="124" text-anchor="middle" fill="#c0392b">
+     
+     
+     
+     其中两项被推迟
+    </text>
+    <text x="715" y="144" text-anchor="middle" fill="#8b95a3">
+     
+     
+     
+     等待上游依赖
+    </text>
+    <circle cx="870" cy="210" r="7" fill="#2c7be5">
+    </circle>
+    <text x="870" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     10-08
+    </text>
+    <rect x="805" y="240" width="140" height="88" rx="8" fill="#eaf2fd" stroke="#2c7be5">
+    </rect>
+    <text x="875" y="266" text-anchor="middle" fill="#1c5bab" font-weight="bold">
+     
+     
+     
+     带外更新预告
+    </text>
+    <text x="875" y="290" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     2枚Critical
+    </text>
+    <text x="875" y="308" text-anchor="middle" fill="#4a5568">
+     
+     
+     
+     1枚High
+    </text>
+    <circle cx="1010" cy="210" r="10" fill="#c0392b">
+    </circle>
+    <text x="1010" y="192" text-anchor="middle" fill="#1f2733" font-weight="bold">
+     
+     
+     
+     10-14
+    </text>
+    <rect x="935" y="56" width="160" height="112" rx="8" fill="#c0392b">
+    </rect>
+    <text x="1015" y="80" text-anchor="middle" fill="#ffffff" font-weight="bold">
+     
+     
+     
+     16.4.1 / 15.5.28
+    </text>
+    <text x="1015" y="104" text-anchor="middle" fill="#ffd9d5">
+     
+     
+     
+     use cache RCE
+    </text>
+    <text x="1015" y="122" text-anchor="middle" fill="#ffd9d5">
+     
+     
+     
+     SVG RCE
+    </text>
+    <text x="1015" y="140" text-anchor="middle" fill="#ffd9d5">
+     
+     
+     
+     Server Actions DoS
+    </text>
+   </g>
+   <path d="M715,56 C715,20 900,16 1010,54" stroke="#d98c00" stroke-width="1.8" fill="none" stroke-dasharray="7 5">
+   </path>
+   <text x="862" y="18" font-size="12.5" fill="#8a5a00" text-anchor="middle">
+    
+    
+    
+    两项原定9月的修复，因上游依赖延迟推至10-14
+   </text>
+   <text x="30" y="386" font-size="12" fill="#6b7480">
+    
+    
+    
+    红色为Critical级RCE修复节点；蓝色为官方预告。资料来源见正文参考文献。
+   </text>
+  </svg>
