@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" role="img" aria-labelledby="title desc">
+<title id="title">Growing the test set</title>
+<desc id="desc">Test corpus sizes across recorded development checkpoints, from 8,100 to 408,708 cases. The vertical axis starts at zero. No accuracy percentage or elapsed time is represented.</desc>
+<rect width="1000" height="440" rx="12" fill="#f8fafc"/>
+<g font-family="system-ui, sans-serif" fill="#172238">
+<text x="40" y="42" font-size="25" font-weight="700">Growing the test set</text>
+<text x="40" y="69" font-size="15" fill="#526477">More positions, checked against the original DOS engine</text>
+<path d="M88 350.00H910" stroke="#dce5ed"/>
+<text x="73" y="355.00" text-anchor="end" font-size="14">0</text>
+<path d="M88 295.33H910" stroke="#dce5ed"/>
+<text x="73" y="300.33" text-anchor="end" font-size="14">100k</text>
+<path d="M88 240.67H910" stroke="#dce5ed"/>
+<text x="73" y="245.67" text-anchor="end" font-size="14">200k</text>
+<path d="M88 186.00H910" stroke="#dce5ed"/>
+<text x="73" y="191.00" text-anchor="end" font-size="14">300k</text>
+<path d="M88 131.33H910" stroke="#dce5ed"/>
+<text x="73" y="136.33" text-anchor="end" font-size="14">400k</text>
+<polygon points="88,350 88.00,345.57 112.91,345.57 137.82,345.57 162.73,345.57 187.64,343.39 212.55,343.39 237.45,341.20 262.36,341.20 287.27,339.01 312.18,336.83 337.09,336.83 362.00,334.64 386.91,334.64 411.82,332.45 436.73,332.45 461.64,330.27 486.55,328.08 511.45,328.08 536.36,325.89 561.27,323.71 586.18,323.71 611.09,319.33 636.00,314.96 660.91,314.96 685.82,310.59 710.73,310.59 735.64,306.21 760.55,306.21 785.45,301.84 810.36,279.97 835.27,258.11 860.18,247.17 885.09,126.91 910.00,126.57 910,350" fill="#176b9b" opacity="0.08"/>
+<polyline points="88.00,345.57 112.91,345.57 137.82,345.57 162.73,345.57 187.64,343.39 212.55,343.39 237.45,341.20 262.36,341.20 287.27,339.01 312.18,336.83 337.09,336.83 362.00,334.64 386.91,334.64 411.82,332.45 436.73,332.45 461.64,330.27 486.55,328.08 511.45,328.08 536.36,325.89 561.27,323.71 586.18,323.71 611.09,319.33 636.00,314.96 660.91,314.96 685.82,310.59 710.73,310.59 735.64,306.21 760.55,306.21 785.45,301.84 810.36,279.97 835.27,258.11 860.18,247.17 885.09,126.91 910.00,126.57" fill="none" stroke="#176b9b" stroke-width="3.5" stroke-linejoin="round"/>
+<circle cx="88.00" cy="345.57" r="3" fill="#176b9b"><title>Checkpoint 001: 8,100 test cases</title></circle>
+<circle cx="112.91" cy="345.57" r="3" fill="#176b9b"><title>Checkpoint 002: 8,100 test cases</title></circle>
+<circle cx="137.82" cy="345.57" r="3" fill="#176b9b"><title>Checkpoint 003: 8,100 test cases</title></circle>
+<circle cx="162.73" cy="345.57" r="3" fill="#176b9b"><title>Checkpoint 004: 8,100 test cases</title></circle>
+<circle cx="187.64" cy="343.39" r="3" fill="#176b9b"><title>Checkpoint 005: 12,100 test cases</title></circle>
+<circle cx="212.55" cy="343.39" r="3" fill="#176b9b"><title>Checkpoint 006: 12,100 test cases</title></circle>
+<circle cx="237.45" cy="341.20" r="3" fill="#176b9b"><title>Checkpoint 007: 16,100 test cases</title></circle>
+<circle cx="262.36" cy="341.20" r="3" fill="#176b9b"><title>Checkpoint 008: 16,100 test cases</title></circle>
+<circle cx="287.27" cy="339.01" r="3" fill="#176b9b"><title>Checkpoint 009: 20,100 test cases</title></circle>
+<circle cx="312.18" cy="336.83" r="3" fill="#176b9b"><title>Checkpoint 010: 24,100 test cases</title></circle>
+<circle cx="337.09" cy="336.83" r="3" fill="#176b9b"><title>Checkpoint 011: 24,100 test cases</title></circle>
+<circle cx="362.00" cy="334.64" r="3" fill="#176b9b"><title>Checkpoint 012: 28,100 test cases</title></circle>
+<circle cx="386.91" cy="334.64" r="3" fill="#176b9b"><title>Checkpoint 013: 28,100 test cases</title></circle>
+<circle cx="411.82" cy="332.45" r="3" fill="#176b9b"><title>Checkpoint 014: 32,100 test cases</title></circle>
+<circle cx="436.73" cy="332.45" r="3" fill="#176b9b"><title>Checkpoint 015: 32,100 test cases</title></circle>
+<circle cx="461.64" cy="330.27" r="3" fill="#176b9b"><title>Checkpoint 016: 36,100 test cases</title></circle>
+<circle cx="486.55" cy="328.08" r="3" fill="#176b9b"><title>Checkpoint 017: 40,100 test cases</title></circle>
+<circle cx="511.45" cy="328.08" r="3" fill="#176b9b"><title>Checkpoint 018: 40,100 test cases</title></circle>
+<circle cx="536.36" cy="325.89" r="3" fill="#176b9b"><title>Checkpoint 019: 44,100 test cases</title></circle>
+<circle cx="561.27" cy="323.71" r="3" fill="#176b9b"><title>Checkpoint 020: 48,100 test cases</title></circle>
+<circle cx="586.18" cy="323.71" r="3" fill="#176b9b"><title>Checkpoint 021: 48,100 test cases</title></circle>
+<circle cx="611.09" cy="319.33" r="3" fill="#176b9b"><title>Checkpoint 022: 56,100 test cases</title></circle>
+<circle cx="636.00" cy="314.96" r="3" fill="#176b9b"><title>Checkpoint 023: 64,100 test cases</title></circle>
+<circle cx="660.91" cy="314.96" r="3" fill="#176b9b"><title>Checkpoint 024: 64,100 test cases</title></circle>
+<circle cx="685.82" cy="310.59" r="3" fill="#176b9b"><title>Checkpoint 025: 72,100 test cases</title></circle>
+<circle cx="710.73" cy="310.59" r="3" fill="#176b9b"><title>Checkpoint 026: 72,100 test cases</title></circle>
+<circle cx="735.64" cy="306.21" r="3" fill="#176b9b"><title>Checkpoint 027: 80,100 test cases</title></circle>
+<circle cx="760.55" cy="306.21" r="3" fill="#176b9b"><title>Checkpoint 028: 80,100 test cases</title></circle>
+<circle cx="785.45" cy="301.84" r="3" fill="#176b9b"><title>Checkpoint 029: 88,100 test cases</title></circle>
+<circle cx="810.36" cy="279.97" r="3" fill="#176b9b"><title>Checkpoint 030: 128,100 test cases</title></circle>
+<circle cx="835.27" cy="258.11" r="3" fill="#176b9b"><title>Checkpoint 031: 168,100 test cases</title></circle>
+<circle cx="860.18" cy="247.17" r="3" fill="#176b9b"><title>Checkpoint 032: 188,100 test cases</title></circle>
+<circle cx="885.09" cy="126.91" r="3" fill="#176b9b"><title>Checkpoint 033: 408,100 test cases</title></circle>
+<circle cx="910.00" cy="126.57" r="3" fill="#176b9b"><title>Checkpoint 034: 408,708 test cases</title></circle>
+<text x="910" y="110.57" text-anchor="end" font-size="21" font-weight="700">408,708</text>
+<text x="88" y="379" font-size="13">First recorded checkpoint</text>
+<text x="910" y="379" text-anchor="end" font-size="13">Final validation</text>
+<text x="500" y="417" text-anchor="middle" font-size="13" fill="#526477">Development checkpoints · test count, not accuracy or elapsed time</text>
+</g></svg>
