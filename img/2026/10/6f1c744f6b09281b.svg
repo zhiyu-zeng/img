@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="530" viewBox="0 0 1120 530">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="black"/></marker></defs>
+<rect width="1120" height="530" fill="white"/>
+<text x="560" y="30" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="25" font-style="normal" fill="black">AES-128-CBC</text>
+<text x="200" y="80" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">P1</text>
+<polyline points="200,90 200,132" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<circle cx="200" cy="153" r="20" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200" y="160" text-anchor="middle" font-family="STIX Two Math,serif" font-size="24" font-style="normal" fill="black">⊕</text>
+<polyline points="200,174 200,206" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="120" y="206" width="160" height="66" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200.0" y="239.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">AES-128</text>
+<text x="200.0" y="263.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">shared key K</text>
+<polyline points="200,272 200,316" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="200" y="345" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">C1</text>
+<polyline points="200,299 375,299 375,153 514,153" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="535" y="80" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">P2</text>
+<polyline points="535,90 535,132" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<circle cx="535" cy="153" r="20" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="535" y="160" text-anchor="middle" font-family="STIX Two Math,serif" font-size="24" font-style="normal" fill="black">⊕</text>
+<polyline points="535,174 535,206" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="455" y="206" width="160" height="66" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="535.0" y="239.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">AES-128</text>
+<text x="535.0" y="263.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">shared key K</text>
+<polyline points="535,272 535,316" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="535" y="345" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">C2</text>
+<polyline points="535,299 710,299 710,153 849,153" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="870" y="80" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">P3</text>
+<polyline points="870,90 870,132" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<circle cx="870" cy="153" r="20" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="870" y="160" text-anchor="middle" font-family="STIX Two Math,serif" font-size="24" font-style="normal" fill="black">⊕</text>
+<polyline points="870,174 870,206" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="790" y="206" width="160" height="66" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="870.0" y="239.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">AES-128</text>
+<text x="870.0" y="263.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">shared key K</text>
+<polyline points="870,272 870,316" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="870" y="345" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">C3</text>
+<text x="56" y="161" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="24" font-style="italic" fill="black">IV</text>
+<polyline points="78,153 178,153" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="560" y="394" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="18" font-style="normal" fill="black">ONE AES BLOCK</text>
+<rect x="30" y="422" width="310" height="68" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="185.0" y="456.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">AddRoundKey</text>
+<text x="185.0" y="480.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">K0</text>
+<polyline points="340,456 404,456" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="405" y="422" width="310" height="68" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="560.0" y="456.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">9 full rounds</text>
+<text x="560.0" y="480.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">SB → SR → MC → ARK</text>
+<polyline points="715,456 779,456" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="780" y="422" width="310" height="68" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="935.0" y="456.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">Final round</text>
+<text x="935.0" y="480.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">SB → SR → ARK</text>
+</svg>

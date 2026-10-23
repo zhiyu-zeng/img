@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="black"/></marker></defs>
+<rect width="1100" height="430" fill="white"/>
+<text x="550" y="30" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="23" font-style="normal" fill="black">CORNER CONSTRUCTION</text>
+<rect x="20" y="170" width="150" height="74" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="95.0" y="207.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">Input byte</text>
+<text x="95.0" y="231.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">x = 01010011</text>
+<rect x="305" y="82" width="180" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="395.0" y="116.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">h00(x)</text>
+<polyline points="170,207 235,207 235,109 305,109" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="485,109 560,109 560,207 655,207" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="305" y="166" width="180" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="395.0" y="200.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">h53(x)</text>
+<polyline points="170,207 235,207 235,193 305,193" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="485,193 560,193 560,207 655,207" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="305" y="250" width="180" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="395.0" y="284.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">hA7(x)</text>
+<polyline points="170,207 235,207 235,277 305,277" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="485,277 560,277 560,207 655,207" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="305" y="334" width="180" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="395.0" y="368.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">hFF(x)</text>
+<polyline points="170,207 235,207 235,361 305,361" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="485,361 560,361 560,207 655,207" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="395" y="74" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="19" font-style="normal" fill="black">256 shared detectors</text>
+<rect x="655" y="170" width="195" height="74" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="752.5" y="207.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">Output matrix</text>
+<text x="752.5" y="231.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">8 output bits</text>
+<polyline points="850,207 907,207" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="907" y="170" width="175" height="74" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="994.5" y="207.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">Output byte</text>
+<text x="994.5" y="231.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">11101101 = ED</text>
+<text x="550" y="409" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="20" font-style="italic" fill="black">h53(x) = 1; all other detectors = 0</text>
+</svg>

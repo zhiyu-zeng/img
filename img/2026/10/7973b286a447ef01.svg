@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="460" viewBox="0 0 1120 460">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="black"/></marker></defs>
+<rect width="1120" height="460" fill="white"/>
+<text x="560" y="28" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="23" font-style="normal" fill="black">AES S-BOX COFACTOR: PREFIX 010100</text>
+<text x="255" y="70" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="18" font-style="normal" fill="black">CORNER EXPANSION</text>
+<text x="850" y="70" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="18" font-style="normal" fill="black">SHARED BOOLEAN TERMS</text>
+<rect x="65" y="105" width="270" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200.0" y="139.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">m00 = ¬u ∧ ¬v</text>
+<rect x="65" y="185" width="270" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200.0" y="219.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">m01 = ¬u ∧ v</text>
+<rect x="65" y="265" width="270" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200.0" y="299.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">m10 = u ∧ ¬v</text>
+<rect x="65" y="345" width="270" height="54" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="200.0" y="379.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">m11 = u ∧ v</text>
+<rect x="390" y="195" width="170" height="86" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="475.0" y="238.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="22" font-style="normal" fill="black">8 output sums</text>
+<text x="475.0" y="262.0" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="17" font-style="normal" fill="black">53 / D1 / 00 / ED</text>
+<polyline points="335,132 365,132 365,238 390,238" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="335,212 365,212 365,238 390,238" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="335,292 365,292 365,238 390,238" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="335,372 365,372 365,238 390,238" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="580,238 640,238" fill="none" stroke="black" stroke-width="1.3" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="680" y="110" width="270" height="58" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="815.0" y="146.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">q = u ∧ v</text>
+<rect x="680" y="205" width="270" height="58" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="815.0" y="241.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">r = 1 ⊕ u ⊕ q</text>
+<rect x="680" y="300" width="270" height="58" fill="white" stroke="black" stroke-width="1.4"/>
+<text x="815.0" y="336.0" text-anchor="middle" font-family="STIX Two Math,serif" font-size="22" font-style="normal" fill="black">t = ¬u ∧ ¬v</text>
+<text x="850" y="408" text-anchor="middle" font-family="Times New Roman,STIX Two Text,serif" font-size="23" font-style="italic" fill="black">S = (v, r, q, ¬u, q, q, t, r)</text>
+</svg>

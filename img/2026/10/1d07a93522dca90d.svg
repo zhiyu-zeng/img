@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1537" viewBox="0 0 1440 1537">
+<rect width="1440" height="1537" fill="white" />
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9" fill="black" /></marker></defs>
+<text x="720" y="46" font-family="Times New Roman,serif" font-size="31" text-anchor="middle" font-weight="bold" font-style="normal" fill="black">AES S-box: complete straight-line program</text>
+<text x="720" y="83" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">119 assignments; read each panel down columns, from left to right.</text>
+<rect x="38" y="116" width="1364" height="262" stroke="black" stroke-width="1" fill="white" />
+<text x="64" y="151" font-family="Times New Roman,serif" font-size="27" text-anchor="start" font-weight="bold" font-style="normal" fill="black">I   Input linear map</text>
+<text x="1376" y="151" font-family="Times New Roman,serif" font-size="23" text-anchor="end" font-weight="normal" font-style="normal" fill="black">23 XOR</text>
+<polyline points="60,165 1380,165" stroke="black" stroke-width="0.7" fill="none" />
+<text x="65" y="196" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y14 = x3 ⊕ x5</text>
+<text x="65" y="227" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y13 = x0 ⊕ x6</text>
+<text x="65" y="258" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y9 = x0 ⊕ x3</text>
+<text x="65" y="289" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y8 = x0 ⊕ x5</text>
+<text x="65" y="320" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t0 = x1 ⊕ x2</text>
+<text x="65" y="351" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y1 = t0 ⊕ x7</text>
+<text x="402" y="196" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y4 = y1 ⊕ x3</text>
+<text x="402" y="227" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y12 = y13 ⊕ y14</text>
+<text x="402" y="258" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y2 = y1 ⊕ x0</text>
+<text x="402" y="289" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y5 = y1 ⊕ x6</text>
+<text x="402" y="320" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y3 = y5 ⊕ y8</text>
+<text x="402" y="351" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t1 = x4 ⊕ y12</text>
+<text x="739" y="196" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y15 = t1 ⊕ x5</text>
+<text x="739" y="227" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y20 = t1 ⊕ x1</text>
+<text x="739" y="258" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y6 = y15 ⊕ x7</text>
+<text x="739" y="289" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y10 = y15 ⊕ t0</text>
+<text x="739" y="320" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y11 = y20 ⊕ y9</text>
+<text x="739" y="351" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y7 = x7 ⊕ y11</text>
+<text x="1076" y="196" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y17 = y10 ⊕ y11</text>
+<text x="1076" y="227" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y19 = y10 ⊕ y8</text>
+<text x="1076" y="258" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y16 = t0 ⊕ y11</text>
+<text x="1076" y="289" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y21 = y13 ⊕ y16</text>
+<text x="1076" y="320" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">y18 = x0 ⊕ y16</text>
+<rect x="38" y="402" width="1364" height="417" stroke="black" stroke-width="1" fill="white" />
+<text x="64" y="437" font-family="Times New Roman,serif" font-size="27" text-anchor="start" font-weight="bold" font-style="normal" fill="black">II   Nonlinear core</text>
+<text x="1376" y="437" font-family="Times New Roman,serif" font-size="23" text-anchor="end" font-weight="normal" font-style="normal" fill="black">30 XOR + 14 AND</text>
+<polyline points="60,451 1380,451" stroke="black" stroke-width="0.7" fill="none" />
+<text x="65" y="482" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t2 = y12 ∧ y15</text>
+<text x="65" y="513" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t3 = y3 ∧ y6</text>
+<text x="65" y="544" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t4 = t3 ⊕ t2</text>
+<text x="65" y="575" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t5 = y4 ∧ x7</text>
+<text x="65" y="606" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t6 = t5 ⊕ t2</text>
+<text x="65" y="637" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t7 = y13 ∧ y16</text>
+<text x="65" y="668" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t8 = y5 ∧ y1</text>
+<text x="65" y="699" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t9 = t8 ⊕ t7</text>
+<text x="65" y="730" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t10 = y2 ∧ y7</text>
+<text x="65" y="761" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t11 = t10 ⊕ t7</text>
+<text x="65" y="792" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t12 = y9 ∧ y11</text>
+<text x="402" y="482" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t13 = y14 ∧ y17</text>
+<text x="402" y="513" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t14 = t13 ⊕ t12</text>
+<text x="402" y="544" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t15 = y8 ∧ y10</text>
+<text x="402" y="575" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t16 = t15 ⊕ t12</text>
+<text x="402" y="606" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t17 = t4 ⊕ t14</text>
+<text x="402" y="637" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t18 = t6 ⊕ t16</text>
+<text x="402" y="668" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t19 = t9 ⊕ t14</text>
+<text x="402" y="699" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t20 = t11 ⊕ t16</text>
+<text x="402" y="730" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t21 = t17 ⊕ y20</text>
+<text x="402" y="761" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t22 = t18 ⊕ y19</text>
+<text x="402" y="792" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t23 = t19 ⊕ y21</text>
+<text x="739" y="482" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t24 = t20 ⊕ y18</text>
+<text x="739" y="513" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t25 = t21 ⊕ t22</text>
+<text x="739" y="544" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t26 = t21 ∧ t23</text>
+<text x="739" y="575" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t27 = t24 ⊕ t26</text>
+<text x="739" y="606" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t28 = t25 ∧ t27</text>
+<text x="739" y="637" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t29 = t28 ⊕ t22</text>
+<text x="739" y="668" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t30 = t23 ⊕ t24</text>
+<text x="739" y="699" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t31 = t22 ⊕ t26</text>
+<text x="739" y="730" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t32 = t31 ∧ t30</text>
+<text x="739" y="761" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t33 = t32 ⊕ t24</text>
+<text x="739" y="792" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t34 = t23 ⊕ t33</text>
+<text x="1076" y="482" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t35 = t27 ⊕ t33</text>
+<text x="1076" y="513" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t36 = t24 ∧ t35</text>
+<text x="1076" y="544" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t37 = t36 ⊕ t34</text>
+<text x="1076" y="575" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t38 = t27 ⊕ t36</text>
+<text x="1076" y="606" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t39 = t29 ∧ t38</text>
+<text x="1076" y="637" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t40 = t25 ⊕ t39</text>
+<text x="1076" y="668" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t41 = t40 ⊕ t37</text>
+<text x="1076" y="699" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t42 = t29 ⊕ t33</text>
+<text x="1076" y="730" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t43 = t29 ⊕ t40</text>
+<text x="1076" y="761" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t44 = t33 ⊕ t37</text>
+<text x="1076" y="792" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t45 = t42 ⊕ t41</text>
+<rect x="38" y="843" width="1364" height="231" stroke="black" stroke-width="1" fill="white" />
+<text x="64" y="878" font-family="Times New Roman,serif" font-size="27" text-anchor="start" font-weight="bold" font-style="normal" fill="black">III   Product layer</text>
+<text x="1376" y="878" font-family="Times New Roman,serif" font-size="23" text-anchor="end" font-weight="normal" font-style="normal" fill="black">18 AND</text>
+<polyline points="60,892 1380,892" stroke="black" stroke-width="0.7" fill="none" />
+<text x="65" y="923" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z0 = t44 ∧ y15</text>
+<text x="65" y="954" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z1 = t37 ∧ y6</text>
+<text x="65" y="985" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z2 = t33 ∧ x7</text>
+<text x="65" y="1016" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z3 = t43 ∧ y16</text>
+<text x="65" y="1047" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z4 = t40 ∧ y1</text>
+<text x="402" y="923" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z5 = t29 ∧ y7</text>
+<text x="402" y="954" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z6 = t42 ∧ y11</text>
+<text x="402" y="985" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z7 = t45 ∧ y17</text>
+<text x="402" y="1016" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z8 = t41 ∧ y10</text>
+<text x="402" y="1047" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z9 = t44 ∧ y12</text>
+<text x="739" y="923" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z10 = t37 ∧ y3</text>
+<text x="739" y="954" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z11 = t33 ∧ y4</text>
+<text x="739" y="985" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z12 = t43 ∧ y13</text>
+<text x="739" y="1016" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z13 = t40 ∧ y5</text>
+<text x="739" y="1047" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z14 = t29 ∧ y2</text>
+<text x="1076" y="923" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z15 = t42 ∧ y9</text>
+<text x="1076" y="954" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z16 = t45 ∧ y14</text>
+<text x="1076" y="985" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">z17 = t41 ∧ y8</text>
+<rect x="38" y="1098" width="1364" height="355" stroke="black" stroke-width="1" fill="white" />
+<text x="64" y="1133" font-family="Times New Roman,serif" font-size="27" text-anchor="start" font-weight="bold" font-style="normal" fill="black">IV   Output affine map</text>
+<text x="1376" y="1133" font-family="Times New Roman,serif" font-size="23" text-anchor="end" font-weight="normal" font-style="normal" fill="black">30 XOR + 4 NOT</text>
+<polyline points="60,1147 1380,1147" stroke="black" stroke-width="0.7" fill="none" />
+<text x="65" y="1178" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t46 = z15 ⊕ z16</text>
+<text x="65" y="1209" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t47 = z10 ⊕ z11</text>
+<text x="65" y="1240" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t48 = z5 ⊕ z13</text>
+<text x="65" y="1271" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t49 = z9 ⊕ z10</text>
+<text x="65" y="1302" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t50 = z2 ⊕ z12</text>
+<text x="65" y="1333" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t51 = z2 ⊕ z5</text>
+<text x="65" y="1364" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t52 = z7 ⊕ z8</text>
+<text x="65" y="1395" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t53 = z0 ⊕ z3</text>
+<text x="65" y="1426" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t54 = z6 ⊕ z7</text>
+<text x="402" y="1178" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t55 = z16 ⊕ z17</text>
+<text x="402" y="1209" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t56 = z12 ⊕ t48</text>
+<text x="402" y="1240" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t57 = t50 ⊕ t53</text>
+<text x="402" y="1271" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t58 = z4 ⊕ t46</text>
+<text x="402" y="1302" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t59 = z3 ⊕ t54</text>
+<text x="402" y="1333" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t60 = t46 ⊕ t57</text>
+<text x="402" y="1364" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t61 = z14 ⊕ t57</text>
+<text x="402" y="1395" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t62 = t52 ⊕ t58</text>
+<text x="402" y="1426" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t63 = t49 ⊕ t58</text>
+<text x="739" y="1178" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t64 = z4 ⊕ t59</text>
+<text x="739" y="1209" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t65 = t61 ⊕ t62</text>
+<text x="739" y="1240" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t66 = z1 ⊕ t63</text>
+<text x="739" y="1271" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s0 = t59 ⊕ t63</text>
+<text x="739" y="1302" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">n0 = ¬t62</text>
+<text x="739" y="1333" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s6 = t56 ⊕ n0</text>
+<text x="739" y="1364" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">n1 = ¬t60</text>
+<text x="739" y="1395" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s7 = t48 ⊕ n1</text>
+<text x="739" y="1426" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">t67 = t64 ⊕ t65</text>
+<text x="1076" y="1178" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s3 = t53 ⊕ t66</text>
+<text x="1076" y="1209" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s4 = t51 ⊕ t66</text>
+<text x="1076" y="1240" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s5 = t47 ⊕ t65</text>
+<text x="1076" y="1271" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">n2 = ¬s3</text>
+<text x="1076" y="1302" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s1 = t64 ⊕ n2</text>
+<text x="1076" y="1333" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">n3 = ¬t67</text>
+<text x="1076" y="1364" font-family="STIX Two Math,serif" font-size="26" text-anchor="start" font-weight="normal" font-style="normal" fill="black">s2 = t55 ⊕ n3</text>
+<text x="720" y="1510" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">x0 and s0 are the most significant bits.  Output order: s0, …, s7.</text>
+</svg>

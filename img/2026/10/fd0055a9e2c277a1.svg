@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="610" viewBox="0 0 1460 610">
+<rect width="1460" height="610" fill="white" />
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9" fill="black" /></marker></defs>
+<text x="730" y="46" font-family="Times New Roman,serif" font-size="31" text-anchor="middle" font-weight="bold" font-style="normal" fill="black">AES S-box: stage structure</text>
+<text x="730" y="82" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Boyar–Peralta connection adopted from BearSSL</text>
+<text x="130" y="172" font-family="Times New Roman,serif" font-size="23" text-anchor="start" font-weight="normal" font-style="normal" fill="black">I</text>
+<rect x="130" y="194" width="220" height="138" stroke="black" stroke-width="1.5" fill="white" />
+<text x="240" y="243" font-family="Times New Roman,serif" font-size="25" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Input linear map</text>
+<text x="240" y="287" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">23 XOR</text>
+<text x="450" y="172" font-family="Times New Roman,serif" font-size="23" text-anchor="start" font-weight="normal" font-style="normal" fill="black">II</text>
+<rect x="450" y="194" width="220" height="138" stroke="black" stroke-width="1.5" fill="white" />
+<text x="560" y="243" font-family="Times New Roman,serif" font-size="25" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Nonlinear core</text>
+<text x="560" y="287" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">30 XOR + 14 AND</text>
+<text x="770" y="172" font-family="Times New Roman,serif" font-size="23" text-anchor="start" font-weight="normal" font-style="normal" fill="black">III</text>
+<rect x="770" y="194" width="220" height="138" stroke="black" stroke-width="1.5" fill="white" />
+<text x="880" y="243" font-family="Times New Roman,serif" font-size="25" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Product layer</text>
+<text x="880" y="287" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">18 AND</text>
+<text x="1090" y="172" font-family="Times New Roman,serif" font-size="23" text-anchor="start" font-weight="normal" font-style="normal" fill="black">IV</text>
+<rect x="1090" y="194" width="220" height="138" stroke="black" stroke-width="1.5" fill="white" />
+<text x="1200" y="243" font-family="Times New Roman,serif" font-size="25" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Output affine map</text>
+<text x="1200" y="287" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">30 XOR + 4 NOT</text>
+<text x="48" y="249" font-family="Times New Roman,serif" font-size="29" text-anchor="middle" font-weight="normal" font-style="italic" fill="black">x</text>
+<text x="48" y="285" font-family="Times New Roman,serif" font-size="21" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">8 bits</text>
+<polyline points="79,263 130,263" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<polyline points="350,263 450,263" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<text x="400" y="302" font-family="Times New Roman,serif" font-size="21" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">u: 22 bits</text>
+<polyline points="670,263 770,263" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<text x="720" y="302" font-family="Times New Roman,serif" font-size="21" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">v: 9 bits</text>
+<polyline points="990,263 1090,263" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<text x="1040" y="302" font-family="Times New Roman,serif" font-size="21" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">z: 18 bits</text>
+<polyline points="1310,263 1372,263" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<text x="1405" y="249" font-family="Times New Roman,serif" font-size="29" text-anchor="middle" font-weight="normal" font-style="italic" fill="black">s</text>
+<text x="1405" y="285" font-family="Times New Roman,serif" font-size="21" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">8 bits</text>
+<circle cx="400" cy="263" r="3.4" fill="black" />
+<polyline points="400,263 400,118 880,118 880,194" stroke="black" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+<text x="640" y="109" font-family="Times New Roman,serif" font-size="22" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">18 selected bits of u</text>
+<text x="240" y="389" font-family="STIX Two Math,serif" font-size="27" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">u = A x</text>
+<text x="730" y="430" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">Linear maps are over GF(2); c = 0x63.</text>
+<polyline points="100,466 1360,466" stroke="black" stroke-width="0.9" fill="none" />
+<text x="730" y="508" font-family="Times New Roman,serif" font-size="25" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">119 operations: 83 XOR + 32 AND + 4 NOT</text>
+<text x="730" y="548" font-family="Times New Roman,serif" font-size="23" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">One fixed computation for all 256 input bytes</text>
+<text x="560" y="389" font-family="STIX Two Math,serif" font-size="27" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">v = G(u)</text><text x="880" y="389" font-family="STIX Two Math,serif" font-size="27" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">z = P(u, v)</text><text x="1200" y="389" font-family="STIX Two Math,serif" font-size="27" text-anchor="middle" font-weight="normal" font-style="normal" fill="black">s = B z ⊕ c</text></svg>
