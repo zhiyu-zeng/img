@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 979 466" width="979" role="img" aria-labelledby="cmTitle cmDesc"><style>
+    /* Self-contained, light-background palette. As an &lt;img&gt; this SVG is fully
+       sandboxed: these styles apply only inside this file and never touch the page. */
+    .b   { fill:#ffffff; stroke:#26313f; stroke-width:1.6; }
+    .rebox { fill:#fbfcfe; stroke:#26313f; stroke-width:1.6; }
+    .chip { fill:#ffffff; stroke:#26313f; stroke-width:1.3; }
+    .chipbad { fill:#fdf3f3; stroke:#d64545; stroke-width:1.6; }
+    .ln  { stroke:#26313f; stroke-width:1.7; fill:none; }
+    .arh { fill:#26313f; }
+    .lbl { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:18.5px; }
+    .fld { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:16.5px; }
+    .step { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-size:16.5px; }
+    .cap { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:16px; }
+    .acccap { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:16.5px; }
+    .badcap { fill:#c03535; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:16px; }
+    .redstrong { fill:#c03535; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:16.5px; }
+    .dot { fill:#26313f; }
+    .lockbody { fill:#2b56d4; }
+    .lockshackle { fill:none; stroke:#2b56d4; stroke-width:1.6; }
+    .lockbodybad { fill:#d64545; }
+    .lockshacklebad { fill:none; stroke:#d64545; stroke-width:1.6; }
+    text { text-anchor:middle; }
+    .l   { text-anchor:start; }
+  </style><defs><marker id="cmArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arh"/></marker></defs><rect class="b" x="326" y="18" width="327" height="48" rx="8"/><text class="lbl" x="489.5" y="48">&lt;telerik:RadImageEditor /&gt;</text><path class="ln" d="M489.5,66 V84"/><text class="cap" x="489.5" y="102">one tag becomes a widget with two halves</text><path class="ln" d="M489.5,110 V124"/><path class="ln" d="M199,124 H780"/><circle class="dot" cx="489.5" cy="124" r="3"/><line class="ln" x1="199" y1="124" x2="199" y2="150" marker-end="url(#cmArr)"/><line class="ln" x1="780" y1="124" x2="780" y2="150" marker-end="url(#cmArr)"/><rect class="rebox" x="16" y="152" width="366" height="236" rx="10"/><text class="lbl" x="199" y="180">SERVER half</text><rect class="chip" x="30" y="198" width="338" height="60" rx="6"/><text class="step" x="199" y="222">render: instantiate the control,</text><text class="step" x="199" y="244">emit encrypted _downloadKey</text><rect class="chipbad" x="30" y="278" width="338" height="94" rx="6"/><text class="step" x="199" y="302">postback: LoadClientState reads</text><text class="step" x="199" y="324">_ClientState, sets ImageUrl</text><text class="badcap" x="199" y="348">no decrypt, no MAC check</text><rect class="rebox" x="597" y="152" width="366" height="236" rx="10"/><text class="lbl" x="780" y="180">CLIENT half</text><text class="cap" x="780" y="204">HTML, JavaScript, and hidden state</text><rect class="chipbad" x="611" y="222" width="338" height="62" rx="6"/><text class="fld l" x="623" y="247">RadImageEditor1_ClientState</text><text class="badcap l" x="623" y="270" style="font-size:14.3px">plain JSON, unencrypted and unsigned</text><g transform="translate(929,242) scale(1.3)"><rect class="lockbodybad" x="-6" y="-4" width="12" height="9" rx="2"/><path class="lockshacklebad" d="M-3.5,-4 v-2.5 a3.5,3.5 0 0 1 6.8,-1.1"/><circle cx="0" cy="0.5" r="1.1" fill="#ffffff"/></g><rect class="chip" x="611" y="314" width="338" height="58" rx="6"/><text class="fld l" x="623" y="339">_downloadKey</text><text class="cap l" x="623" y="361">encrypted by the server</text><g transform="translate(929,334) scale(1.3)"><rect class="lockbody" x="-6" y="-4" width="12" height="9" rx="2"/><path class="lockshackle" d="M-3.5,-4 v-2.5 a3.5,3.5 0 0 1 7,0 v2.5"/><circle cx="0" cy="0.5" r="1.1" fill="#ffffff"/></g><line class="ln" x1="368" y1="228" x2="594" y2="228" marker-end="url(#cmArr)"/><text class="cap" x="482" y="219">emit _downloadKey</text><line class="ln" x1="597" y1="325" x2="371" y2="325" marker-end="url(#cmArr)"/><text class="cap" x="482" y="295">postback</text><text class="cap" x="482" y="316">poisoned _ClientState</text><text class="acccap" x="489.5" y="420">The _downloadKey the server sends out is encrypted.</text><text class="redstrong" x="489.5" y="447">The _ClientState it trusts back on postback is not.</text></svg>
