@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 838 280" width="838" role="img" aria-labelledby="csTitle csDesc">
+  <title id="csTitle">Splicing a forged tail onto a genuine _serializedConfiguration</title>
+  <desc id="csDesc">The genuine _serializedConfiguration ciphertext splits into a prefix (TargetFolder, TempTargetFolder, MaxFileSize, TimeToLive, CsrfToken, UAPI which is UseApplicationPoolImpersonation) plus the start of the AllowedFileExtensions key, all reused verbatim, and the rest of AllowedFileExtensions which is discarded. The cut falls inside the AllowedFileExtensions key. In the forged blob the reused portion is followed by a sacrificial block and a forged AllowedFileExtensions tail built with backwards-CBC. The CsrfToken inside the reused prefix is a live-session token carried over as-is.</desc>
+  <style>
+    .seggenuine { fill:#ffffff; stroke:#26313f; stroke-width:1.6; }
+    .segdrop    { fill:#eef1f6; stroke:#7b8794; stroke-width:1.3; }
+    .segdropx   { fill:#eef1f6; stroke:#7b8794; stroke-width:1.3; stroke-dasharray:6 4; }
+    .segsac     { fill:#fdeaea; stroke:#d64545; stroke-width:1.6; }
+    .segforge   { fill:#eaf0ff; stroke:#2b56d4; stroke-width:1.6; }
+    .hicsrf     { fill:#e6f4ea; stroke:#2f9e44; stroke-width:1.7; }
+    .seglbl     { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px; }
+    .seglblsac  { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+    .fldin      { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:10px; }
+    .fldinhi    { fill:#1e7a34; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:10px; }
+    .rowlbl     { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:13px; }
+    .code       { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:13px; }
+    .brk        { stroke:#556270; stroke-width:1.2; fill:none; }
+    .brkf       { stroke:#2b56d4; stroke-width:1.4; fill:none; }
+    .cap        { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11px; }
+    .capf       { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:11.5px; }
+    text        { text-anchor:middle; }
+    .l          { text-anchor:start; }
+  </style>
+
+  <text class="rowlbl l" x="16" y="62">original <tspan class="code">_serializedConfiguration</tspan></text>
+  <rect class="seggenuine" x="16" y="72" width="82" height="46" rx="4"/>
+  <text class="fldin" x="57" y="101">TargetFolder</text>
+  <rect class="seggenuine" x="98" y="72" width="108" height="46" rx="4"/>
+  <text class="fldin" x="152" y="101">TempTargetFolder</text>
+  <rect class="seggenuine" x="206" y="72" width="76" height="46" rx="4"/>
+  <text class="fldin" x="244" y="101">MaxFileSize</text>
+  <rect class="seggenuine" x="282" y="72" width="70" height="46" rx="4"/>
+  <text class="fldin" x="317" y="101">TimeToLive</text>
+  <rect class="seggenuine" x="352" y="72" width="64" height="46" rx="4"/>
+  <text class="fldin" x="384" y="101">CsrfToken</text>
+  <rect class="seggenuine" x="416" y="72" width="44" height="46" rx="4"/>
+  <text class="fldin" x="438" y="101">UAPI</text>
+  <rect class="segdrop" x="460" y="72" width="32" height="46" rx="4"/>
+  <rect class="segdropx" x="492" y="72" width="330" height="46" rx="6"/>
+  <text class="seglbl" x="641" y="100">AllowedFileExtensions</text>
+  <path class="brk" d="M16,124 L16,130 L492,130 L492,124"/>
+  <text class="cap" x="254" y="145">retained</text>
+  <path class="brk" d="M492,124 L492,130 L822,130 L822,124"/>
+  <text class="cap" x="657" y="145">discarded</text>
+
+  <text class="rowlbl l" x="16" y="174">forged <tspan class="code">_serializedConfiguration</tspan></text>
+  <rect class="seggenuine" x="16" y="184" width="82" height="46" rx="4"/>
+  <text class="fldin" x="57" y="213">TargetFolder</text>
+  <rect class="seggenuine" x="98" y="184" width="108" height="46" rx="4"/>
+  <text class="fldin" x="152" y="213">TempTargetFolder</text>
+  <rect class="seggenuine" x="206" y="184" width="76" height="46" rx="4"/>
+  <text class="fldin" x="244" y="213">MaxFileSize</text>
+  <rect class="seggenuine" x="282" y="184" width="70" height="46" rx="4"/>
+  <text class="fldin" x="317" y="213">TimeToLive</text>
+  <rect class="hicsrf" x="352" y="184" width="64" height="46" rx="4"/>
+  <text class="fldinhi" x="384" y="213">CsrfToken</text>
+  <rect class="seggenuine" x="416" y="184" width="44" height="46" rx="4"/>
+  <text class="fldin" x="438" y="213">UAPI</text>
+  <rect class="segdrop" x="460" y="184" width="32" height="46" rx="4"/>
+  <rect class="segsac" x="492" y="184" width="90" height="46" rx="6"/>
+  <text class="seglblsac" x="537" y="212">sacrificial</text>
+  <rect class="segforge" x="582" y="184" width="240" height="46" rx="6"/>
+  <text class="seglbl" x="702" y="212">forged AllowedFileExtensions</text>
+  <path class="brk" d="M16,236 L16,242 L492,242 L492,236"/>
+  <text class="cap" x="254" y="257">reused</text>
+  <path class="brkf" d="M492,236 L492,242 L822,242 L822,236"/>
+  <text class="capf" x="657" y="257">backwards-CBC</text>
+</svg>

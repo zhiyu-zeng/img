@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 32 690 580" width="860" height="723" role="img" aria-labelledby="padTitle padDesc">
+  <title id="padTitle">Valid and invalid PKCS#7 padding on 16-byte blocks</title>
+  <desc id="padDesc">Five decrypted 16-byte blocks. A block ending 02 02 and one ending 03 03 03 are valid. A block that is a full block of the byte 10 is valid, the padding added when the message is already a whole number of blocks. A block ending 03 03 02 is invalid because the last byte 02 requires the final two bytes to both be 02. A block whose last byte is 0xcc is invalid because 0xcc is not a valid padding length.</desc>
+  <style>
+    .cell { fill:#ffffff; stroke:#26313f; stroke-width:1.5; }
+    .good { fill:#2f9e44; fill-opacity:0.16; stroke:#2f9e44; stroke-width:1.5; }
+    .bad  { fill:#e03131; fill-opacity:0.16; stroke:#e03131; stroke-width:1.5; }
+    .hex  { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:13px; text-anchor:middle; }
+    .rule { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:12.5px; text-anchor:middle; }
+    .lb   { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:10.5px; text-anchor:middle; }
+    .sg   { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:11.5px; text-anchor:middle; }
+    .sb   { fill:#e03131; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:11.5px; text-anchor:middle; }
+    .vg   { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12.5px; }
+    .vb   { fill:#e03131; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12.5px; }
+    .rsn  { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; }
+    .brg  { stroke:#2f9e44; stroke-width:1.7; fill:none; }
+    .brb  { stroke:#e03131; stroke-width:1.7; fill:none; }
+    .ptr  { stroke:#556270; stroke-width:1.4; fill:none; }
+    text  { text-anchor:middle; }
+  </style>
+  <defs>
+    <marker id="pdArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#556270"/>
+    </marker>
+  </defs>
+  
+  <text class="lb" x="617.0" y="40">last byte = 02</text>
+  <line class="ptr" x1="617.0" y1="45" x2="617.0" y2="59" marker-end="url(#pdArr)"/>
+  <rect class="cell" x="30" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="47.0" y="84">74</text>
+  <rect class="cell" x="68" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="85.0" y="84">68</text>
+  <rect class="cell" x="106" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="123.0" y="84">69</text>
+  <rect class="cell" x="144" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="161.0" y="84">73</text>
+  <rect class="cell" x="182" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="199.0" y="84">69</text>
+  <rect class="cell" x="220" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="237.0" y="84">73</text>
+  <rect class="cell" x="258" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="275.0" y="84">70</text>
+  <rect class="cell" x="296" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="313.0" y="84">6b</text>
+  <rect class="cell" x="334" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="351.0" y="84">63</text>
+  <rect class="cell" x="372" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="389.0" y="84">73</text>
+  <rect class="cell" x="410" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="427.0" y="84">23</text>
+  <rect class="cell" x="448" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="465.0" y="84">37</text>
+  <rect class="cell" x="486" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="503.0" y="84">2d</text>
+  <rect class="cell" x="524" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="541.0" y="84">31</text>
+  <rect class="good" x="562" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="579.0" y="84">02</text>
+  <rect class="good" x="600" y="62" width="34" height="34" rx="5"/>
+  <text class="hex" x="617.0" y="84">02</text>
+  <path class="brg" d="M562,101 V107 H634 V101"/>
+  <path class="brg" d="M598.0,107 V111"/>
+  <text class="sg" x="598.0" y="123">2 padding bytes</text>
+  <text x="332.0" y="141"><tspan class="vg">good padding</tspan> <tspan class="rsn">(both padding bytes hold 02)</tspan></text>
+
+  
+  <text class="lb" x="617.0" y="154">last byte = 03</text>
+  <line class="ptr" x1="617.0" y1="159" x2="617.0" y2="173" marker-end="url(#pdArr)"/>
+  <rect class="cell" x="30" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="47.0" y="198">74</text>
+  <rect class="cell" x="68" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="85.0" y="198">68</text>
+  <rect class="cell" x="106" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="123.0" y="198">69</text>
+  <rect class="cell" x="144" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="161.0" y="198">73</text>
+  <rect class="cell" x="182" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="199.0" y="198">69</text>
+  <rect class="cell" x="220" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="237.0" y="198">73</text>
+  <rect class="cell" x="258" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="275.0" y="198">70</text>
+  <rect class="cell" x="296" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="313.0" y="198">6b</text>
+  <rect class="cell" x="334" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="351.0" y="198">63</text>
+  <rect class="cell" x="372" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="389.0" y="198">73</text>
+  <rect class="cell" x="410" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="427.0" y="198">23</text>
+  <rect class="cell" x="448" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="465.0" y="198">37</text>
+  <rect class="cell" x="486" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="503.0" y="198">2d</text>
+  <rect class="good" x="524" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="541.0" y="198">03</text>
+  <rect class="good" x="562" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="579.0" y="198">03</text>
+  <rect class="good" x="600" y="176" width="34" height="34" rx="5"/>
+  <text class="hex" x="617.0" y="198">03</text>
+  <path class="brg" d="M524,215 V221 H634 V215"/>
+  <path class="brg" d="M579.0,221 V225"/>
+  <text class="sg" x="579.0" y="237">3 padding bytes</text>
+  <text x="332.0" y="255"><tspan class="vg">good padding</tspan> <tspan class="rsn">(all three padding bytes hold 03)</tspan></text>
+
+  
+  <text class="lb" x="617.0" y="268">last byte = 10</text>
+  <line class="ptr" x1="617.0" y1="273" x2="617.0" y2="287" marker-end="url(#pdArr)"/>
+  <rect class="good" x="30" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="47.0" y="312">10</text>
+  <rect class="good" x="68" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="85.0" y="312">10</text>
+  <rect class="good" x="106" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="123.0" y="312">10</text>
+  <rect class="good" x="144" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="161.0" y="312">10</text>
+  <rect class="good" x="182" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="199.0" y="312">10</text>
+  <rect class="good" x="220" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="237.0" y="312">10</text>
+  <rect class="good" x="258" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="275.0" y="312">10</text>
+  <rect class="good" x="296" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="313.0" y="312">10</text>
+  <rect class="good" x="334" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="351.0" y="312">10</text>
+  <rect class="good" x="372" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="389.0" y="312">10</text>
+  <rect class="good" x="410" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="427.0" y="312">10</text>
+  <rect class="good" x="448" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="465.0" y="312">10</text>
+  <rect class="good" x="486" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="503.0" y="312">10</text>
+  <rect class="good" x="524" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="541.0" y="312">10</text>
+  <rect class="good" x="562" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="579.0" y="312">10</text>
+  <rect class="good" x="600" y="290" width="34" height="34" rx="5"/>
+  <text class="hex" x="617.0" y="312">10</text>
+  <path class="brg" d="M30,329 V335 H634 V329"/>
+  <path class="brg" d="M332.0,335 V339"/>
+  <text class="sg" x="332.0" y="351">16 padding bytes</text>
+  <text x="332.0" y="369"><tspan class="vg">good padding</tspan> <tspan class="rsn">(the message filled whole blocks, so a full block of 10 is added)</tspan></text>
+
+  
+  <text class="lb" x="617.0" y="382">last byte = 02</text>
+  <line class="ptr" x1="617.0" y1="387" x2="617.0" y2="401" marker-end="url(#pdArr)"/>
+  <rect class="cell" x="30" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="47.0" y="426">74</text>
+  <rect class="cell" x="68" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="85.0" y="426">68</text>
+  <rect class="cell" x="106" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="123.0" y="426">69</text>
+  <rect class="cell" x="144" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="161.0" y="426">73</text>
+  <rect class="cell" x="182" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="199.0" y="426">69</text>
+  <rect class="cell" x="220" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="237.0" y="426">73</text>
+  <rect class="cell" x="258" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="275.0" y="426">70</text>
+  <rect class="cell" x="296" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="313.0" y="426">6b</text>
+  <rect class="cell" x="334" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="351.0" y="426">63</text>
+  <rect class="cell" x="372" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="389.0" y="426">73</text>
+  <rect class="cell" x="410" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="427.0" y="426">23</text>
+  <rect class="cell" x="448" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="465.0" y="426">37</text>
+  <rect class="cell" x="486" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="503.0" y="426">2d</text>
+  <rect class="cell" x="524" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="541.0" y="426">03</text>
+  <rect class="bad" x="562" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="579.0" y="426">03</text>
+  <rect class="bad" x="600" y="404" width="34" height="34" rx="5"/>
+  <text class="hex" x="617.0" y="426">02</text>
+  <path class="brb" d="M562,443 V449 H634 V443"/>
+  <path class="brb" d="M598.0,449 V453"/>
+  <text class="sb" x="598.0" y="465">should be 2 padding bytes</text>
+  <text x="332.0" y="483"><tspan class="vb">bad padding</tspan> <tspan class="rsn">(the final two bytes are 03 02, not 02 02)</tspan></text>
+
+  
+  <text class="lb" x="617.0" y="496">last byte = cc</text>
+  <line class="ptr" x1="617.0" y1="501" x2="617.0" y2="515" marker-end="url(#pdArr)"/>
+  <rect class="cell" x="30" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="47.0" y="540">74</text>
+  <rect class="cell" x="68" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="85.0" y="540">68</text>
+  <rect class="cell" x="106" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="123.0" y="540">69</text>
+  <rect class="cell" x="144" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="161.0" y="540">73</text>
+  <rect class="cell" x="182" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="199.0" y="540">69</text>
+  <rect class="cell" x="220" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="237.0" y="540">73</text>
+  <rect class="cell" x="258" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="275.0" y="540">70</text>
+  <rect class="cell" x="296" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="313.0" y="540">6b</text>
+  <rect class="cell" x="334" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="351.0" y="540">63</text>
+  <rect class="cell" x="372" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="389.0" y="540">73</text>
+  <rect class="cell" x="410" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="427.0" y="540">23</text>
+  <rect class="cell" x="448" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="465.0" y="540">37</text>
+  <rect class="cell" x="486" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="503.0" y="540">2d</text>
+  <rect class="cell" x="524" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="541.0" y="540">31</text>
+  <rect class="cell" x="562" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="579.0" y="540">30</text>
+  <rect class="bad" x="600" y="518" width="34" height="34" rx="5"/>
+  <text class="hex" x="617.0" y="540">cc</text>
+  <text x="332.0" y="597"><tspan class="vb">bad padding</tspan> <tspan class="rsn">(0xcc is not a valid padding length, the max is 0x10)</tspan></text>
+</svg>

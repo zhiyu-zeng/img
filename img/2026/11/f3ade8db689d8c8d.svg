@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 769.16 144" width="715" role="img" aria-labelledby="t d">
+  <title id="t">Splicing the RadAsyncUpload config</title>
+  <desc id="d">1. The genuine config</desc>
+  <style>
+    .iv    { fill:#eef1f4; stroke:#8a97a5; stroke-width:1.5; stroke-dasharray:5 4; }
+    .big   { fill:#ffffff; stroke:#26313f; stroke-width:1.7; }
+    .padin { fill:#e7ebf0; stroke:#a7b0bd; stroke-width:1.1; }
+    .reuse { fill:#ffffff; stroke:#26313f; stroke-width:1.7; }
+    .sac   { fill:#fdeaea; stroke:#d64545; stroke-width:1.7; }
+    .forge { fill:#eaf0ff; stroke:#2b56d4; stroke-width:1.7; }
+    .padinf{ fill:#dbe4fb; stroke:#93aaf0; stroke-width:1.1; }
+    .scan  { fill:#f08c0026; stroke:#c76a00; stroke-width:1.7; }
+    .scang { fill:#2f9e4418; stroke:#2f9e44; stroke-width:1.9; }
+    .cut   { fill:none; stroke:#98a2b3; stroke-width:1.5; stroke-dasharray:5 4; }
+    .cutfill { fill:#f4f6f8; }
+    .json  { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:12px; text-anchor:start; }
+    .grn   { fill:#1f7a34; }
+    .dim   { fill:#b6bec9; }
+    .padlbl{ fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:10.5px; text-anchor:middle; }
+    .ivlbl { fill:#556270; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:12px; text-anchor:middle; }
+    .step  { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:14px; text-anchor:start; }
+    .scanl { fill:#c76a00; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:11.5px; text-anchor:middle; }
+    .cutl  { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12px; text-anchor:middle; }
+    .saclbl{ fill:#d64545; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12px; text-anchor:middle; }
+    .capr  { fill:#d64545; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:11.5px; text-anchor:middle; }
+    .capf  { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:11.5px; text-anchor:middle; }
+    .cap   { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; text-anchor:middle; }
+    .arw   { stroke:#c76a00; stroke-width:2; fill:none; }
+    text   { text-anchor:middle; }
+  </style>
+  <text class="step" x="20" y="34">1. The genuine config</text>
+  <rect class="iv" x="20" y="64" width="46" height="40" rx="6"/>
+  <text class="ivlbl" x="43.0" y="88.0">IV</text>
+  <rect class="big" x="80" y="64" width="671.16" height="40" rx="6"/>
+  <rect class="padin" x="704.16" y="69" width="40.0" height="30" rx="4"/>
+  <text class="padlbl" x="724.16" y="88.0">pad</text>
+  <text class="json" x="89" y="88.0">{…,"TempTargetFolder":"U2FsdGVk…d0E9",…,"AllowedFileExtensions":["jpg","png","gif"]}</text>
+
+</svg>

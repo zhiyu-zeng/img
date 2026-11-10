@@ -1,0 +1,268 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -18 1088 426" width="1088" height="426" role="img" aria-labelledby="rmTitle rmDesc">
+  <title id="rmTitle">Growing the pad to two valid bytes</title>
+  <desc id="rmDesc">The last controlled byte is pinned so the target block ends in 0x02, then the next byte to the left is cycled until the target ends in a valid two-byte pad 0x02 0x02. Its intermediate is recovered as the controlled byte XOR 0x02, and the real plaintext byte as the original ciphertext byte XOR the intermediate.</desc>
+  <style>
+    .b    { fill:#ffffff; stroke:#26313f; stroke-width:1.7; }
+    .ctl  { fill:#2b56d4; fill-opacity:0.12; stroke:#26313f; stroke-width:1.7; }
+    .cyc  { fill:#f08c00; fill-opacity:0.20; stroke:#f08c00; stroke-width:2; }
+    .pin  { fill:#6741d9; fill-opacity:0.16; stroke:#6741d9; stroke-width:2; }
+    .pad  { fill:#2f9e44; fill-opacity:0.16; stroke:#2f9e44; stroke-width:2; }
+    .ln   { stroke:#26313f; stroke-width:1.7; fill:none; }
+    .hx   { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:14px; }
+    .ch   { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:16px; }
+    .lblL { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:15px; text-anchor:start; }
+    .capL { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:13.5px; text-anchor:start; }
+    .capR { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:13.5px; text-anchor:end; }
+    .sg   { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:14px; text-anchor:middle; }
+    .sgr  { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:14px; text-anchor:end; }
+    .sa   { fill:#c76a00; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:13px; text-anchor:middle; }
+    .sp   { fill:#5f3dc4; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:13px; text-anchor:middle; }
+    .mono { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:14px; text-anchor:start; }
+    .brg  { stroke:#2f9e44; stroke-width:1.9; fill:none; }
+    .bra  { stroke:#f08c00; stroke-width:1.9; fill:none; }
+    .brp  { stroke:#6741d9; stroke-width:1.9; fill:none; }
+    .op   { fill:#2b56d4; font-family:ui-monospace,monospace; font-weight:700; font-size:24px; }
+    text  { text-anchor:middle; }
+    .colhdr  { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:16px; text-anchor:middle; letter-spacing:0.04em; }
+  </style>
+  <defs>
+    <marker id="rmA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#26313f"/></marker>
+    <marker id="rmAa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c76a00"/></marker>
+    <marker id="rmAp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5f3dc4"/></marker>
+  </defs>
+  <text class="colhdr" x="267.0" y="4">controlled block</text>
+  <text class="colhdr" x="817.0" y="4">target block</text>
+  <g opacity="0.38">
+  <line class="ln" x1="267.0" y1="106" x2="267.0" y2="130" marker-end="url(#rmA)"/>
+  <line class="ln" x1="267.0" y1="170" x2="267.0" y2="196" marker-end="url(#rmA)"/>
+  <line class="ln" x1="267.0" y1="226" x2="267.0" y2="256" marker-end="url(#rmA)"/>
+  <line class="ln" x1="267.0" y1="296" x2="267.0" y2="322" marker-end="url(#rmA)"/>
+  <circle class="b" cx="267.0" cy="150" r="20"/>
+  <g transform="translate(256.0,139) scale(1.1)"><path d="M4 8V6a6 6 0 1 1 12 0h-3v2h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z" fill="#26313f"/></g>
+  <rect class="b" x="12" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="27.0" y="216.0">1c</text>
+  <rect class="b" x="44" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="59.0" y="216.0">8a</text>
+  <rect class="b" x="76" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="91.0" y="216.0">35</text>
+  <rect class="b" x="108" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="123.0" y="216.0">d9</text>
+  <rect class="b" x="140" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="155.0" y="216.0">60</text>
+  <rect class="b" x="172" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="187.0" y="216.0">2f</text>
+  <rect class="b" x="204" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="219.0" y="216.0">b4</text>
+  <rect class="b" x="236" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="251.0" y="216.0">07</text>
+  <rect class="b" x="268" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="283.0" y="216.0">e8</text>
+  <rect class="b" x="300" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="315.0" y="216.0">53</text>
+  <rect class="b" x="332" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="347.0" y="216.0">9a</text>
+  <rect class="b" x="364" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="379.0" y="216.0">c1</text>
+  <rect class="b" x="396" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="411.0" y="216.0">76</text>
+  <rect class="b" x="428" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="443.0" y="216.0">0d</text>
+  <rect class="b" x="460" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="475.0" y="216.0">af</text>
+  <rect class="b" x="492" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="507.0" y="216.0">42</text>
+  <circle class="b" cx="267.0" cy="276" r="20"/>
+  <text class="op" x="267.0" y="285">⊕</text>
+  <rect class="b" x="12" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="27.0" y="342.0">4f</text>
+  <rect class="b" x="44" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="59.0" y="342.0">d2</text>
+  <rect class="b" x="76" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="91.0" y="342.0">18</text>
+  <rect class="b" x="108" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="123.0" y="342.0">7b</text>
+  <rect class="b" x="140" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="155.0" y="342.0">a6</text>
+  <rect class="b" x="172" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="187.0" y="342.0">30</text>
+  <rect class="b" x="204" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="219.0" y="342.0">ed</text>
+  <rect class="b" x="236" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="251.0" y="342.0">59</text>
+  <rect class="b" x="268" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="283.0" y="342.0">02</text>
+  <rect class="b" x="300" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="315.0" y="342.0">94</text>
+  <rect class="b" x="332" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="347.0" y="342.0">cb</text>
+  <rect class="b" x="364" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="379.0" y="342.0">67</text>
+  <rect class="b" x="396" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="411.0" y="342.0">1e</text>
+  <rect class="b" x="428" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="443.0" y="342.0">88</text>
+  <rect class="b" x="460" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="475.0" y="342.0">3a</text>
+  <rect class="b" x="492" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="507.0" y="342.0">f5</text>
+  <line class="ln" x1="201.0" y1="276" x2="247.0" y2="276" marker-end="url(#rmA)"/>
+  <text class="capR" x="193.0" y="281">IV</text>
+  <text class="capL" x="297.0" y="155">decryption</text>
+  <text class="lblL" x="12" y="186">intermediate1 (scrambled)</text>
+  <text class="lblL" x="12" y="312">plaintext1 (garbage)</text>
+  </g>
+  <rect class="ctl" x="12" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="27.0" y="96.0">3a</text>
+  <rect class="ctl" x="44" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="59.0" y="96.0">91</text>
+  <rect class="ctl" x="76" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="91.0" y="96.0">c2</text>
+  <rect class="ctl" x="108" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="123.0" y="96.0">04</text>
+  <rect class="ctl" x="140" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="155.0" y="96.0">5f</text>
+  <rect class="ctl" x="172" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="187.0" y="96.0">e8</text>
+  <rect class="ctl" x="204" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="219.0" y="96.0">17</text>
+  <rect class="ctl" x="236" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="251.0" y="96.0">6b</text>
+  <rect class="ctl" x="268" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="283.0" y="96.0">88</text>
+  <rect class="ctl" x="300" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="315.0" y="96.0">d0</text>
+  <rect class="ctl" x="332" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="347.0" y="96.0">22</text>
+  <rect class="ctl" x="364" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="379.0" y="96.0">f9</text>
+  <rect class="ctl" x="396" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="411.0" y="96.0">4e</text>
+  <rect class="ctl" x="428" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="443.0" y="96.0">1a</text>
+  <rect class="cyc" x="460" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="475.0" y="96.0">b1</text>
+  <rect class="pin" x="492" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="507.0" y="96.0">6a</text>
+  <text class="lblL" x="12" y="66">ciphertext1</text>
+  <text class="sp" x="507.0" y="30">pinned → 0x6a ⊕ 0x68 = 0x02</text>
+  <line class="brp" x1="507.0" y1="36" x2="507.0" y2="73" marker-end="url(#rmAp)"/>
+  <text class="sa" x="475.0" y="50">cycling</text>
+  <line class="bra" x1="475.0" y1="56" x2="475.0" y2="73" marker-end="url(#rmAa)"/>
+  <line class="ln" x1="817.0" y1="106" x2="817.0" y2="130" marker-end="url(#rmA)"/>
+  <line class="ln" x1="817.0" y1="170" x2="817.0" y2="196" marker-end="url(#rmA)"/>
+  <line class="ln" x1="817.0" y1="226" x2="817.0" y2="256" marker-end="url(#rmA)"/>
+  <line class="ln" x1="817.0" y1="296" x2="817.0" y2="322" marker-end="url(#rmA)"/>
+  <rect class="b" x="562" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="577.0" y="96.0">9f</text>
+  <rect class="b" x="594" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="609.0" y="96.0">2c</text>
+  <rect class="b" x="626" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="641.0" y="96.0">74</text>
+  <rect class="b" x="658" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="673.0" y="96.0">d1</text>
+  <rect class="b" x="690" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="705.0" y="96.0">08</text>
+  <rect class="b" x="722" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="737.0" y="96.0">bb</text>
+  <rect class="b" x="754" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="769.0" y="96.0">63</text>
+  <rect class="b" x="786" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="801.0" y="96.0">40</text>
+  <rect class="b" x="818" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="833.0" y="96.0">e7</text>
+  <rect class="b" x="850" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="865.0" y="96.0">15</text>
+  <rect class="b" x="882" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="897.0" y="96.0">aa</text>
+  <rect class="b" x="914" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="929.0" y="96.0">3c</text>
+  <rect class="b" x="946" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="961.0" y="96.0">90</text>
+  <rect class="b" x="978" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="993.0" y="96.0">5d</text>
+  <rect class="b" x="1010" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="1025.0" y="96.0">c8</text>
+  <rect class="b" x="1042" y="76" width="30" height="30" rx="4"/>
+  <text class="hx" x="1057.0" y="96.0">21</text>
+  <circle class="b" cx="817.0" cy="150" r="20"/>
+  <g transform="translate(806.0,139) scale(1.1)"><path d="M4 8V6a6 6 0 1 1 12 0h-3v2h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z" fill="#26313f"/></g>
+  <rect class="b" x="562" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="577.0" y="216.0">57</text>
+  <rect class="b" x="594" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="609.0" y="216.0">f4</text>
+  <rect class="b" x="626" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="641.0" y="216.0">e0</text>
+  <rect class="b" x="658" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="673.0" y="216.0">3e</text>
+  <rect class="b" x="690" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="705.0" y="216.0">7d</text>
+  <rect class="b" x="722" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="737.0" y="216.0">89</text>
+  <rect class="b" x="754" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="769.0" y="216.0">73</text>
+  <rect class="b" x="786" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="801.0" y="216.0">06</text>
+  <rect class="b" x="818" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="833.0" y="216.0">e1</text>
+  <rect class="b" x="850" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="865.0" y="216.0">be</text>
+  <rect class="b" x="882" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="897.0" y="216.0">00</text>
+  <rect class="b" x="914" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="929.0" y="216.0">84</text>
+  <rect class="b" x="946" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="961.0" y="216.0">4a</text>
+  <rect class="b" x="978" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="993.0" y="216.0">1e</text>
+  <rect class="b" x="1010" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="1025.0" y="216.0">b3</text>
+  <rect class="b" x="1042" y="196" width="30" height="30" rx="4"/>
+  <text class="hx" x="1057.0" y="216.0">68</text>
+  <circle class="b" cx="817.0" cy="276" r="20"/>
+  <text class="op" x="817.0" y="285">⊕</text>
+  <rect class="b" x="562" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="577.0" y="342.5">m</text>
+  <rect class="b" x="594" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="609.0" y="342.5">e</text>
+  <rect class="b" x="626" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="641.0" y="342.5">"</text>
+  <rect class="b" x="658" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="673.0" y="342.5">:</text>
+  <rect class="b" x="690" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="705.0" y="342.5">"</text>
+  <rect class="b" x="722" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="737.0" y="342.5">a</text>
+  <rect class="b" x="754" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="769.0" y="342.5">d</text>
+  <rect class="b" x="786" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="801.0" y="342.5">m</text>
+  <rect class="b" x="818" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="833.0" y="342.5">i</text>
+  <rect class="b" x="850" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="865.0" y="342.5">n</text>
+  <rect class="b" x="882" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="897.0" y="342.5">"</text>
+  <rect class="b" x="914" y="322" width="30" height="30" rx="4"/>
+  <text class="ch" x="929.0" y="342.5">}</text>
+  <rect class="b" x="946" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="961.0" y="342.0">04</text>
+  <rect class="b" x="978" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="993.0" y="342.0">04</text>
+  <rect class="pad" x="1010" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="1025.0" y="342.0">02</text>
+  <rect class="pad" x="1042" y="322" width="30" height="30" rx="4"/>
+  <text class="hx" x="1057.0" y="342.0">02</text>
+  <text class="lblL" x="562" y="66">ciphertext2</text>
+  <text class="lblL" x="562" y="186">intermediate2</text>
+  <text class="lblL" x="562" y="312">plaintext2</text>
+  <path class="brg" d="M1010,359 V366 H1072 V359"/>
+  <text class="sgr" x="1072" y="384">valid two-byte padding</text>
+  <text class="capL" x="853.0" y="146">recover the intermediate:</text>
+  <text class="mono" x="853.0" y="165">0xb1 ⊕ 0x02 = 0xb3</text>
+  <path class="ln" d="M923.0,174 H1025.0 V193" marker-end="url(#rmA)"/>
+  <text class="capL" x="853.0" y="272">recover the plaintext:</text>
+  <text class="mono" x="853.0" y="291">0xb7 ⊕ 0xb3 = 0x04</text>
+  <path class="ln" d="M923.0,300 H1025.0 V319" marker-end="url(#rmA)"/>
+  <path class="ln" d="M522,91.0 H542.0 V276 H797.0" marker-end="url(#rmA)"/>
+  <text class="capL" x="550.0" y="266">controlled ciphertext1</text>
+</svg>

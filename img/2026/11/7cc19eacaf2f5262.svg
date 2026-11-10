@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 856.04 184" width="796" role="img" aria-labelledby="t d">
+  <title id="t">Splicing the RadAsyncUpload config</title>
+  <desc id="d">4. Splice in the payload</desc>
+  <style>
+    .iv    { fill:#eef1f4; stroke:#8a97a5; stroke-width:1.5; stroke-dasharray:5 4; }
+    .big   { fill:#ffffff; stroke:#26313f; stroke-width:1.7; }
+    .padin { fill:#e7ebf0; stroke:#a7b0bd; stroke-width:1.1; }
+    .reuse { fill:#ffffff; stroke:#26313f; stroke-width:1.7; }
+    .sac   { fill:#fdeaea; stroke:#d64545; stroke-width:1.7; }
+    .forge { fill:#eaf0ff; stroke:#2b56d4; stroke-width:1.7; }
+    .padinf{ fill:#dbe4fb; stroke:#93aaf0; stroke-width:1.1; }
+    .scan  { fill:#f08c0026; stroke:#c76a00; stroke-width:1.7; }
+    .scang { fill:#2f9e4418; stroke:#2f9e44; stroke-width:1.9; }
+    .cut   { fill:none; stroke:#98a2b3; stroke-width:1.5; stroke-dasharray:5 4; }
+    .cutfill { fill:#f4f6f8; }
+    .json  { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:12px; text-anchor:start; }
+    .grn   { fill:#1f7a34; }
+    .dim   { fill:#b6bec9; }
+    .padlbl{ fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:10.5px; text-anchor:middle; }
+    .ivlbl { fill:#556270; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:12px; text-anchor:middle; }
+    .step  { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:14px; text-anchor:start; }
+    .scanl { fill:#c76a00; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:11.5px; text-anchor:middle; }
+    .cutl  { fill:#2f9e44; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12px; text-anchor:middle; }
+    .saclbl{ fill:#d64545; font-family:system-ui,-apple-system,sans-serif; font-weight:700; font-size:12px; text-anchor:middle; }
+    .capr  { fill:#d64545; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:11.5px; text-anchor:middle; }
+    .capf  { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:11.5px; text-anchor:middle; }
+    .cap   { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; text-anchor:middle; }
+    .arw   { stroke:#c76a00; stroke-width:2; fill:none; }
+    text   { text-anchor:middle; }
+  </style>
+  <text class="step" x="20" y="34">4. Splice in the payload</text>
+  <rect class="iv" x="20" y="78" width="46" height="40" rx="6"/>
+  <text class="ivlbl" x="43.0" y="102.0">IV</text>
+  <rect class="reuse" x="80" y="78" width="385.48" height="40" rx="6"/>
+  <rect class="sac" x="465.48" y="78" width="57.92000000000007" height="40"/>
+  <rect class="forge" x="523.4000000000001" y="78" width="314.6399999999999" height="40" rx="6"/>
+  <rect class="padinf" x="791.04" y="83" width="40.0" height="30" rx="4"/>
+  <text class="padlbl" x="811.04" y="102.0">pad</text>
+  <text class="json" x="89" y="102.0">{…,"TempTargetFolder":"U2FsdGVk…d0E9",…,"AllowedFileq9%Kf2#z":0,"AllowedFileExtensions":["dll"]}</text>
+  <text class="saclbl" x="494.44000000000005" y="62">sacrificial block</text>
+  <path class="arw" style="stroke:#d64545" d="M494.44000000000005,66 V76"/>
+  <path fill="#d64545" d="M494.44000000000005,78 l-4.5,-8 h9 z"/>
+  <text class="cap" x="272.74" y="138">reused prefix</text>
+  <text class="capf" x="680.72" y="138">forged tail (backwards-CBC)</text>
+  <text class="cap" x="428.02" y="160">the genuine key becomes the harmless junk key "AllowedFileq9%Kf2#z", so only the appended AllowedFileExtensions is seen</text>
+
+</svg>

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 452" width="860" height="398" role="img" aria-labelledby="cbcTitle cbcDesc">
+  <title id="cbcTitle">CBC decryption of three chained blocks, with padding on the last block</title>
+  <desc id="cbcDesc">Three ciphertext blocks Ct[1], Ct[2] and Ct[3] are each run through AES decryption with the secret key, producing D(Ct[1]), D(Ct[2]) and D(Ct[3]). Each is XORed with the previous ciphertext block to give the plaintext blocks P[1], P[2] and P[3]. The initialization vector feeds the first XOR. The last plaintext block P[3] ends in PKCS#7 padding, and whether that padding is valid is the only thing the oracle reveals.</desc>
+  <style>
+    /* Self-contained, light-background palette. As an &lt;img&gt; this SVG is fully
+       sandboxed: these styles apply only inside this file and never touch the page. */
+    .b    { fill:#ffffff; stroke:#26313f; stroke-width:1.6; }
+    .pad  { fill:#2b56d4; fill-opacity:0.18; stroke:#2b56d4; stroke-width:1.6; }
+    .ln   { stroke:#26313f; stroke-width:1.5; fill:none; }
+    .arh  { fill:#26313f; }
+    .lbl  { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:16px; }
+    .cap  { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11px; }
+    .acccap { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:12px; }
+    .op   { fill:#2b56d4; font-family:ui-monospace,monospace; font-weight:700; font-size:22px; }
+    .dot  { fill:#26313f; }
+    text  { text-anchor:middle; }
+  </style>
+  <defs>
+    <marker id="cbcArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" class="arh"/>
+    </marker>
+  </defs>
+
+  
+  
+  <line class="ln" x1="290" y1="80" x2="290" y2="131" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="545" y1="80" x2="545" y2="131" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="800" y1="80" x2="800" y2="131" marker-end="url(#cbcArr)"/>
+  
+  <line class="ln" x1="290" y1="191" x2="290" y2="240" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="545" y1="191" x2="545" y2="240" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="800" y1="191" x2="800" y2="240" marker-end="url(#cbcArr)"/>
+  
+  <line class="ln" x1="290" y1="282" x2="290" y2="320" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="545" y1="282" x2="545" y2="320" marker-end="url(#cbcArr)"/>
+  <line class="ln" x1="800" y1="282" x2="800" y2="320" marker-end="url(#cbcArr)"/>
+  
+  <path class="ln" d="M86,80 L86,262 L270,262" marker-end="url(#cbcArr)"/>
+  
+  <path class="ln" d="M290,98 L417,98 L417,262 L525,262" marker-end="url(#cbcArr)"/>
+  
+  <path class="ln" d="M545,98 L672,98 L672,262 L780,262" marker-end="url(#cbcArr)"/>
+  
+  <circle class="dot" cx="290" cy="98" r="3"/>
+  <circle class="dot" cx="545" cy="98" r="3"/>
+
+  
+  <rect class="b" x="11" y="20" width="150" height="60" rx="8"/>
+  <text class="lbl" x="86" y="47">IV</text>
+  <text class="cap" x="86" y="66">Initialization Vector</text>
+
+  <rect class="b" x="215" y="20" width="150" height="60" rx="8"/>
+  <text class="lbl" x="290" y="47">C<tspan baseline-shift="sub" font-size="70%">t</tspan>[1]</text>
+  <text class="cap" x="290" y="66">ciphertext block 1</text>
+
+  <rect class="b" x="470" y="20" width="150" height="60" rx="8"/>
+  <text class="lbl" x="545" y="47">C<tspan baseline-shift="sub" font-size="70%">t</tspan>[2]</text>
+  <text class="cap" x="545" y="66">ciphertext block 2</text>
+
+  <rect class="b" x="725" y="20" width="150" height="60" rx="8"/>
+  <text class="lbl" x="800" y="47">C<tspan baseline-shift="sub" font-size="70%">t</tspan>[3]</text>
+  <text class="cap" x="800" y="66">ciphertext block 3</text>
+
+  
+  <rect class="b" x="205" y="131" width="170" height="60" rx="8"/>
+  <text class="lbl" x="290" y="158">D(C<tspan baseline-shift="sub" font-size="70%">t</tspan>[1])</text>
+  <text class="cap" x="290" y="177">AES decryption</text>
+
+  <rect class="b" x="460" y="131" width="170" height="60" rx="8"/>
+  <text class="lbl" x="545" y="158">D(C<tspan baseline-shift="sub" font-size="70%">t</tspan>[2])</text>
+  <text class="cap" x="545" y="177">AES decryption</text>
+
+  <rect class="b" x="715" y="131" width="170" height="60" rx="8"/>
+  <text class="lbl" x="800" y="158">D(C<tspan baseline-shift="sub" font-size="70%">t</tspan>[3])</text>
+  <text class="cap" x="800" y="177">AES decryption</text>
+
+  
+  <circle class="b" cx="290" cy="262" r="20"/>
+  <text class="op" x="290" y="270">⊕</text>
+  <circle class="b" cx="545" cy="262" r="20"/>
+  <text class="op" x="545" y="270">⊕</text>
+  <circle class="b" cx="800" cy="262" r="20"/>
+  <text class="op" x="800" y="270">⊕</text>
+
+  
+  <rect class="b" x="215" y="320" width="150" height="60" rx="8"/>
+  <text class="lbl" x="290" y="347">P[1]</text>
+  <text class="cap" x="290" y="366">plaintext block 1</text>
+
+  <rect class="b" x="470" y="320" width="150" height="60" rx="8"/>
+  <text class="lbl" x="545" y="347">P[2]</text>
+  <text class="cap" x="545" y="366">plaintext block 2</text>
+
+  
+  <rect class="b" x="725" y="320" width="150" height="60" rx="8"/>
+  <text class="lbl" x="800" y="347">P[3]</text>
+  <text class="cap" x="800" y="366">plaintext block 3</text>
+  
+  <path class="pad" d="M856,320 L867,320 Q875,320 875,328 L875,372 Q875,380 867,380 L856,380 Z"/>
+
+  
+  <line class="ln" x1="865" y1="380" x2="865" y2="404"/>
+  <text class="acccap" x="865" y="422">PKCS#7 padding</text>
+  <text class="cap" x="865" y="439">the only thing the oracle checks</text>
+</svg>

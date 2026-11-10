@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1016 504" width="880" role="img" aria-labelledby="hrTitle hrDesc">
+  <title id="hrTitle">How a page's Telerik controls reach their handlers</title>
+  <desc id="hrDesc">An .aspx page holds Telerik control tags. Most of them, such as RadAsyncUpload, RadBinaryImage and more, reach the server through WebResource.axd, which passes the request to a HandlerRouter that dispatches on a type parameter to the matching handler. RadEditor is the exception: its dialogs, the image and document managers, RadFileExplorer and others, are served through DialogHandler.aspx. Some RadEditor handlers use the type-routed handlers back through WebResource.axd. Everything lives inside the single Telerik.Web.UI.dll assembly.</desc>
+  <style>
+    /* Self-contained, light-background palette. As an &lt;img&gt; this SVG is fully
+       sandboxed: these styles apply only inside this file and never touch the page. */
+    .b   { fill:#ffffff; stroke:#26313f; stroke-width:1.6; }
+    .dll { fill:#f6f8fc; stroke:#26313f; stroke-width:1.4; stroke-dasharray:6 5; }
+    .rebox { fill:#fbfcfe; stroke:#26313f; stroke-width:1.4; }
+    .chip { fill:#ffffff; stroke:#26313f; stroke-width:1.3; }
+    .chiphi { fill:#ffffff; stroke:#2b56d4; stroke-width:1.6; }
+    .chipother { fill:#eef1f6; stroke:#7b8794; stroke-width:1.2; stroke-dasharray:5 4; }
+    .ln  { stroke:#26313f; stroke-width:1.5; fill:none; }
+    .arh { fill:#26313f; }
+    .lbl { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:15px; }
+    .item{ fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px; }
+    .itemmuted { fill:#556270; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; }
+    .tag { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+    .hi  { fill:#2b56d4; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:14px; }
+    .cap { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; }
+    .cbcap { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; }
+    .ell { fill:#7b8794; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:15px; }
+    .dot { fill:#26313f; }
+    .grpblue { fill:none; stroke:#2b56d4; stroke-width:1.6; }
+    .grpred  { fill:none; stroke:#d64545; stroke-width:1.6; }
+    .lnblue  { stroke:#2b56d4; stroke-width:1.8; fill:none; }
+    .lnred   { stroke:#d64545; stroke-width:1.8; fill:none; }
+    .cbarrow { stroke:#d64545; stroke-width:1.8; fill:none; }
+    text { text-anchor:middle; }
+    .l   { text-anchor:start; }
+  </style>
+  <defs>
+    <marker id="hrArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" class="arh"/>
+    </marker>
+    <marker id="hrArrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2b56d4"/>
+    </marker>
+    <marker id="hrArrRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d64545"/>
+    </marker>
+  </defs>
+
+  
+  <rect class="b" x="20" y="100" width="214" height="250" rx="8"/>
+  <text class="lbl" x="127" y="124">somepage.aspx</text>
+  <rect class="grpblue" x="32" y="138" width="190" height="110" rx="8"/>
+  <text class="tag l" x="42" y="162">&lt;telerik:RadAsyncUpload&gt;</text>
+  <text class="tag l" x="42" y="186">&lt;telerik:RadCloudUpload&gt;</text>
+  <text class="tag l" x="42" y="210">&lt;telerik:RadBinaryImage&gt;</text>
+  <text class="tag l" x="42" y="234">&lt;telerik: ... &gt;</text>
+  <rect class="grpred" x="32" y="280" width="190" height="32" rx="8"/>
+  <text class="tag l" x="42" y="301">&lt;telerik:RadEditor&gt;</text>
+
+  
+  <rect class="dll" x="292" y="22" width="708" height="448" rx="14"/>
+  <text class="lbl" x="646" y="46">Telerik.Web.UI.dll</text>
+  <text class="cap" x="646" y="64">one assembly, every control and handler lives inside it</text>
+
+  
+  <rect class="b" x="320" y="120" width="170" height="58" rx="8"/>
+  <text class="lbl" x="405" y="146">WebResource.axd</text>
+  <text class="cap" x="405" y="165">?type=&lt;handler_key&gt;</text>
+  <line class="ln" x1="490" y1="149" x2="529" y2="149" marker-end="url(#hrArr)"/>
+
+  
+  <rect class="b" x="530" y="120" width="150" height="58" rx="8"/>
+  <text class="lbl" x="605" y="146">HandlerRouter</text>
+  <text class="cap" x="605" y="165">dispatch by type</text>
+
+  
+  <path class="ln" d="M680,149 H704"/>
+  <path class="ln" d="M704,91 V201"/>
+  <circle class="dot" cx="704" cy="149" r="2.6"/>
+  <line class="ln" x1="704" y1="91" x2="722" y2="91" marker-end="url(#hrArr)"/>
+  <line class="ln" x1="704" y1="123" x2="722" y2="123" marker-end="url(#hrArr)"/>
+  <line class="ln" x1="704" y1="155" x2="722" y2="155" marker-end="url(#hrArr)"/>
+  <line class="ln" x1="704" y1="201" x2="722" y2="201" marker-end="url(#hrArr)"/>
+  <rect class="chiphi" x="724" y="78" width="234" height="26" rx="6"/>
+  <text class="hi l" x="736" y="95">RadAsyncUpload (rau)</text>
+  <rect class="chip" x="724" y="110" width="234" height="26" rx="6"/>
+  <text class="item l" x="736" y="127">RadCloudUpload (rcu)</text>
+  <rect class="chip" x="724" y="142" width="234" height="26" rx="6"/>
+  <text class="item l" x="736" y="159">RadBinaryImage (rbi)</text>
+  <text class="ell" x="841" y="179">. . .</text>
+  <rect class="chipother" x="724" y="188" width="234" height="26" rx="6"/>
+  <text class="itemmuted l" x="736" y="205">other type-routed handlers</text>
+
+  
+  <rect class="b" x="320" y="335" width="200" height="74" rx="8"/>
+  <text class="lbl" x="420" y="358">DialogHandler.aspx</text>
+  <text class="cap" x="420" y="377">?dp=&lt;encrypted_config&gt;</text>
+  <text class="cap" x="420" y="395">&amp;dpptn=&lt;encrypted_type&gt;</text>
+  <line class="ln" x1="520" y1="372" x2="706" y2="372" marker-end="url(#hrArr)"/>
+  <text class="cap" x="613" y="365">decrypted configuration</text>
+
+  
+  <rect class="rebox" x="708" y="286" width="266" height="172" rx="10"/>
+  <text class="lbl" x="841" y="308">RadEditor</text>
+  <rect class="chip" x="724" y="316" width="234" height="24" rx="5"/>
+  <text class="item l" x="736" y="332">image manager</text>
+  <rect class="chip" x="724" y="346" width="234" height="24" rx="5"/>
+  <text class="item l" x="736" y="362">document manager</text>
+  <rect class="chip" x="724" y="376" width="234" height="24" rx="5"/>
+  <text class="item l" x="736" y="392">RadFileExplorer</text>
+  <text class="ell" x="841" y="410">. . .</text>
+  <rect class="chipother" x="724" y="418" width="234" height="24" rx="5"/>
+  <text class="itemmuted l" x="736" y="434">other RadEditor handlers</text>
+
+  
+  <path class="cbarrow" d="M841,286 V250 H405 V178" marker-end="url(#hrArrRed)"/>
+  <text class="cbcap" x="630" y="243">some also use type-routed handlers</text>
+
+  
+  <text class="cap" x="646" y="488">Most controls arrive through the router. DialogHandler.aspx is the exception.</text>
+
+  
+  <path class="lnblue" d="M222,193 H284 V149 H320" marker-end="url(#hrArrBlue)"/>
+  <path class="lnred" d="M222,296 H284 V372 H320" marker-end="url(#hrArrRed)"/>
+</svg>

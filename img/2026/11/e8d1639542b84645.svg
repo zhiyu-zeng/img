@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 376" width="850" role="img" aria-labelledby="cmTitle cmDesc">
+  <title id="cmTitle">A Telerik control is a server half and a client half sharing encrypted state</title>
+  <desc id="cmDesc">One control tag on a page becomes a widget with two halves. The server half has two steps: on render it instantiates the object and emits its encrypted state to the client; on postback it receives that state back, decrypts and processes it. The client half is HTML and JavaScript plus hidden state fields, all encrypted before they leave the server: rau_ClientState, _serializedConfiguration and _serializedConfigurationType. The client is trusted because the state is encrypted, and most Telerik handlers work this way.</desc>
+  <style>
+    /* Self-contained, light-background palette. As an &lt;img&gt; this SVG is fully
+       sandboxed: these styles apply only inside this file and never touch the page. */
+    .b   { fill:#ffffff; stroke:#26313f; stroke-width:1.6; }
+    .rebox { fill:#fbfcfe; stroke:#26313f; stroke-width:1.6; }
+    .chip { fill:#ffffff; stroke:#26313f; stroke-width:1.3; }
+    .ln  { stroke:#26313f; stroke-width:1.5; fill:none; }
+    .arh { fill:#26313f; }
+    .lbl { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:15px; }
+    .fld { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; }
+    .step { fill:#26313f; font-family:system-ui,-apple-system,sans-serif; font-size:12px; }
+    .cap { fill:#556270; font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; }
+    .acccap { fill:#2b56d4; font-family:system-ui,-apple-system,sans-serif; font-weight:600; font-size:12.5px; }
+    .strong { fill:#26313f; font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:13px; }
+    .dot { fill:#26313f; }
+    .lockbody { fill:#2b56d4; }
+    .lockshackle { fill:none; stroke:#2b56d4; stroke-width:1.6; }
+    text { text-anchor:middle; }
+    .l   { text-anchor:start; }
+  </style>
+  <defs>
+    <marker id="cmArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" class="arh"/>
+    </marker>
+  </defs>
+
+  
+  <rect class="b" x="345" y="20" width="260" height="42" rx="8"/>
+  <text class="lbl" x="475" y="46">&lt;telerik:RadAsyncUpload /&gt;</text>
+
+  
+  <path class="ln" d="M475,62 V80"/>
+  <text class="cap" x="475" y="93">one tag becomes a widget with two halves</text>
+  <path class="ln" d="M475,102 V114"/>
+  <path class="ln" d="M235,114 H715"/>
+  <circle class="dot" cx="475" cy="114" r="2.6"/>
+  <line class="ln" x1="235" y1="114" x2="235" y2="138" marker-end="url(#cmArr)"/>
+  <line class="ln" x1="715" y1="114" x2="715" y2="138" marker-end="url(#cmArr)"/>
+
+  
+  <rect class="rebox" x="80" y="138" width="310" height="170" rx="10"/>
+  <text class="lbl" x="235" y="162">SERVER half</text>
+  <rect class="chip" x="94" y="176" width="282" height="48" rx="6"/>
+  <text class="step" x="235" y="195">instantiates the object,</text>
+  <text class="step" x="235" y="211">emits its encrypted state</text>
+  <rect class="chip" x="94" y="242" width="282" height="48" rx="6"/>
+  <text class="step" x="235" y="261">receives it on postback,</text>
+  <text class="step" x="235" y="277">decrypts and processes it</text>
+
+  
+  <rect class="rebox" x="560" y="138" width="310" height="170" rx="10"/>
+  <text class="lbl" x="715" y="162">CLIENT half</text>
+  <text class="cap" x="715" y="182">HTML, JavaScript, and hidden state</text>
+  <rect class="chip" x="574" y="196" width="282" height="30" rx="6"/>
+  <text class="fld l" x="584" y="215">rau_ClientState</text>
+  <g transform="translate(840,214)"><rect class="lockbody" x="-6" y="-4" width="12" height="9" rx="2"/><path class="lockshackle" d="M-3.5,-4 v-2.5 a3.5,3.5 0 0 1 7,0 v2.5"/><circle cx="0" cy="0.5" r="1.1" fill="#ffffff"/></g>
+  <rect class="chip" x="574" y="232" width="282" height="30" rx="6"/>
+  <text class="fld l" x="584" y="251">_serializedConfiguration</text>
+  <g transform="translate(840,250)"><rect class="lockbody" x="-6" y="-4" width="12" height="9" rx="2"/><path class="lockshackle" d="M-3.5,-4 v-2.5 a3.5,3.5 0 0 1 7,0 v2.5"/><circle cx="0" cy="0.5" r="1.1" fill="#ffffff"/></g>
+  <rect class="chip" x="574" y="268" width="282" height="30" rx="6"/>
+  <text class="fld l" x="584" y="287">_serializedConfigurationType</text>
+  <g transform="translate(840,286)"><rect class="lockbody" x="-6" y="-4" width="12" height="9" rx="2"/><path class="lockshackle" d="M-3.5,-4 v-2.5 a3.5,3.5 0 0 1 7,0 v2.5"/><circle cx="0" cy="0.5" r="1.1" fill="#ffffff"/></g>
+
+  
+  <line class="ln" x1="376" y1="200" x2="558" y2="200" marker-end="url(#cmArr)"/>
+  <text class="cap" x="475" y="193">emit encrypted state</text>
+  <line class="ln" x1="560" y1="266" x2="378" y2="266" marker-end="url(#cmArr)"/>
+  <text class="cap" x="475" y="259">postback</text>
+
+  
+  <text class="acccap" x="475" y="338">The client is trusted because the state is encrypted.</text>
+  <text class="strong" x="475" y="360">Most Telerik handlers work this way.</text>
+</svg>
