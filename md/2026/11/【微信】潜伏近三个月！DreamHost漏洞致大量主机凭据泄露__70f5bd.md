@@ -1,0 +1,77 @@
+---
+title: 【微信】潜伏近三个月！DreamHost漏洞致大量主机凭据泄露
+source: https://mp.weixin.qq.com/s/wJN6O12dAl5aOLmY6M_0zQ
+source_host: mp.weixin.qq.com
+clip_date: 2026-11-10T20:05:26+08:00
+trace_id: e300832d-cde5-4e34-aed1-5e55187dbe67
+content_hash: 84bc9d3bc7cd3e384fcc8b6e9e18f32362f99668363103abbbd228ea3af6a49f
+status: synced
+tags:
+  - 微信
+series: null
+feed_source: 公众号聚合·Doonsec
+ai_summary: null
+ai_summary_style: null
+images_status:
+  total: 2
+  succeeded: 2
+  failed_urls: []
+notion_page_id: 41475244-d011-8144-9cba-eed727dbc7d4
+ioc: null
+---
+
+**内生安全联盟** *2026年11月10日 16:34*
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/11/e1644555022cc2fb.gif)
+
+**2026 年 11 月 5 日，美国知名网站托管与域名服务商 DreamHost 正式确认遭遇严重安全事件。攻击者利用其自研 Web 文件管理器的底层软件漏洞，自 2026 年 8 月起秘密潜伏近 3 个月，直至 10 月 23 日官方察觉异常才被强行切断。期间大量用户的 FTP/SFTP 账户密码、已激活的会话令牌（Session Token）以及部分 Webmail 邮箱凭据遭成批窃取，托管服务器上的源码与数据库面临全量拖库及网页挂马风险**
+
+攻击链路：Web 文件管理器沦为黑客跳板
+
+DreamHost 提供的文件管理器是帮助站长在浏览器端管理文件的 Web 工具。根据官方初步调查通报，黑客突破与凭据抓取的路径极为直接：
+
+-   渗透运行服务器：黑客利用文件管理工具中的未公开代码漏洞，直接拿到了承载该服务的基础设施访问权限
+-   截获会话与凭据：在攻击生效的长达 80 多天内，只要站长登录过该网页文件管理器，其输入的 FTP/SFTP 用户名、明文/哈希密码便被静默捕获；黑客同时批量导出了用户的登录会话令牌（Session Token），可直接绕过二次验证伪造登录态
+-   蔓延至企业邮箱：除主机文件管理系统外，DreamHost 确认部分网页邮箱（Webmail）系统同样遭到波及，少量客户的邮箱账户密码外泄，邮件往来记录面临被窥探风险
+
+致命破坏力：直通代码库与供应链污染
+
+获得 FTP/SFTP 凭证等于拿到了受害者站点的绝对读写权，黑客可实施两类高烈度攻击：
+
+-   一键打包核心资产：通过 SFTP 客户端直接将整套网站源码、 `wp-config.php` 或`.env` 等环境变量文件全盘打包下载，其中包含的数据库账号、密码、支付 API Key 随即二次失窃
+-   隐蔽注入供应链恶意代码：利用写权限在已有静态 JS 文件、PHP 模板中植入远程恶意重定向脚本或虚假登录表单，当正常访客浏览这些网站时，无差别触发钓鱼或恶意下载
+
+️
+
+站长应急处置清单：四个必做排查动作
+
+所有托管在 DreamHost 上的站点负责人，应立即执行以下加固步骤：
+
+-   全量轮换凭证并吊销会话：立即登录 DreamHost 控制台重置主账号密码、所有 FTP/SFTP 用户密码、数据库密码，并点击“注销所有已连接设备与会话”
+-   比对生产环境代码指纹：使用本地干净的 Git 版本库与服务器现有文件做git diff比对，重点检查近 90 天内被修改的index.php、核心 JS 文件以及新增的隐藏脚本
+-   审计 SSH 公钥配置：检查服务器家目录下的~/.ssh/authorized_keys，彻底删除任何非本人添加的未知公钥条目，封堵后门跳板
+-   检查邮箱转发与自动过滤规则：登录 Webmail 后台，排查是否存在将收件静默转发至未知外部域名的规则，防止重置凭证邮件被黑客截胡
+
+来源：安全圈
+
+[【征稿启事】2026 IEEE网络韧性与内生安全国际会议（IEEE CRESS 2026）相约南京，诚邀投稿！](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247540726&idx=1&sn=b9402b72bbf0adc75cef49f7bbd0bd49&scene=21#wechat_redirect)
+
+****| 推荐阅读****
+
+**[AI4E如何重构数字生态系统网络发展范式？](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247532455&idx=1&sn=ee5102d94087e9440ede67b18386c621&scene=21#wechat_redirect)**
+
+**[资料下载 | 十五五规划建议全文及说明](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247534593&idx=2&sn=7f9516f40cbafbcb1012d5999612157a&scene=21#wechat_redirect)**
+
+**[《科技日报》整版访谈邬江兴院士：将“安全基因”植入人工智能系统](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247537206&idx=1&sn=2ce618202d759560ecee6aeca93b8c24&scene=21#wechat_redirect)**
+
+[重磅发布 | 行业首部《智能网联汽车内生安全白皮书》，智己LS9 Hyper全球首搭中国原创内生安全系统](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247540505&idx=1&sn=db8e714a57b8bf3dad9268b996fb5a44&scene=21#wechat_redirect)
+
+[邬江兴院士：构建内生安全质量检测体系，筑牢人类可控可信 AI 根基](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247539044&idx=1&sn=1791fd1aad5f130fe5d87c46cc4b8687&scene=21#wechat_redirect)
+
+[人工智能内生安全让“千里马”跑得快又跑得稳——邬江兴院士解读AI安全应对新思路](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247540081&idx=1&sn=7abcebf943fbb1723bc747b626f90087&scene=21#wechat_redirect)
+
+[中国工程院院士邬江兴：从“概率性”中构建“确定性”，以内生安全范式破解大模型安全困局](https://mp.weixin.qq.com/s?__biz=Mzg4MDU0NTQ4Mw==&mid=2247540750&idx=1&sn=412b1fca972cda7fe628429d14ea6a7a&scene=21#wechat_redirect)
+
+![图片](https://cdn.jsdelivr.net/gh/zhiyu-zeng/img@main/img/2026/11/8309b3df15982848.gif)
+
+全球资讯 · 目录
