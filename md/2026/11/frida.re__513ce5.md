@@ -1,0 +1,57 @@
+---
+title: frida.re
+source: https://frida.re/news/2026/11/18/frida-17-27-1-released/
+source_host: frida.re
+clip_date: 2026-11-19T09:13:42+08:00
+trace_id: 41135dfd-ab33-4954-af12-d0c775e33298
+content_hash: b94063cbb61923a31c94efbe2c8005783517abe4dd8eb3fbd469c3ea8b05629a
+status: synced
+tags: []
+series: null
+feed_source: Frida Releases
+ai_summary: null
+ai_summary_style: null
+images_status:
+  total: 0
+  succeeded: 0
+  failed_urls: []
+notion_page_id: 41d75244-d011-81a4-b6ea-d3a0bd6fefc7
+ioc: null
+---
+
+## Frida 17.27.1 Released
+
+release
+
+A small one. The rest of our binaries now carry their version the way Gadget does, two latent bugs in Idun are gone, found by building against a GLib with its runtime checks enabled, and the XNU agent stopped sleeping through two kinds of wakeups.
+
+## Version metadata
+
+In 17.27.0, Gadget started embedding its name, version and architectures, readable through *BinaryMetadata.from_file()* without loading it. frida-server, frida-portal, frida-inject and gum-graft now do the same, so tools can tell which one they have without running it. The embedding moved into a generator in our release engineering tooling, shared by frida-core and frida-gum.
+
+## Idun
+
+The GLib in the binaries we ship is built without runtime checks, which hid two bugs. They surfaced when building against a distro’s GLib, where those checks are typically enabled.
+
+When talking to a jailed iOS device, our client for the Instruments process control service is told when a process terminates. The notification carries the pid as an *NSNumber*, which we read as if it were a GObject. Without runtime checks, GLib hands back the pointer without looking at its type, so this happened to work. With them it returns *NULL*, and we crashed.
+
+A handful of enum properties were also never installed there, as GLib rejects a property whose default is not a member of its enum.
+
+## Barebone
+
+Getting the XNU agent’s tests to run reliably on CI turned up two lost wakeups, both a matter of ordering. The agent injected into a process sampled its wake word after testing the predicate, so a wake landing in between left it asleep with work already queued. And when that agent rang the kernel half’s bell before the kernel half’s loop had blocked, the wake was lost and the queued frame stranded. A test that wedges on CI now fails within a time budget and dumps the host’s stacks and the guest’s registers, rather than hanging the job.
+
+Enjoy!
+
+### Changelog
+
+-   server: Embed version metadata.
+-   portal: Embed version metadata.
+-   inject: Embed version metadata.
+-   gum-graft: Embed version metadata.
+-   releng: Add a generator for embedded binary metadata.
+-   idun: Fix a crash on process termination on jailed iOS, when built against a GLib with runtime checks enabled.
+-   idun: Give enum properties a valid default.
+-   barebone: Fix a lost wake in XNU process agent waits.
+-   barebone: Fix a lost bell wake in the XNU kernel half.
+-   swift: Expose GLib’s user cache directory.
