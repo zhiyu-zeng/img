@@ -1,0 +1,1685 @@
+本文仅用于逆向技术教学
+
+原文作者Zhan_Er  QQ:3439859003
+转载请注明原作者
+
+开始之前，请确保你已经下载IDA工具并拥有一份王者dump.cs和王者安装包内的libil2cpp.so
+
+如果不知道如何进行dump，请到互联网搜索相关教学
+
+完成准备后，即可开始阅读教学！
+---------------------------------------------------
+首先，我们必须知道与英雄相关的内容被存放在哪里（例如英雄位置），
+通过观察dump.cs可以推测应该是被存放在了ActorManager类中，接下来进一步观察，发现它是全局静态单例，
+游戏想要引用它里面的各种内容，必然得先知道这个单例存放在哪里了，猜一猜程序如何知道的呢？他一定被存放在了某个全局class图纸中，这里一共就两个class图纸（IActorManager是接口），既然
+ActorManager没有，那就进父类图纸看看，然后就找到了s_instance，现在我们只需要找到Singleton<ActorManager>的图纸，就能直接拿到里面存放的ActorManager的指针（注意Singleton是泛型类，他的每一种特定型号都有一个单独的图纸，例如Singleton<A>,Singleton<B>以及我们的Singleton<ActorManager>）
+
+补充要点：诸如Singleton`1中所携带的[`1]代表这是一个泛型类，并且泛型参数数量为1，如果是A`2，则代表泛型参数数量为2
+
+我意识到程序似乎总是喜欢把这个ActorManager的指针存放进某个class图纸里，例如此处存放进了Singleton<ActorManager>的class图纸里。为什么程序要这么做，程序难道能直接找到这个class图纸的内存地址吗？
+是的，程序不仅能直接找到这张“图纸”的内存地址，而且在编译链接阶段就已经把去往这张图纸的“路线”写死在代码里了。这是由编译器完成的
+
+额外要点：继承是把图纸的产物合在一起，但不把图纸合在一起，例如 public class A : B, 则是把AB两个图纸生成的实例合在一起（A实例里直接包含了B实例），因此静态字段这种位于图纸的东西，即便A继承了B，也依旧需要我们跑到B的图纸里去找。（这里提醒一下：实例只包含字段，它是不会包含方法的，方法位于class图纸）
+
+
+现在我们需要找到Singleton<ActorManager>的图纸位置，前面提到过编译器在编译时会把寻找图纸的路径直接写死在程序里，那它具体写到哪里了呢？
+此处需要先明确，C++规定：任何非静态成员方法在执行时，必须由调用者通过第一个参数（ARM64 架构下的 `X0` 寄存器）传入 `this` 指针（即 `ActorManager` 实例的位置）
+所以我们直接找一个ActorManager的成员方法被调用的地方，调用它的地方在调用之前必然找到了Singleton<ActorManager>的图纸位置（并借此调用内部的Singleton<ActorManager>.Instance 获取了ActorManager实例位置）
+我们试图寻找GetActor处的交叉引用，但没有搜到结果，这说明有一个地方存着GetActor的内存地址（代称为 间调处），程序其它地方全部引用的见调出
+这属于GOT 函数指针表，应该位于内存的.data段，我们直接在ida搜索GetActor的内存地址字节码即可搜到，然后查看间调处的交叉引用
+然后随便进入一个调用它的地方（这里最好找在ida中跳转过去之后往上翻一小段就直接到了调用处的整个函数的开头的地方）
+直接查看调用处的伪代码
+类似于（不同地方代码会有差异）
+
+```c
+v105 = qword_E58D7F8;                 // 1. 加载全局泛型方法上下文指针
+v113 = (_QWORD *)off_DFBFFA0(v105);   // 2. 调用泛型单例 GetInstance() 获取实例
+off_DC98B80(v113, 0, ...);            // 3. 将实例作为 this 传入 GetActorTotalCount[cite: 7, 8]
+```
+qword_E58D7F8 是 Singleton<ActorManager>.Instance的泛型方法的小票，Singleton<>的public static T Instance { get; } 属于泛型方法
+编译器不会单独为每个特定类型的泛型方法都单独生成一个方法，它只会生成一个模板，该模板会接受一个参数（特定泛型方法小票），内部依据该参数进行运算，不同小票返回的结果不同
+
+补充点:针对泛型类，编译器会为每个泛型类的特定泛型都生成一张图纸，但针对其内的泛型方法却只有一个泛型方法模板，并不会为每个特定类型的泛型方法都单独生成一个方法
+
+off_DFBFFA0则是指向Singleton<>的public static T Instance { get; }，我们直接跳转过去，看看它是如何依据小票计算出对应的特定泛型实例的位置的（Singleton<ActorManager>的位置）
+
+f5伪代码类似于
+```c
+v1 = *(_QWORD *)(a1 + 32);              // +0x20 : 关联类元数据
+v3 = *(_QWORD *)(v1 + 192);             // +0xC0 : Il2CppClass->rgctx_data (运行时泛型上下文表)
+v4 = *(_QWORD *)(v3 + 16);              // +0x10 : 取出真正的 Singleton<ActorManager> 图纸 (Il2CppClass*)
+v11 = **(_QWORD **)(v4 + 184);          // +0xB8 -> +0x0 : 静态字段表(static_fields) -> s_instance
+
+```
+可以清楚的看到，通过小票_QWORD计算出了Singleton<ActorManager>的位置
+
+注意:在 dump.cs 里，静态字段（static）和普通实例字段的计算基准点（Base Address）是完全不同的两套规则
+普通非静态字段（如 HeroActors // 0x18）：
+基准点是实例对象（Instance）的首地址。
+静态字段：
+基准点不是“图纸（Il2CppClass）”本身，而是图纸的static_fields（静态字段表指针）区域的首地址（通常此处距离图纸首地址偏移+0xB8）
+这也就解释了为什么dump.cs里s_instance偏移为0，但此处伪代码却说s_instance位于图纸（v4）偏移0xB8的位置
+
+额外补充：
+泛型定义模板是没有固定内存布局的（具体内存布局取决于它具体被填入了什么类型）
+dump.cs解析字段变量偏移时是依据图纸的实例产物的，而泛型模板本身没有实例产物（有实例产物的是特定类型泛型的class图纸，而不是那个最初的未指定特定类型的泛型模板class图纸）
+因此dump解析不出泛型模板的字段偏移，如AbstractBaseTinyList<T>中的字段变量的偏移全部都被dump记作0x0了
+但是，因为dump解析方法偏移时依据图纸本身，而非图纸的实例化产物，因此泛型模板class图纸虽然无实例化产物，但其内的方法依旧可以被dump正确的解析出偏移（例如AbstractBaseTinyList<T>的方法都被解析出了偏移）
+
+
+
+// Dll : Scripts.GameCore.dll
+// Namespace: Assets.Scripts.GameLogic
+public class ActorManager : Singleton`1, IActorManager
+{
+	// Fields
+	public DictionaryView`2 actorList; // 0x8
+public DictionaryView`2 updatableActorList; // 0x10
+	public TinyValueList`1 HeroActors; // 0x18
+public TinyValueList`1 OrganActors; // 0x20
+	public TinyValueList`1 TowerActors; // 0x28
+public TinyValueList`1 SoldierActors; // 0x30
+	public TinyValueList`1 DragonActors; // 0x38
+public TinyValueList`1 VehicleActors; // 0x40
+	public TinyValueList`1 BuffMonsterActors; // 0x48
+public TinyValueList`1 SpringActors; // 0x50
+	public TinyValueList`1 CallMonsterActors; // 0x58
+public TinyValueList`1 CallActors; // 0x60
+	public TinyValueList`1 SacredAnimalActors; // 0x68
+public DictionaryView`2 cacheList; // 0x70
+	private TinyValueList`1[] CampsActors; // 0x78
+private Int32 lastFrameHerosInScene_; // 0x80
+private Single vmdReportAccumTime; // 0x84
+public static PoolObjHandle`1 EMPTY_ACTOR_LINKER; // 0x0
+public Int32 shadowShowTimeOnDead; // 0x88
+private Vector2[] m_basePos; // 0x90
+
+	// Properties
+	public DictionaryView`2 ActorList { get; }
+
+	// Methods
+	// RVA: 0x6f9d380 VA: 0x763867799380
+	public DictionaryView`2 get_ActorList() { }
+	// RVA: 0x6f9d388 VA: 0x763867799388
+	public override Void Init() { }
+	// RVA: 0x6f9d47c VA: 0x76386779947c
+	public PoolObjHandle`1 GetActor(UInt32 actorID, Boolean bAlwaysFind) { }
+	// RVA: 0x6f9d59c VA: 0x76386779959c
+	public IActorLinker GetActorProxy(UInt32 actorID, Boolean bAlwaysFind) { }
+	// RVA: 0x6f9d640 VA: 0x763867799640
+	public PoolObjHandle`1 GetHeroByCfgID(UInt32 cfgID) { }
+	// RVA: 0x6f9d810 VA: 0x763867799810
+	public Void CreateActor(ref SpawnActorData data, Boolean isRecover) { }
+	// RVA: 0x6f9d9bc VA: 0x7638677999bc
+	public UInt32 GetRawHostPlayerActorId() { }
+	// RVA: 0x6f9db14 VA: 0x763867799b14
+	public UInt32 GetPlayerRawActorId(UInt32 playerId) { }
+	// RVA: 0x6f9dc30 VA: 0x763867799c30
+	public Void TestAIPlayerVoice(UInt32 playerId, Boolean isVoice) { }
+	// RVA: 0x6f9dcdc VA: 0x763867799cdc
+	public PoolObjHandle`1 PrepareActor(ref ActorPrepareData data, Boolean resetShape) { }
+	// RVA: 0x6f9dedc VA: 0x763867799edc
+	public Void DeactiveActor(UInt32 actorID, UInt32 objSeq) { }
+	// RVA: 0x6f9df8c VA: 0x763867799f8c
+	public Void SwitchCaptainCommaderMode(UInt32 oriActorId, UInt32 targetActorId) { }
+	// RVA: 0x6f9e0fc VA: 0x76386779a0fc
+	public Void DeactiveActor(ActorConfig actor, UInt32 actorID, UInt32 objSeq) { }
+	// RVA: 0x6f9e58c VA: 0x76386779a58c
+	public Void ChangeDeactivedActorSeq(UInt32 oldObjSeq, UInt32 newObjSeq) { }
+	// RVA: 0x6f9e684 VA: 0x76386779a684
+	private PoolObjHandle`1 AddActor(UInt32 objID, ActorConfig linkCfg) { }
+	// RVA: 0x6f9eb80 VA: 0x76386779ab80
+	public Void AddCallMonster(PoolObjHandle`1 actor) { }
+	// RVA: 0x6f9ec6c VA: 0x76386779ac6c
+	public Boolean DestroyActor(UInt32 actorID) { }
+	// RVA: 0x6f9f278 VA: 0x76386779b278
+	public Boolean DestroyCacheActor(UInt32 objSeq) { }
+	// RVA: 0x6f9f360 VA: 0x76386779b360
+	public Void ClearActor() { }
+	// RVA: 0x6f9fa6c VA: 0x76386779ba6c
+	public Void ForceSetHeroFarRangeOutLine(Boolean enableOrDisable) { }
+	// RVA: 0x6f9fb98 VA: 0x76386779bb98
+	public Void LateUpdate() { }
+	// RVA: 0x6fa013c VA: 0x76386779c13c
+	public Void Interpolation() { }
+	// RVA: 0x6fa0280 VA: 0x76386779c280
+	public Void UpdateLogic(Int32 delta) { }
+	// RVA: 0x6fa0424 VA: 0x76386779c424
+	public Void StartFight() { }
+	// RVA: 0x6fa0804 VA: 0x76386779c804
+	public Void RefreshLayers() { }
+	// RVA: 0x6fa0e88 VA: 0x76386779ce88
+	public TinyValueList`1 GetCampActors(COM_PLAYERCAMP camp) { }
+	// RVA: 0x6fa0ec4 VA: 0x76386779cec4
+	public Int32 GetActorTotalCount() { }
+	// RVA: 0x6fa0f2c VA: 0x76386779cf2c
+	public Void RefreshAllActorPositionByMovementDataCache(DisplayInfoData* displayData, UInt32 count) { }
+	// RVA: 0x6fa1084 VA: 0x76386779d084
+	public Void RecoverCreateActors(ref WholeRecoverData wholeData) { }
+	// RVA: 0x6fa158c VA: 0x76386779d58c
+	public Void RecoverRmvGameCoreCachedActorType(ref WholeRecoverData wholeData) { }
+	// RVA: 0x6fa2008 VA: 0x76386779e008
+	public Void RecoverCreateActorsDiffAdd(ref WholeRecoverData wholeData) { }
+	// RVA: 0x6fa255c VA: 0x76386779e55c
+	public Void RecoverDiffDelete(ref WholeRecoverData wholeData) { }
+	// RVA: 0x6fa2ff0 VA: 0x76386779eff0
+	public Void RecoverPrepareActors(ref WholeRecoverData wholeData) { }
+	// RVA: 0x6fa32fc VA: 0x76386779f2fc
+	public Boolean OnActorEnterView(ref ActorRecoverData recoverData) { }
+	// RVA: 0x6fa3404 VA: 0x76386779f404
+	public Boolean OnActorLeaveView(UInt32 actorID, UInt32 objSeq) { }
+	// RVA: 0x6fa3414 VA: 0x76386779f414
+	public Boolean DestroyActorAndCacheActor(UInt32 objId, UInt32 objSeq) { }
+	// RVA: 0x6fa3470 VA: 0x76386779f470
+	public Void ChangeActorCamp(UInt32 objID, COM_PLAYERCAMP oldCamp, COM_PLAYERCAMP newCamp) { }
+	// RVA: 0x6fa36f4 VA: 0x76386779f6f4
+	public Void ChangeActorPlayerID(UInt32 objID, UInt32 newID, UInt32 oldID, Boolean changeRawPlayerID) { }
+	// RVA: 0x6fa398c VA: 0x76386779f98c
+	private Void InitBasePos(PoolObjHandle`1 actor) { }
+	// RVA: 0x6fa3a54 VA: 0x76386779fa54
+	private Byte GetMonsterCamp(Single bornPosX, Single bornPosZ) { }
+	// RVA: 0x6fa3ad8 VA: 0x76386779fad8
+	public UInt32 GetActorConfigId(UInt32 actorID) { }
+	// RVA: 0x6fa3b88 VA: 0x76386779fb88
+	public Void InitActorParams() { }
+	// RVA: 0x6fa3bbc VA: 0x76386779fbbc
+	public Boolean IsExistByType(RES_SOLDIER_TYPE type) { }
+	// RVA: 0x6fa4048 VA: 0x7638677a0048
+	public Int32 GetCampCallOrganCount(Int32 checkConfigId, COM_PLAYERCAMP camp, ref PoolObjHandle`1 earliestOrgan) { }
+	// RVA: 0x6fa420c VA: 0x7638677a020c
+	public Boolean HasHero(Int32 heroConfigId) { }
+	// RVA: 0x6fa42f4 VA: 0x7638677a02f4
+	public Void ApplyShadowSettings() { }
+	// RVA: 0x6fa45e0 VA: 0x7638677a05e0
+	public Void UpateTorch(COM_PLAYERCAMP camp, String[] shaderParam, ref Vector4 tmpVector) { }
+	// RVA: 0x6fa48b0 VA: 0x7638677a08b0
+	public Int32 GetHeroActorCount() { }
+	// RVA: 0x6fa490c VA: 0x7638677a090c
+	public Int32 GetOrganActorCount() { }
+	// RVA: 0x6fa4968 VA: 0x7638677a0968
+	public Int32 GetSoldierActorCount() { }
+	// RVA: 0x6fa49c4 VA: 0x7638677a09c4
+	public Int32 GetBuffMonsterCount() { }
+	// RVA: 0x6fa4a20 VA: 0x7638677a0a20
+	public Int32 GetDragonActorCount() { }
+	// RVA: 0x6fa4a7c VA: 0x7638677a0a7c
+	public Int32 GetCampActorCount(COM_PLAYERCAMP camp) { }
+	// RVA: 0x6fa4b0c VA: 0x7638677a0b0c
+	public IActorLinker GetHeroActorByIndex(Int32 index) { }
+	// RVA: 0x6fa4c10 VA: 0x7638677a0c10
+	public IActorLinker GetOrganActorByIndex(Int32 index) { }
+	// RVA: 0x6fa4d14 VA: 0x7638677a0d14
+	public IActorLinker GetSoldierActorByIndex(Int32 index) { }
+	// RVA: 0x6fa4e18 VA: 0x7638677a0e18
+	public IActorLinker GetBuffMonsterByIndex(Int32 index) { }
+	// RVA: 0x6fa4f1c VA: 0x7638677a0f1c
+	public IActorLinker GetDragonActorByIndex(Int32 index) { }
+	// RVA: 0x6fa5020 VA: 0x7638677a1020
+	public IActorLinker GetCampActorByIndex(COM_PLAYERCAMP camp, Int32 index) { }
+	// RVA: 0x6fa5180 VA: 0x7638677a1180
+	public TinyValueList`1 GetCallMonsterActors() { }
+	// RVA: 0x6fa5188 VA: 0x7638677a1188
+	public TinyValueList`1 GetCallActors() { }
+	// RVA: 0x6fa5190 VA: 0x7638677a1190
+	public TinyValueList`1 GetOrganActors() { }
+	// RVA: 0x6fa5198 VA: 0x7638677a1198
+	public Void .ctor() { }
+	// RVA: 0x6fa549c VA: 0x7638677a149c
+	private static Void .cctor() { }
+}
+
+// Dll : Gear.Runtime.dll
+// Namespace: Gear
+public class Singleton`1
+{
+// Fields
+private static T s_instance; // 0x0
+
+	// Properties
+	public static T Instance { get; }
+
+	// Methods
+	// RVA: 0x4c72744 VA: 0x76386516e744
+	protected Void .ctor() { }
+	// RVA: 0x4c19394 VA: 0x763865115394
+	public static Boolean IsValidate() { }
+	// RVA: 0x4c72760 VA: 0x76386516e760
+	public static Void CreateInstance() { }
+	// RVA: 0x4c72760 VA: 0x76386516e760
+	public static Void DestroyInstance() { }
+	// RVA: 0x3a06ee4 VA: 0x763863f02ee4
+	public static T get_Instance() { }
+	// RVA: 0x3a06ee4 VA: 0x763863f02ee4
+	public static T GetInstance() { }
+	// RVA: 0x4c19394 VA: 0x763865115394
+	public static Boolean HasInstance() { }
+	// RVA: 0x4c72744 VA: 0x76386516e744
+	protected virtual Void Init() { }
+	// RVA: 0x4c72744 VA: 0x76386516e744
+	protected virtual Void UnInit() { }
+}
+
+
+
+至此，我们完成了第一步，成功拿到了ActorManager全局唯一实例的位置。
+
+
+// Dll : UnityService.dll
+// Namespace: UnityService.Collections
+public class TinyValueList`1 : AbstractBaseTinyList`1
+{
+	// Fields
+
+	// Properties
+	public T Item { get; set; }
+
+	// Methods
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public Void .ctor() { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	public Void .ctor(Int32 capacity) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T get_Item(Int32 index) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void set_Item(Int32 index, T value) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void Add(T item) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void Insert(Int32 index, T item) { }
+}
+
+// Dll : UnityService.dll
+// Namespace: UnityService.Collections
+[Serializable]
+public abstract class AbstractBaseTinyList`1 : ITinyList
+{
+	// Fields
+	protected internal T[] Item_Backends; // 0x0
+	protected Int32 Size; // 0x0
+	protected static readonly T[] EmptyArray; // 0x0
+
+	// Properties
+	public Int32 Count { get; }
+	public Int32 Capacity { get; set; }
+
+	// Methods
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public Void .ctor() { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	public Void .ctor(Int32 capacity) { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public Int32 get_Count() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public Int32 get_Capacity() { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	public Void set_Capacity(Int32 value) { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public Void Clear() { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	protected Void EnsureCapacity(Int32 min) { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	public Void RemoveAt(Int32 index) { }
+	// RVA: 0x4e19580 VA: 0x763865615580
+	public Void RemoveRange(Int32 index, Int32 count) { }
+	// RVA: 0x4e0facc VA: 0x76386560bacc
+	private static Void .cctor() { }
+}
+
+// Dll : UnityService.dll
+// Namespace: UnityService.Collections.Interfaces
+public interface ITinyList
+{
+	// Fields
+
+	// Properties
+	public abstract Int32 Count { get; }
+
+	// Methods
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 get_Count() { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public abstract Void Clear() { }
+	// RVA: 0x4e18c8c VA: 0x763865614c8c
+	public abstract Void RemoveAt(Int32 index) { }
+}
+
+
+接下来，依据dump.cs（内部已经标注好了ActorManager内部的个字段的偏移）
+我们直接可以通过ActorManager的位置偏移出HeroActors的指针的位置（public TinyValueList`1 HeroActors 这里存的是指向TinyValueList<>实例的指针），取出里面的指针，这个指针直接指向TinyValueList<>实例
+
+
+得到了指向TinyValueList<>实例的指针之后，我们接下来就得确定，人物位置究竟是存放在TinyValueList<>实例的哪里了？
+这里再次注意：实例包含自身及所有父类中所包含的字段变量，因此TinyValueList<>实例包含TinyValueList和AbstractBaseTinyList二者中的所有字段变量
+然后你会发现TinyValueList的所有固定类型的字段变量都没有包含人物位置
+那么唯一可能的地方就是TinyValueList的会变化类型的字段变量了（因为类型会变，所以里面存的东西也会变，如果变为了一个包含人物信息的类型，那么这个字段变量就包含人物信息了）
+而TinyValueList只有一个泛型变量（类型不固定），那就是【protected internal T[] Item_Backends】变量
+接下来问题来了，这个被HeroActors所指向的特定的TinyValueList<>实例的里面的Item_Backends变量的类型究竟是什么？
+
+注意观察dump.cs里的ActorManager，有一个字段叫做【public static PoolObjHandle`1 EMPTY_ACTOR_LINKER】
+中文译名：空ACTOR句柄
+从名字不难看出，它指向一个空的ACTOR，那么他的类型肯定就是这个空的ACTOR的类型，因此ACTOR类型为PoolObjHandle，再结合dump.cs里的PoolObjHandle的内容，可以确定该游戏通过对象池句柄（PoolObjHandle）来对Actor进行管理，整个ActorManager在存储和传递Actor时统一采用PoolObjHandle进行托管（这是为了更安全的对Actor进行各种操作）
+猜测一下它的作用：1.游戏里有些地方需要查询并返回一个ACTOR实例，例如ActorManager的GetHeroByCfgID()方法，当没有查到任何ACTOR时，要么返回null，但这容易引起空指针异常，因此游戏选择返回一个空的ACTOR
+2.游戏里有索敌，这个你记得吧？当你释放索敌时，游戏将索敌目标定义为这个空的ACTOR，以确保你不会索敌场上任何一个真实的ACTOR
+你可能会问，那为什么不直接在需要空ACTOR的时候现场创建一个空的ACTOR呢？因为太耗性能，重复引用同一个，就不需要反复重创了，既省内存又节约开销
+
+既然游戏把Actor托管给了PoolObjHandle，那么【protected internal T[] Item_Backends】就应当是对PoolObjHandle进行的包联
+故此TinyValueList<>的泛型被确定为是PoolObjHandle<>
+
+// Dll : Scripts.Plugins.dll
+// Namespace: Assets.Scripts.Common
+public struct PoolObjHandle`1 : IEquatable`1
+{
+	// Fields
+	private UInt32 _handleSeq; // 0x0
+	private T _handleObj; // 0x0
+
+	// Properties
+	public T handle { get; }
+	public T GetHandleObjForce { get; }
+
+	// Methods
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void .ctor(T obj) { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public Void Validate() { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public Void Release() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public Boolean IsValid() { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public static Boolean op_Implicit(PoolObjHandle`1 ptr) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public static Boolean op_Equality(PoolObjHandle`1 lhs, PoolObjHandle`1 rhs) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public static Boolean op_Inequality(PoolObjHandle`1 lhs, PoolObjHandle`1 rhs) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Boolean Equals(PoolObjHandle`1 other) { }
+	// RVA: 0x4dbe348 VA: 0x7638655ba348
+	public override Boolean Equals(Object obj) { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public override Int32 GetHashCode() { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T get_handle() { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T get_GetHandleObjForce() { }
+}
+现在实例的类型变成了TinyValueList<PoolObjHandle<>>
+如何确定PoolObjHandle的泛型？
+我们前面推断出了PoolObjHandle是在对Actor进行托管，那么它的泛型就是Actor的真实泛型
+如何确定Actor的真实泛型？
+依旧去看dump.cs，观察发现ActorManager里面有一个方法名【public IActorLinker GetHeroActorByIndex(Int32 index) { }】
+方法名：通过索引获取英雄类型的Actor
+依据方法名，该方法应该是返回了Actor，那么它的返回类型应该就是Actor的类型
+观察它返回的Actor的类型，他这里返回的不再是托管版的Actor的类型（PoolObjHandle），而是一个全新类型IActorLinker，它是一个接口，Actor的类型应该就是这个接口的实现类
+
+
+// Dll : Scripts.Base.dll
+// Namespace: Assets.Scripts.GameLogic
+public interface IActorLinker : IActorLinkerBase
+{
+	// Fields
+
+	// Properties
+	public abstract UInt32 objID { get; }
+	public abstract COM_PLAYERCAMP objCamp { get; }
+	public abstract ActorTypeDef objType { get; }
+	public abstract UInt32 ConfigId { get; }
+	public abstract CActorInfo CharInfo { get; }
+	public abstract UInt32 playerId { get; }
+	public abstract Int32 ExtraSubType { get; }
+	public abstract Int32 SecondaryExtraSubType { get; }
+	public abstract Int32 ActorSubType { get; }
+	public abstract ActorStaticData TheStaticDataProxy { get; }
+	public abstract IValueLinkerComponent ValueComponentProxy { get; }
+	public abstract String Name { get; }
+	public abstract Boolean Visible { get; }
+	public abstract Boolean InCamera { get; }
+	public abstract Boolean HitEffect { get; }
+	public abstract VInt GroundY { get; }
+	public abstract CPooledGameObjectScript ActorMeshProxy { get; }
+	public abstract ISkillLinkerComponent SkillControlProxy { get; }
+	public abstract IObjLinkerWrapper ActorControlProxy { get; }
+	public abstract IHudComponent3D HudControlProxy { get; }
+	public abstract IActorLinker HostActorProxy { get; }
+	public abstract IActorLinker CallActorProxy { get; }
+	public abstract IActorLinker ImposterActorProxy { get; }
+	public abstract IActorLinker OriginalActorProxy { get; }
+	public abstract IActorLinker lastKiller { get; set; }
+	public abstract IActorLinker MonsterHostActorProxy { get; }
+	public abstract IEffectPlayComponent EffectControlProxy { get; }
+	public abstract AnimPlayComponentBase AnimControlProxy { get; }
+	public abstract IEquipLinkerComponent EquipComponentProxy { get; }
+	public abstract Boolean InWater { get; }
+	public abstract Vector3 Position { get; }
+	public abstract Quaternion Rotation { get; }
+	public abstract VInt3 Forward { get; }
+	public abstract GameObject gameObject { get; }
+	public abstract Transform MyTransform { get; }
+	public abstract Boolean Clipped { get; }
+	public abstract Boolean MeshVisible { get; }
+	public abstract ActorTypeDef ActorType { get; }
+	public abstract UInt32 SkinID { get; set; }
+	public abstract UInt32 OriginalSkinID { get; set; }
+	public abstract Boolean NeedFallbackSkin { get; }
+	public abstract Byte Difficuty { get; }
+	public abstract Single TotalTargetZoomRateFromAge { get; }
+	public abstract ActorIKComponent ActorIKProxy { get; }
+	public abstract ActorConfig ObjLinkerProxy { get; }
+	public abstract IActorSoundComponent SoundComponentProxy { get; }
+	public abstract IActorSoundVisibilityComponent SoundVisibilityCompProxy { get; }
+	public abstract UInt32 RawPlayerID { get; }
+	public abstract Single TargetZoomRateFromAge { get; set; }
+	public abstract Single ExtraZoomRateFromAge { get; set; }
+	public abstract Single ZoomRateFromAge { get; set; }
+	public abstract Boolean IsSubstituteMesh { get; }
+	public abstract Single MoveSpeed { get; }
+	public abstract Boolean IsEmptyActor { get; }
+	public abstract UInt32 DimensionGender { get; }
+	public abstract UInt32 DynamicObjMask { get; set; }
+	public abstract Boolean IsImposterCopyAllState { get; }
+	public abstract Boolean IsImposterCopyAllStateWhenDisguiseCHange { get; }
+	public abstract Int32 CameraAreaId { get; }
+
+	// Methods
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_objID() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract COM_PLAYERCAMP get_objCamp() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract ActorTypeDef get_objType() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_ConfigId() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract CActorInfo get_CharInfo() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_playerId() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 get_ExtraSubType() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 get_SecondaryExtraSubType() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 get_ActorSubType() { }
+	// RVA: 0x VA: 0x0
+	public abstract ActorStaticData get_TheStaticDataProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IValueLinkerComponent get_ValueComponentProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract String get_Name() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_Visible() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_InCamera() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_HitEffect() { }
+	// RVA: 0x VA: 0x0
+	public abstract VInt get_GroundY() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract CPooledGameObjectScript get_ActorMeshProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract ISkillLinkerComponent get_SkillControlProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IObjLinkerWrapper get_ActorControlProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IHudComponent3D get_HudControlProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_HostActorProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_CallActorProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_ImposterActorProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_OriginalActorProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_lastKiller() { }
+	// RVA: 0x4e206ec VA: 0x76386561c6ec
+	public abstract Void set_lastKiller(IActorLinker value) { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorLinker get_MonsterHostActorProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IEffectPlayComponent get_EffectControlProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract AnimPlayComponentBase get_AnimControlProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IEquipLinkerComponent get_EquipComponentProxy() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_InWater() { }
+	// RVA: 0x4e0eac4 VA: 0x76386560aac4
+	public abstract Vector3 get_Position() { }
+	// RVA: 0x VA: 0x0
+	public abstract Quaternion get_Rotation() { }
+	// RVA: 0x VA: 0x0
+	public abstract VInt3 get_Forward() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract GameObject get_gameObject() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract Transform get_MyTransform() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_Clipped() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_MeshVisible() { }
+	// RVA: 0x4dbe348 VA: 0x7638655ba348
+	public abstract Boolean IsEnemyCamp(IActorLinker actor) { }
+	// RVA: 0x4dbe348 VA: 0x7638655ba348
+	public abstract Boolean IsSelfCamp(IActorLinker actor) { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract ActorOutLineType GetTopPriorityOutLineType() { }
+	// RVA: 0x4e18da0 VA: 0x763865614da0
+	public abstract Void AddOrRemoveActorOutline(ActorOutLineType type, Boolean addOrRmv) { }
+	// RVA: 0x VA: 0x0
+	public abstract Void ScaleTo(Single lerp, Single blendTime, Boolean isRefresh) { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract ActorTypeDef get_ActorType() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_SkinID() { }
+	// RVA: 0x4e3d204 VA: 0x763865639204
+	public abstract Void set_SkinID(UInt32 value) { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_OriginalSkinID() { }
+	// RVA: 0x4e3d204 VA: 0x763865639204
+	public abstract Void set_OriginalSkinID(UInt32 value) { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_NeedFallbackSkin() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Byte get_Difficuty() { }
+	// RVA: 0x4e078a0 VA: 0x7638656038a0
+	public abstract Single get_TotalTargetZoomRateFromAge() { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public abstract Void UpdatePosition() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract ActorIKComponent get_ActorIKProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract ActorIKComponent CreateActorIKComponent() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract ActorConfig get_ObjLinkerProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorSoundComponent get_SoundComponentProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorSoundVisibilityComponent get_SoundVisibilityCompProxy() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract IActorSoundVisibilityComponent CreateSoundVisibilityComponent() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_RawPlayerID() { }
+	// RVA: 0x4e078a0 VA: 0x7638656038a0
+	public abstract Single get_TargetZoomRateFromAge() { }
+	// RVA: 0x4e3ab08 VA: 0x763865636b08
+	public abstract Void set_TargetZoomRateFromAge(Single value) { }
+	// RVA: 0x4e078a0 VA: 0x7638656038a0
+	public abstract Single get_ExtraZoomRateFromAge() { }
+	// RVA: 0x4e3ab08 VA: 0x763865636b08
+	public abstract Void set_ExtraZoomRateFromAge(Single value) { }
+	// RVA: 0x4e078a0 VA: 0x7638656038a0
+	public abstract Single get_ZoomRateFromAge() { }
+	// RVA: 0x4e3ab08 VA: 0x763865636b08
+	public abstract Void set_ZoomRateFromAge(Single value) { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_IsSubstituteMesh() { }
+	// RVA: 0x4e078a0 VA: 0x7638656038a0
+	public abstract Single get_MoveSpeed() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_IsEmptyActor() { }
+	// RVA: 0x4e0fab0 VA: 0x76386560bab0
+	public abstract Void SetInvisibleSpecialComponentsDirty() { }
+	// RVA: 0x4dfe0d8 VA: 0x7638655fa0d8
+	public abstract GameObject FindBindPoint(String bindPointName) { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 GetSyncMonsterCfgID() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_DimensionGender() { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 get_DynamicObjMask() { }
+	// RVA: 0x4e3d204 VA: 0x763865639204
+	public abstract Void set_DynamicObjMask(UInt32 value) { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_IsImposterCopyAllState() { }
+	// RVA: 0x4db47a0 VA: 0x7638655b07a0
+	public abstract Boolean get_IsImposterCopyAllStateWhenDisguiseCHange() { }
+	// RVA: 0x4dd4364 VA: 0x7638655d0364
+	public abstract Int32 get_CameraAreaId() { }
+	// RVA: 0x4e22acc VA: 0x76386561eacc
+	public abstract Void AddOrRemoveInvisibleComponent(InvisibleSpecialComponentScript component, Boolean addOrRmv) { }
+	// RVA: 0x4e0a47c VA: 0x76386560647c
+	public abstract UInt32 GetRealRawPlayerId() { }
+	// RVA: 0x4dfa98c VA: 0x7638655f698c
+	public abstract Animator GetValidMeshAnimator() { }
+	// RVA: 0x VA: 0x0
+	public abstract IActorLinker GetCustomParamActorProxy(StringId variableName) { }
+}
+
+观察dump.cs可以发现IActorLinker里面包含了大量的与对局中Actor自身可能包含的方法高度相关的一系列方法，例如【public abstract Boolean Visible { get; }】、【public abstract Vector3 Position { get; }】等
+由此可以确认，Actor的类型的确应该是这个接口的实现类
+
+
+// Dll : Scripts.GameCore.dll
+// Namespace: Assets.Scripts.GameLogic
+public class ActorLinker : PooledClassObject, IActorLinker, IActorLinkerBase
+{
+	// Fields
+	private List`1 m_LogicComponents; // 0x20
+	public SkillLinkerComponent SkillControl; // 0x28
+	public EquipLinkerComponent EquipComponent; // 0x30
+	private ResHeroCfgInfo resHeroCfgInfo; // 0x38
+	public ValueLinkerComponent ValueComponent; // 0x3b8
+	public ObjLinkerWrapper ActorControl; // 0x3c0
+	public AnimPlayComponentBase AnimControl; // 0x3c8
+	public MaterialHurtEffect MatHurtEffect; // 0x3d0
+	public MaterialGeneralEffect MatGeneralEffect; // 0x3d8
+	public HudComponent3D HudControl; // 0x3e0
+	public HudComponent3D FixedHudControl; // 0x3e8
+	public MinimapComponentNew miniMap; // 0x3f0
+	public UpdateShadowPlane ShadowEffect; // 0x3f8
+	public UpdateShadowPlane_Static ShadowEffect_Static; // 0x400
+	public EffectPlayComponent EffectControl; // 0x408
+	public BuffLinkerComponent BuffControl; // 0x410
+	public CustomHUDComponent CustomHUDControl; // 0x418
+	public MoveComponent MoveControl; // 0x420
+	public ActorSkinComponent ActorSkin; // 0x428
+	public ActorExtraDataLinkerComponent ExtraDataControl; // 0x430
+	public ActorIKComponent ActorIK; // 0x438
+	public RecoverComponent RecoverControl; // 0x440
+	public BoneBindingParticleComponent BoneBindingParticleComponent; // 0x448
+	public ActorSoundComponent SoundComponent; // 0x450
+	public ActorSoundVisibilityComponent SoundVisibilityComponent; // 0x458
+	public PoolObjHandle`1 SelfPtr; // 0x460
+	public BlueprintVarTable blueprintVarTable; // 0x470
+	public List`1 PositionRecords; // 0x478
+	public const Single K_PositionRecordsTimeGap; // 0x0
+	public VInt groundY; // 0x480
+	public CActorInfo charInfo; // 0x488
+	public ActorConfig ObjLinker; // 0x490
+	private UInt32 <MeshActorID>k__BackingField; // 0x498
+	private IActorLinker lastDeadKiller; // 0x4a0
+	private UInt32 <CoreSeq>k__BackingField; // 0x4a8
+	private UInt32 ObjID; // 0x4ac
+	public String name; // 0x4b0
+	public VInt3 forward; // 0x4b8
+	public Vector3 position; // 0x4c4
+	public Quaternion rotation; // 0x4d0
+	public Int32 lastPositionXZChangedFrameNum; // 0x4e0
+	public Int32 actorInfoChangeType; // 0x4e4
+	private UInt32 NavParentObjID; // 0x4e8
+	private UInt32 _dynamicObjMask; // 0x4ec
+	public Byte soldierRouteId; // 0x4f0
+	public Int32 waveCount; // 0x4f4
+	public VInt3 BornPos; // 0x4f8
+	public Byte monsterCamp; // 0x504
+	private Boolean _logicVisible; // 0x505
+	private Boolean _meshVisible; // 0x506
+	private Boolean _inCamera; // 0x507
+	private Boolean _rendererInCamera; // 0x508
+	private Boolean _checkRealInCamera; // 0x509
+	private PoolObjHandle`1 replaceCheckInCameraActor; // 0x510
+	private Boolean _positionInCamera; // 0x520
+	private Boolean _checkPositionInCamera; // 0x521
+	private Boolean _hitEffect; // 0x522
+	private Renderer myRenderer; // 0x528
+	private Boolean _ageVisbleFlag; // 0x530
+	private Single _zoomRateFromAge; // 0x534
+	private Single _TargetZoomRateFromAge; // 0x538
+	private Single _ExtraZoomRateFromAge; // 0x53c
+	private Int32 _cameraAreaId; // 0x540
+	public Boolean isMovable; // 0x544
+	public Boolean isRotatable; // 0x545
+	public ActorMeta theMeta; // 0x548
+	public ActorStaticData TheStaticData; // 0x580
+	private List`1 outlineSrcs; // 0x688
+	public UInt32 UnityObjID; // 0x690
+	public UInt32 MeshUnityObjID; // 0x694
+	public CPooledGameObjectScript ActorMesh; // 0x698
+	public ActorScaleComponent ScaleComponent; // 0x6a0
+	private Int32 meshLoadStamp; // 0x6a8
+	private Boolean <IsSubstituteMesh>k__BackingField; // 0x6ac
+	private Vector3 initDynamicScale; // 0x6b0
+	private Vector3 dynamicScale; // 0x6bc
+	public ListView`1 SubMeshList; // 0x6c8
+	private ListView`1 addedExtraHurtEffectMeshes; // 0x6d0
+	private ListView`1 addedSpecialExtraHurtEffectMeshes; // 0x6d8
+	public ListView`1 partGoHurtEffectList; // 0x6e0
+	public StringId MeshPrefabPath; // 0x6e8
+	public Vector3 initMeshScale; // 0x6f8
+	public Transform myTransform; // 0x708
+	private ListView`1 logicParticleSystemList; // 0x710
+	private ListView`1 navTransformCompList; // 0x718
+	public Int32 actorSubType; // 0x720
+	public Int32 extraSubType; // 0x724
+	public Int32 secondaryExtraSubType; // 0x728
+	public UInt32 waveID; // 0x72c
+	public Boolean IsTrueType; // 0x730
+	public Boolean IsSimpleCallActor; // 0x731
+	public Boolean useSelfSkinInfo; // 0x732
+	public Boolean bCopySkill; // 0x733
+	public Boolean IsMirrorActor; // 0x734
+	public CALLACTOR_STATE_CHANGE_TYPE callActorStateType; // 0x738
+	public Boolean bFilterAsHero; // 0x73c
+	public CALLACTOR_HUD_DISGUISE_STATE_TYPE hudDisguiseType; // 0x740
+	public Boolean IsInvincible; // 0x744
+	public Boolean AttackOrderReady; // 0x745
+	public Int32 sightRange; // 0x748
+	private UInt32 rangeOutLineMin; // 0x74c
+	private UInt32 rangeOutLineMax; // 0x750
+	private Boolean hasDrawRangeOutLine; // 0x754
+	private Boolean _clipped; // 0x755
+	public String _strPassiveAffix; // 0x758
+	public Int32 _passiveAffixCnt; // 0x760
+	private Single moveSpeed; // 0x764
+	private Boolean _bPuppetPlaced; // 0x768
+	private UInt32 _btnPosActorObjId; // 0x76c
+	private Boolean _bInWater; // 0x770
+	private ActorInfoAnimType _animType; // 0x774
+	public Boolean bGetVisibleComponent; // 0x778
+	private Int64 _bEffectState; // 0x780
+	public Boolean bDisableSkillTargetRuleIgnoreFilterAsHero; // 0x788
+	public List`1 invisibleSpecialComponents; // 0x790
+	private Boolean isInvisibleSpecialComponentStateDirty; // 0x798
+	private readonly LoadGameObjectCallback attachMeshObject_CallBack; // 0x7a0
+	private readonly LoadGameObjectCallback onChangeActorMeshCallback; // 0x7a8
+	private readonly PooledMonoVisitor addNavTransformMono_CallBack; // 0x7b0
+	public Boolean bGetParticleSystemWorldSpaceMode; // 0x7b8
+	public List`1 particleSystemWorldSpaceModeList; // 0x7c0
+	public DimensionHeroComponent dimensionHeroComponent; // 0x7c8
+	private Boolean <IsEmptyActor>k__BackingField; // 0x7d0
+	private OnTimeUpHandler hideSoldierShadowDeg; // 0x7d8
+	private PoolObjHandle`1 hostActor; // 0x7e0
+	private PoolObjHandle`1 callActor; // 0x7f0
+	private PoolObjHandle`1 imposterActor; // 0x800
+	private PoolObjHandle`1 copyHudActor; // 0x810
+	public TinyValueList`1 callActorList; // 0x820
+	private PoolObjHandle`1 monsterHostActor; // 0x828
+	private PoolObjHandle`1 organHostActor; // 0x838
+	private TinyValueDictionary`2 m_customParamActors; // 0x848
+	private Boolean <Mute>k__BackingField; // 0x850
+	protected UInt32 _taoshaBuffFlag; // 0x854
+
+	// Properties
+	public ISkillLinkerComponent SkillControlProxy { get; }
+	public IEquipLinkerComponent EquipComponentProxy { get; }
+	public EquipPackageLinkerComponent taoShaEquipComponent { get; }
+	public PVECooperationEquipLinkerComponent pveCooperationEquipComponent { get; }
+	public IValueLinkerComponent ValueComponentProxy { get; }
+	public IObjLinkerWrapper ActorControlProxy { get; }
+	public AnimPlayComponentBase AnimControlProxy { get; }
+	public IHudComponent3D HudControlProxy { get; }
+	public IEffectPlayComponent EffectControlProxy { get; }
+	public ActorIKComponent ActorIKProxy { get; }
+	public IActorSoundComponent SoundComponentProxy { get; }
+	public IActorSoundVisibilityComponent SoundVisibilityCompProxy { get; }
+	public VInt GroundY { get; }
+	public CActorInfo CharInfo { get; }
+	public ActorConfig ObjLinkerProxy { get; }
+	public UInt32 RawPlayerID { get; }
+	public UInt32 MeshActorID { get; set; }
+	public UInt32 CoreSeq { get; set; }
+	public String Name { get; }
+	public VInt3 Forward { get; }
+	public Vector3 Position { get; }
+	public Quaternion Rotation { get; }
+	public PoolObjHandle`1 ReplaceCheckInCameraActor { get; set; }
+	public ActorStaticData TheStaticDataProxy { get; }
+	public CPooledGameObjectScript ActorMeshProxy { get; }
+	public Boolean IsSubstituteMesh { get; set; }
+	public Transform MyTransform { get; }
+	public Int32 ActorSubType { get; }
+	public Int32 ExtraSubType { get; }
+	public Int32 SecondaryExtraSubType { get; }
+	public Boolean IsEmptyActor { get; set; }
+	public Boolean IsImposterCopyAllState { get; }
+	public Boolean IsImposterCopyAllStateWhenDisguiseCHange { get; }
+	public Boolean IsUseMecanim { get; }
+	public ActorInfoAnimType AnimType { get; }
+	public Renderer MyRenderer { get; }
+	public Boolean InWater { get; set; }
+	public UInt32 BtnPosActorObjId { get; set; }
+	public Boolean bPuppetPlaced { get; set; }
+	public Single ZoomRateFromAge { get; set; }
+	public Single ExtraZoomRateFromAge { get; set; }
+	public Int32 CameraAreaId { get; set; }
+	public UInt32 DynamicObjMask { get; set; }
+	public Single TargetZoomRateFromAge { get; set; }
+	public Single TotalTargetZoomRateFromAge { get; }
+	public SkinnedMeshRenderer SkinMeshRdr { get; }
+	public Boolean Clipped { get; set; }
+	public UInt32 objID { get; }
+	public IActorLinker lastKiller { get; set; }
+	public UInt32 ConfigId { get; }
+	public ActorTypeDef ActorType { get; }
+	public UInt32 SkinID { get; set; }
+	public UInt32 OriginalSkinID { get; set; }
+	public Boolean NeedFallbackSkin { get; }
+	public COM_PLAYERCAMP objCamp { get; }
+	public ActorTypeDef objType { get; }
+	public UInt32 playerId { get; }
+	public Byte Difficuty { get; }
+	public IActorLinker HostActorProxy { get; }
+	public IActorLinker CallActorProxy { get; }
+	public IActorLinker ImposterActorProxy { get; }
+	public IActorLinker OriginalActorProxy { get; }
+	public PoolObjHandle`1 ImposterActor { get; set; }
+	public PoolObjHandle`1 HostActor { get; set; }
+	public PoolObjHandle`1 CallActor { get; set; }
+	public PoolObjHandle`1 CopyHudActor { get; set; }
+	public PoolObjHandle`1 MonsterHostActor { get; set; }
+	public IActorLinker MonsterHostActorProxy { get; }
+	public Single MoveSpeed { get; set; }
+	public UInt32 DimensionGender { get; }
+	public Boolean Visible { get; }
+	public Boolean MeshVisible { get; }
+	public Boolean RealMeshVisible { get; }
+	public Boolean CheckRealInCamera { get; set; }
+	public Boolean InCamera { get; set; }
+	public Boolean RendererInCamera { get; set; }
+	public Boolean PositionInCamera { get; set; }
+	public Boolean CheckPositionInCamera { get; set; }
+	public GameObject gameObject { get; }
+	public Boolean HitEffect { get; set; }
+	public Boolean Mute { get; set; }
+
+	// Methods
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T GetLogicComponent() { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void AddLogicComponent(T logicComponent) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public Void RemoveLogicComponent(T logicComponent) { }
+	// RVA: 0x6f8ee7c VA: 0x76386778ae7c
+	private Void NtfComponentsPrepare() { }
+	// RVA: 0x6f8ef74 VA: 0x76386778af74
+	private Void NtfComponentsFight() { }
+	// RVA: 0x6f8f06c VA: 0x76386778b06c
+	private Void NtfComponentsLateUpdate(Int32 nDelta) { }
+	// RVA: 0x6f8f16c VA: 0x76386778b16c
+	public ISkillLinkerComponent get_SkillControlProxy() { }
+	// RVA: 0x6f8f174 VA: 0x76386778b174
+	public IEquipLinkerComponent get_EquipComponentProxy() { }
+	// RVA: 0x6f8f17c VA: 0x76386778b17c
+	public EquipPackageLinkerComponent get_taoShaEquipComponent() { }
+	// RVA: 0x6f8f204 VA: 0x76386778b204
+	public PVECooperationEquipLinkerComponent get_pveCooperationEquipComponent() { }
+	// RVA: 0x6f8f28c VA: 0x76386778b28c
+	public IValueLinkerComponent get_ValueComponentProxy() { }
+	// RVA: 0x6f8f294 VA: 0x76386778b294
+	public IObjLinkerWrapper get_ActorControlProxy() { }
+	// RVA: 0x6f8f29c VA: 0x76386778b29c
+	public AnimPlayComponentBase get_AnimControlProxy() { }
+	// RVA: 0x6f8f2a4 VA: 0x76386778b2a4
+	public IHudComponent3D get_HudControlProxy() { }
+	// RVA: 0x6f8f2ac VA: 0x76386778b2ac
+	public IEffectPlayComponent get_EffectControlProxy() { }
+	// RVA: 0x6f8f2b4 VA: 0x76386778b2b4
+	public ActorIKComponent get_ActorIKProxy() { }
+	// RVA: 0x6f8f2bc VA: 0x76386778b2bc
+	public IActorSoundComponent get_SoundComponentProxy() { }
+	// RVA: 0x6f8f2c4 VA: 0x76386778b2c4
+	public IActorSoundVisibilityComponent get_SoundVisibilityCompProxy() { }
+	// RVA: 0x6f8f2cc VA: 0x76386778b2cc
+	public VInt get_GroundY() { }
+	// RVA: 0x6f8f2d4 VA: 0x76386778b2d4
+	public CActorInfo get_CharInfo() { }
+	// RVA: 0x6f8f2dc VA: 0x76386778b2dc
+	public ActorConfig get_ObjLinkerProxy() { }
+	// RVA: 0x6f8f2e4 VA: 0x76386778b2e4
+	public UInt32 get_RawPlayerID() { }
+	// RVA: 0x6f8f2ec VA: 0x76386778b2ec
+	public UInt32 get_MeshActorID() { }
+	// RVA: 0x6f8f2f4 VA: 0x76386778b2f4
+	private Void set_MeshActorID(UInt32 value) { }
+	// RVA: 0x6f8f2fc VA: 0x76386778b2fc
+	public UInt32 get_CoreSeq() { }
+	// RVA: 0x6f8f304 VA: 0x76386778b304
+	private Void set_CoreSeq(UInt32 value) { }
+	// RVA: 0x6f8f30c VA: 0x76386778b30c
+	public String get_Name() { }
+	// RVA: 0x6f8f314 VA: 0x76386778b314
+	public VInt3 get_Forward() { }
+	// RVA: 0x6f8f324 VA: 0x76386778b324
+	public Vector3 get_Position() { }
+	// RVA: 0x6f8f334 VA: 0x76386778b334
+	public Quaternion get_Rotation() { }
+	// RVA: 0x6f8f348 VA: 0x76386778b348
+	public PoolObjHandle`1 get_ReplaceCheckInCameraActor() { }
+	// RVA: 0x6f8f358 VA: 0x76386778b358
+	public Void set_ReplaceCheckInCameraActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f364 VA: 0x76386778b364
+	public ActorStaticData get_TheStaticDataProxy() { }
+	// RVA: 0x6f8f374 VA: 0x76386778b374
+	public CPooledGameObjectScript get_ActorMeshProxy() { }
+	// RVA: 0x6f8f37c VA: 0x76386778b37c
+	public Boolean get_IsSubstituteMesh() { }
+	// RVA: 0x6f8f384 VA: 0x76386778b384
+	private Void set_IsSubstituteMesh(Boolean value) { }
+	// RVA: 0x6f8f38c VA: 0x76386778b38c
+	public Transform get_MyTransform() { }
+	// RVA: 0x6f8f394 VA: 0x76386778b394
+	public Int32 get_ActorSubType() { }
+	// RVA: 0x6f8f39c VA: 0x76386778b39c
+	public Int32 get_ExtraSubType() { }
+	// RVA: 0x6f8f3a4 VA: 0x76386778b3a4
+	public Int32 get_SecondaryExtraSubType() { }
+	// RVA: 0x6f8f3ac VA: 0x76386778b3ac
+	public Boolean get_IsEmptyActor() { }
+	// RVA: 0x6f8f3b4 VA: 0x76386778b3b4
+	public Void set_IsEmptyActor(Boolean value) { }
+	// RVA: 0x6f8f3bc VA: 0x76386778b3bc
+	public Boolean get_IsImposterCopyAllState() { }
+	// RVA: 0x6f8f3e8 VA: 0x76386778b3e8
+	public Boolean get_IsImposterCopyAllStateWhenDisguiseCHange() { }
+	// RVA: 0x6f8f414 VA: 0x76386778b414
+	public Boolean get_IsUseMecanim() { }
+	// RVA: 0x6f8f428 VA: 0x76386778b428
+	public ActorInfoAnimType get_AnimType() { }
+	// RVA: 0x6f8f430 VA: 0x76386778b430
+	public Renderer get_MyRenderer() { }
+	// RVA: 0x6f8f438 VA: 0x76386778b438
+	public Boolean get_InWater() { }
+	// RVA: 0x6f8f440 VA: 0x76386778b440
+	public Void set_InWater(Boolean value) { }
+	// RVA: 0x6f8f448 VA: 0x76386778b448
+	public UInt32 get_BtnPosActorObjId() { }
+	// RVA: 0x6f8f450 VA: 0x76386778b450
+	public Void set_BtnPosActorObjId(UInt32 value) { }
+	// RVA: 0x6f8f458 VA: 0x76386778b458
+	public Boolean get_bPuppetPlaced() { }
+	// RVA: 0x6f8f460 VA: 0x76386778b460
+	public Void set_bPuppetPlaced(Boolean value) { }
+	// RVA: 0x6f8f468 VA: 0x76386778b468
+	public Single get_ZoomRateFromAge() { }
+	// RVA: 0x6f8f470 VA: 0x76386778b470
+	public Void set_ZoomRateFromAge(Single value) { }
+	// RVA: 0x6f8f478 VA: 0x76386778b478
+	public Single get_ExtraZoomRateFromAge() { }
+	// RVA: 0x6f8f480 VA: 0x76386778b480
+	public Void set_ExtraZoomRateFromAge(Single value) { }
+	// RVA: 0x6f8f488 VA: 0x76386778b488
+	public Int32 get_CameraAreaId() { }
+	// RVA: 0x6f8f490 VA: 0x76386778b490
+	public Void set_CameraAreaId(Int32 value) { }
+	// RVA: 0x6f8f498 VA: 0x76386778b498
+	public UInt32 get_DynamicObjMask() { }
+	// RVA: 0x6f8f4a0 VA: 0x76386778b4a0
+	public Void set_DynamicObjMask(UInt32 value) { }
+	// RVA: 0x6f8f4a8 VA: 0x76386778b4a8
+	public Single get_TargetZoomRateFromAge() { }
+	// RVA: 0x6f8f4b0 VA: 0x76386778b4b0
+	public Void set_TargetZoomRateFromAge(Single value) { }
+	// RVA: 0x6f8f4b8 VA: 0x76386778b4b8
+	public Single get_TotalTargetZoomRateFromAge() { }
+	// RVA: 0x6f8f4c8 VA: 0x76386778b4c8
+	public SkinnedMeshRenderer get_SkinMeshRdr() { }
+	// RVA: 0x6f8f550 VA: 0x76386778b550
+	public Boolean get_Clipped() { }
+	// RVA: 0x6f8f558 VA: 0x76386778b558
+	public Void set_Clipped(Boolean value) { }
+	// RVA: 0x6f8f560 VA: 0x76386778b560
+	public UInt32 get_objID() { }
+	// RVA: 0x6f8f568 VA: 0x76386778b568
+	public IActorLinker get_lastKiller() { }
+	// RVA: 0x6f8f570 VA: 0x76386778b570
+	public Void set_lastKiller(IActorLinker value) { }
+	// RVA: 0x6f8f578 VA: 0x76386778b578
+	public UInt32 get_ConfigId() { }
+	// RVA: 0x6f8f580 VA: 0x76386778b580
+	public ActorTypeDef get_ActorType() { }
+	// RVA: 0x6f8f588 VA: 0x76386778b588
+	public UInt32 get_SkinID() { }
+	// RVA: 0x6f8f590 VA: 0x76386778b590
+	public Void set_SkinID(UInt32 value) { }
+	// RVA: 0x6f8f598 VA: 0x76386778b598
+	public UInt32 get_OriginalSkinID() { }
+	// RVA: 0x6f8f5a0 VA: 0x76386778b5a0
+	public Void set_OriginalSkinID(UInt32 value) { }
+	// RVA: 0x6f8f5a8 VA: 0x76386778b5a8
+	public Boolean get_NeedFallbackSkin() { }
+	// RVA: 0x6f8f5c8 VA: 0x76386778b5c8
+	public COM_PLAYERCAMP get_objCamp() { }
+	// RVA: 0x6f8f5d0 VA: 0x76386778b5d0
+	public ActorTypeDef get_objType() { }
+	// RVA: 0x6f8f5d8 VA: 0x76386778b5d8
+	public UInt32 get_playerId() { }
+	// RVA: 0x6f8f5e0 VA: 0x76386778b5e0
+	public Byte get_Difficuty() { }
+	// RVA: 0x6f8f5e8 VA: 0x76386778b5e8
+	public IActorLinker get_HostActorProxy() { }
+	// RVA: 0x6f8f668 VA: 0x76386778b668
+	public IActorLinker get_CallActorProxy() { }
+	// RVA: 0x6f8f6e8 VA: 0x76386778b6e8
+	public IActorLinker get_ImposterActorProxy() { }
+	// RVA: 0x6f8f768 VA: 0x76386778b768
+	public IActorLinker get_OriginalActorProxy() { }
+	// RVA: 0x6f8f7e4 VA: 0x76386778b7e4
+	public IActorLinker GetCustomParamActorProxy(StringId variableName) { }
+	// RVA: 0x6f8f888 VA: 0x76386778b888
+	public PoolObjHandle`1 get_ImposterActor() { }
+	// RVA: 0x6f8f898 VA: 0x76386778b898
+	public Void set_ImposterActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f8a4 VA: 0x76386778b8a4
+	public PoolObjHandle`1 get_HostActor() { }
+	// RVA: 0x6f8f8b4 VA: 0x76386778b8b4
+	public Void set_HostActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f8c0 VA: 0x76386778b8c0
+	public PoolObjHandle`1 get_CallActor() { }
+	// RVA: 0x6f8f8d0 VA: 0x76386778b8d0
+	public Void set_CallActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f8dc VA: 0x76386778b8dc
+	public PoolObjHandle`1 get_CopyHudActor() { }
+	// RVA: 0x6f8f8ec VA: 0x76386778b8ec
+	public Void set_CopyHudActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f8f8 VA: 0x76386778b8f8
+	public PoolObjHandle`1 get_MonsterHostActor() { }
+	// RVA: 0x6f8f908 VA: 0x76386778b908
+	public Void set_MonsterHostActor(PoolObjHandle`1 value) { }
+	// RVA: 0x6f8f914 VA: 0x76386778b914
+	public IActorLinker get_MonsterHostActorProxy() { }
+	// RVA: 0x6f8f994 VA: 0x76386778b994
+	public Void SetCustomParamActor(StringId variableName, UInt32 targetObjID) { }
+	// RVA: 0x6f8fab8 VA: 0x76386778bab8
+	public PoolObjHandle`1 GetCustomParamActor(StringId variableName) { }
+	// RVA: 0x6f8fbc0 VA: 0x76386778bbc0
+	public Single get_MoveSpeed() { }
+	// RVA: 0x6f8fbc8 VA: 0x76386778bbc8
+	public Void set_MoveSpeed(Single value) { }
+	// RVA: 0x6f8fbd0 VA: 0x76386778bbd0
+	public Void AddCallActor(PoolObjHandle`1 call) { }
+	// RVA: 0x6f8fc94 VA: 0x76386778bc94
+	public Void RemoveCallActor(PoolObjHandle`1 call) { }
+	// RVA: 0x6f8fde0 VA: 0x76386778bde0
+	public UInt32 get_DimensionGender() { }
+	// RVA: 0x6f8fde8 VA: 0x76386778bde8
+	public Void SetObjCamp(COM_PLAYERCAMP camp) { }
+	// RVA: 0x6f8fdf0 VA: 0x76386778bdf0
+	private Void ForceSetVisible(Boolean bLogicVisible, Boolean bMeshVisible) { }
+	// RVA: 0x6f90168 VA: 0x76386778c168
+	public Void AddOrRemoveInvisibleComponent(InvisibleSpecialComponentScript component, Boolean isAddOrRemove) { }
+	// RVA: 0x6f90264 VA: 0x76386778c264
+	public Void InitInVisibleSpecialComponents() { }
+	// RVA: 0x6f904ec VA: 0x76386778c4ec
+	public Void SetInvisibleSpecialComponentsEnable(Boolean visible) { }
+	// RVA: 0x6f905e0 VA: 0x76386778c5e0
+	public Void SetInvisibleSpecialComponentsDirty() { }
+	// RVA: 0x6f905ec VA: 0x76386778c5ec
+	private Void RefreshInvisibleSpecialComponentsShowLayer() { }
+	// RVA: 0x6f90a18 VA: 0x76386778ca18
+	private Void ProcessParticleSystemWorldSpaceModeOnActor() { }
+	// RVA: 0x6f90dc8 VA: 0x76386778cdc8
+	public Boolean get_Visible() { }
+	// RVA: 0x6f90dd0 VA: 0x76386778cdd0
+	public Boolean get_MeshVisible() { }
+	// RVA: 0x6f90dd8 VA: 0x76386778cdd8
+	public Boolean get_RealMeshVisible() { }
+	// RVA: 0x6f90e00 VA: 0x76386778ce00
+	public Void SetVisible(Boolean bLogicVisible, Boolean bMeshVisible) { }
+	// RVA: 0x6f90e38 VA: 0x76386778ce38
+	public Void SetAgeVisibleFlag(Boolean bVisible) { }
+	// RVA: 0x6f90e58 VA: 0x76386778ce58
+	public Void ReInitHeroControl() { }
+	// RVA: 0x6f90f34 VA: 0x76386778cf34
+	public Boolean get_CheckRealInCamera() { }
+	// RVA: 0x6f90f3c VA: 0x76386778cf3c
+	public Void set_CheckRealInCamera(Boolean value) { }
+	// RVA: 0x6f90f44 VA: 0x76386778cf44
+	public Boolean get_InCamera() { }
+	// RVA: 0x6f90f4c VA: 0x76386778cf4c
+	public Void set_InCamera(Boolean value) { }
+	// RVA: 0x6f911dc VA: 0x76386778d1dc
+	public Boolean get_RendererInCamera() { }
+	// RVA: 0x6f911e4 VA: 0x76386778d1e4
+	public Void set_RendererInCamera(Boolean value) { }
+	// RVA: 0x6f91270 VA: 0x76386778d270
+	public Boolean get_PositionInCamera() { }
+	// RVA: 0x6f91278 VA: 0x76386778d278
+	public Void set_PositionInCamera(Boolean value) { }
+	// RVA: 0x6f912a8 VA: 0x76386778d2a8
+	public Boolean get_CheckPositionInCamera() { }
+	// RVA: 0x6f912b0 VA: 0x76386778d2b0
+	public Void set_CheckPositionInCamera(Boolean value) { }
+	// RVA: 0x6f912b8 VA: 0x76386778d2b8
+	public GameObject get_gameObject() { }
+	// RVA: 0x6f912e8 VA: 0x76386778d2e8
+	public Boolean get_HitEffect() { }
+	// RVA: 0x6f912f0 VA: 0x76386778d2f0
+	public Void set_HitEffect(Boolean value) { }
+	// RVA: 0x6f912f8 VA: 0x76386778d2f8
+	public Boolean get_Mute() { }
+	// RVA: 0x6f91300 VA: 0x76386778d300
+	public Void set_Mute(Boolean value) { }
+	// RVA: 0x6f91308 VA: 0x76386778d308
+	public Void .ctor() { }
+	// RVA: 0x6f91740 VA: 0x76386778d740
+	public override Void OnUse() { }
+	// RVA: 0x6f91c24 VA: 0x76386778dc24
+	public override Void OnRelease() { }
+	// RVA: 0x6f91c38 VA: 0x76386778dc38
+	public Void SpawnActor(ref SpawnActorData data, Boolean isRecover) { }
+	// RVA: 0x6f92710 VA: 0x76386778e710
+	private Void SetMecanimType(UInt32 skinId) { }
+	// RVA: 0x6f92748 VA: 0x76386778e748
+	public UInt32 GetRecorverEpDigitType(Boolean isEpMaxState) { }
+	// RVA: 0x6f92764 VA: 0x76386778e764
+	public UInt32 GetRecorverEpDigitThreshold() { }
+	// RVA: 0x6f9276c VA: 0x76386778e76c
+	public Int32 GetSyncMonsterCfgID() { }
+	// RVA: 0x6f92774 VA: 0x76386778e774
+	public UInt32 GetRealRawPlayerId() { }
+	// RVA: 0x6f92828 VA: 0x76386778e828
+	public Void Prepare(ref ActorPrepareData data) { }
+	// RVA: 0x6f93178 VA: 0x76386778f178
+	public Void DeactiveActor() { }
+	// RVA: 0x6f936d0 VA: 0x76386778f6d0
+	public Void DestroyActor() { }
+	// RVA: 0x6f93ea0 VA: 0x76386778fea0
+	public Void UpdatePosition(DisplayInfoData data) { }
+	// RVA: 0x6f93eb0 VA: 0x76386778feb0
+	private Void UpdateMoveComponent() { }
+	// RVA: 0x6f94018 VA: 0x763867790018
+	public Void UpdatePosition() { }
+	// RVA: 0x6f941d4 VA: 0x7638677901d4
+	public Void UpdatePosition(ref DisplayInfoData data) { }
+	// RVA: 0x6f945c0 VA: 0x7638677905c0
+	private Void LateUpdateHeroRangeOutLine() { }
+	// RVA: 0x6f948ac VA: 0x7638677908ac
+	public Void ForceSetFarRangeOutLine(Boolean enableOrDisable) { }
+	// RVA: 0x6f94940 VA: 0x763867790940
+	private Boolean IsPositionVisibleInMainCamera(Vector3 pt) { }
+	// RVA: 0x6f949f8 VA: 0x7638677909f8
+	private Boolean IsPositionVisibleInOtherCamera(Vector3 pt) { }
+	// RVA: 0x6f94aec VA: 0x763867790aec
+	private Boolean IsRealMeshVisibleInMainCamera() { }
+	// RVA: 0x6f94b28 VA: 0x763867790b28
+	public Void LateUpdate() { }
+	// RVA: 0x6f95024 VA: 0x763867791024
+	public Void Interpolation() { }
+	// RVA: 0x6f95164 VA: 0x763867791164
+	public Void UpdateLogic(Int32 delta) { }
+	// RVA: 0x6f952d8 VA: 0x7638677912d8
+	private Void LoadActorInfo() { }
+	// RVA: 0x6f954cc VA: 0x7638677914cc
+	private Void AttachMeshObject() { }
+	// RVA: 0x6f95578 VA: 0x763867791578
+	private Void AttachMeshObject_CallBack(UInt32 callSeq, CPooledGameObjectScript scriptObj, UInt32 unityObjId, Object context, Boolean isSubstitute) { }
+	// RVA: 0x6f957b8 VA: 0x7638677917b8
+	public Void ChangeActorMesh(UInt32 newMeshUnityObjId, Int32 iMeshActorObjId, Boolean bClearAnims, Boolean bPlayPrevAnim, Int32 animGroupId, Boolean bRevertMatParam, Boolean bCrossover, Int32 heroConfigID, Int32 actorType, Int32 targetAnimSkinCfgId) { }
+	// RVA: 0x6f95980 VA: 0x763867791980
+	private Void OnChangeActorMeshCallback(UInt32 callSeq, CPooledGameObjectScript scriptObj, UInt32 unityObjId, Object context, Boolean isSubstitute) { }
+	// RVA: 0x6f95dd0 VA: 0x763867791dd0
+	public Void SimpleReplaceActorMesh(UInt32 virID, ResPathIndicator resPathIdc) { }
+	// RVA: 0x6f95ecc VA: 0x763867791ecc
+	private Void SimpleReplaceActorMeshImpl(CPooledGameObjectScript gameObj, UInt32 unityObjId) { }
+	// RVA: 0x4e2a758 VA: 0x763865626758
+	public static Void Swap(ref T lhs, ref T rhs) { }
+	// RVA: 0x6f961ec VA: 0x7638677921ec
+	public Void SwitchActorMesh(PoolObjHandle`1 anotherActor) { }
+	// RVA: 0x6f96a84 VA: 0x763867792a84
+	public Void RefreshMyRender() { }
+	// RVA: 0x6f96f34 VA: 0x763867792f34
+	private Boolean GetResHeroSkinRootBone(out ResHeroSkinRootBone rootBoneData) { }
+	// RVA: 0x6f96fac VA: 0x763867792fac
+	private Boolean IsCheckMyRenderer(ref ResHeroSkinRootBone rootBoneData, SkinnedMeshRenderer tempRenderer) { }
+	// RVA: 0x6f97150 VA: 0x763867793150
+	private Void SafeSetMeshUnityObjId(UInt32 meshUnityObjId) { }
+	// RVA: 0x6f97348 VA: 0x763867793348
+	public ValueTuple`2 GetMeshConfig(CActorInfo refCharInfo) { }
+	// RVA: 0x6f97578 VA: 0x763867793578
+	private Void ValidateMeshTransform(CActorInfo refCharInfo, Boolean bKeepLocalPos) { }
+	// RVA: 0x6f977a4 VA: 0x7638677937a4
+	public Void SetDynamicScale(ref Vector3 scale) { }
+	// RVA: 0x6f977d4 VA: 0x7638677937d4
+	public Vector3 GetDynamicScale() { }
+	// RVA: 0x6f977e4 VA: 0x7638677937e4
+	public Void AddSubMeshList(CPooledGameObjectScript mesh) { }
+	// RVA: 0x6f978ac VA: 0x7638677938ac
+	public Void RemoveSubMeshList(CPooledGameObjectScript mesh) { }
+	// RVA: 0x6f979a8 VA: 0x7638677939a8
+	public Void AddLogicParticleSystemList(CPooledGameObjectScript particle) { }
+	// RVA: 0x6f97b0c VA: 0x763867793b0c
+	public Void RemoveLogicParticleSystemList(CPooledGameObjectScript particle) { }
+	// RVA: 0x6f97b80 VA: 0x763867793b80
+	public Void UpdateLogicParticle(Int32 curValue, Int32 maxValue) { }
+	// RVA: 0x6f97d68 VA: 0x763867793d68
+	public Void AddExtraHurtEffectMesh(CPooledGameObjectScript par) { }
+	// RVA: 0x6f97ea8 VA: 0x763867793ea8
+	public Void AddSpecialExtraHurtEffectMeshes(CPooledGameObjectScript par) { }
+	// RVA: 0x6f97fe8 VA: 0x763867793fe8
+	public Boolean RemoveExtraHurtEffectMesh(CPooledGameObjectScript par) { }
+	// RVA: 0x6f980cc VA: 0x7638677940cc
+	public Boolean RemoveSpecialExtraHurtEffectMeshes(CPooledGameObjectScript par) { }
+	// RVA: 0x6f981b0 VA: 0x7638677941b0
+	private Void RemoveAllAddedExtraHurtEffectMeshes() { }
+	// RVA: 0x6f98520 VA: 0x763867794520
+	public Void ReInitAnimControl(ActorInfoAnimType animType, String bornAnimation, Byte bornFlags) { }
+	// RVA: 0x6f98780 VA: 0x763867794780
+	private Void AddNavTransformMono(IPooledMonoBehaviour mono) { }
+	// RVA: 0x6f98894 VA: 0x763867794894
+	public Void SetMeshVisibleTag() { }
+	// RVA: 0x6f98910 VA: 0x763867794910
+	public Void SetMeshVisibleTagRecursively(GameObject obj) { }
+	// RVA: 0x6f98ad0 VA: 0x763867794ad0
+	private Void SetMesh(CPooledGameObjectScript newMesh) { }
+	// RVA: 0x6f98db0 VA: 0x763867794db0
+	private Void SetActorMesh(CPooledGameObjectScript newMesh) { }
+	// RVA: 0x6f98fbc VA: 0x763867794fbc
+	private Void ChangeActorMesh(CPooledGameObjectScript newMesh, Int32 iMeshActorObjId, Int32 animGroupId, Boolean bRevertMatParam, Boolean bCrossover, Int32 heroConfigID, Int32 actorType, Int32 targetAnimSkinCfgId) { }
+	// RVA: 0x6f99308 VA: 0x763867795308
+	private Void RefreshComponent() { }
+	// RVA: 0x6f99470 VA: 0x763867795470
+	private Void ChangeActorAnimControl(Int32 iMeshActorObjId, Int32 animGroupId, Boolean bCrossover, Int32 heroConfigID, Int32 actorType, Int32 targetAnimSkinCfgId) { }
+	// RVA: 0x6f996c0 VA: 0x7638677956c0
+	private Void ChangeMeshReInitAnim(UInt32 skinID, Int32 iMeshActorObjId, Int32 animGroupId, Boolean bCrossover, Int32 heroConfigID, Int32 actorType) { }
+	// RVA: 0x6f99ae8 VA: 0x763867795ae8
+	private Void InitAnimControl(Int32 animGroupId) { }
+	// RVA: 0x6f99c40 VA: 0x763867795c40
+	public Animator GetValidMeshAnimator() { }
+	// RVA: 0x6f99dfc VA: 0x763867795dfc
+	public Void ChangeMaterialParam(MaterialHurtEffect materialEffect) { }
+	// RVA: 0x6f99e2c VA: 0x763867795e2c
+	public Void ResetShape() { }
+	// RVA: 0x6f99eec VA: 0x763867795eec
+	public Void Teleport(ref Vector3 pos, ref VInt3 dir, ref Quaternion rot) { }
+	// RVA: 0x6f9a014 VA: 0x763867796014
+	public Void OnVisibleChange(ref Vector3 pos, ref VInt3 dir, ref Quaternion rot) { }
+	// RVA: 0x6f9a100 VA: 0x763867796100
+	public Boolean IsEnemyCamp(IActorLinker actor) { }
+	// RVA: 0x6f9a25c VA: 0x76386779625c
+	public Boolean IsSelfCamp(IActorLinker actor) { }
+	// RVA: 0x6f9a3bc VA: 0x7638677963bc
+	public Void CreateDebugCollision(ref InitDebugCollision data) { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T CreateLogicComponent() { }
+	// RVA: 0x3af0088 VA: 0x7638642ec088
+	public T CreateActorComponent() { }
+	// RVA: 0x6f9a3c0 VA: 0x7638677963c0
+	public ActorIKComponent CreateActorIKComponent() { }
+	// RVA: 0x6f9a414 VA: 0x763867796414
+	public IActorSoundVisibilityComponent CreateSoundVisibilityComponent() { }
+	// RVA: 0x6f9a470 VA: 0x763867796470
+	public Void InitComponent() { }
+	// RVA: 0x6f9a5b0 VA: 0x7638677965b0
+	public Void StartFight() { }
+	// RVA: 0x6f9aa50 VA: 0x763867796a50
+	public Void onActorDamage(Int32 hurtType, UInt32 hurtCount, ref PoolObjHandle`1 attacker, ref ActorDamageEventParam evt) { }
+	// RVA: 0x6f9ad60 VA: 0x763867796d60
+	public Void OnCustomDamageEffect(String path, Int32 count) { }
+	// RVA: 0x6f9ae3c VA: 0x763867796e3c
+	private Void PartGoHurtEffect(Int32 hurtType, UInt32 hurtCount, ref PoolObjHandle`1 attacker, ref ActorDamageEventParam evt) { }
+	// RVA: 0x6f9af54 VA: 0x763867796f54
+	public Void onActorHudShake(Boolean bOpen, Int32 shakeMod, ref PoolObjHandle`1 attacker, String shakePath) { }
+	// RVA: 0x6f9b0a0 VA: 0x7638677970a0
+	public Boolean CanAttack(ref PoolObjHandle`1 target) { }
+	// RVA: 0x6f9b298 VA: 0x763867797298
+	public Boolean CanAttackPerformance(ref ActorLinker targetLinker) { }
+	// RVA: 0x6f9b454 VA: 0x763867797454
+	public Boolean IsForbidSelectBySkillOrg(ActorLinker target) { }
+	// RVA: 0x6f9b544 VA: 0x763867797544
+	public Boolean CanForceSelectTarget(ref PoolObjHandle`1 target) { }
+	// RVA: 0x6f9b63c VA: 0x76386779763c
+	public Boolean CanForceSelectTarget(ref ActorLinker target) { }
+	// RVA: 0x6f9b698 VA: 0x763867797698
+	public Void OnDead(Int32 _reviveCooldown) { }
+	// RVA: 0x6f9b840 VA: 0x763867797840
+	private Void HideSoldierShadow(Int32 timeSeq) { }
+	// RVA: 0x6f9b8b4 VA: 0x7638677978b4
+	public Void RecoverActor(ref ActorRecoverData data) { }
+	// RVA: 0x6f9be3c VA: 0x763867797e3c
+	public Void ScaleTo(Single lerp, Single blendTime, Boolean isRefresh) { }
+	// RVA: 0x6f9bf08 VA: 0x763867797f08
+	public Void ActorLookAtTarget(PoolObjHandle`1 target) { }
+	// RVA: 0x6f9c07c VA: 0x76386779807c
+	public Void OnClipRecover_ActorLinker() { }
+	// RVA: 0x6f9c138 VA: 0x763867798138
+	public Void OnClipRecover_Mesh(UInt32 meshObjID) { }
+	// RVA: 0x6f9c22c VA: 0x76386779822c
+	public Void OnClip_UnregisterEvt() { }
+	// RVA: 0x6f9c2a8 VA: 0x7638677982a8
+	public Void OnClipRecover_RegisterEvt() { }
+	// RVA: 0x6f9c33c VA: 0x76386779833c
+	public Boolean IsTaoShaRelativeBuffValueIsFull(Int32 shenfuId) { }
+	// RVA: 0x6f9c3f0 VA: 0x7638677983f0
+	public Boolean IsTaoShaRelativeBuffValueIsFullByBufID(Int32 bufId) { }
+	// RVA: 0x6f9c4a4 VA: 0x7638677984a4
+	public Void SetTaoShaRelativeBuffValueIsFull(Int32 bufId) { }
+	// RVA: 0x6f9c55c VA: 0x76386779855c
+	private Void DeleteNonHostTrails(UInt32 playerId) { }
+	// RVA: 0x6f9c7b4 VA: 0x7638677987b4
+	public Boolean IsPositionXZChangedInLastFrame() { }
+	// RVA: 0x6f9c804 VA: 0x763867798804
+	public Void AddOrRemoveActorOutline(ActorOutLineType type, Boolean addOrRmv) { }
+	// RVA: 0x6f9c930 VA: 0x763867798930
+	public ActorOutLineType GetTopPriorityOutLineType() { }
+	// RVA: 0x6f9c9cc VA: 0x7638677989cc
+	public Void OnCsRecover(ref ActorRecoverData data) { }
+	// RVA: 0x6f9ca30 VA: 0x763867798a30
+	public Void OnCsBackup(ref ActorRecoverData data) { }
+	// RVA: 0x6f9ca9c VA: 0x763867798a9c
+	public GameObject FindBindPoint(String bindPointName) { }
+	// RVA: 0x6f9cb8c VA: 0x763867798b8c
+	public Void ChangeEnergy(UInt32 eneryID) { }
+	// RVA: 0x6f9cc48 VA: 0x763867798c48
+	public Void OnSelfTotalHpChange() { }
+	// RVA: 0x6f9cca4 VA: 0x763867798ca4
+	private Void RestoreMeshSequenceMaterials() { }
+}
+
+我们在dump.cs中直接搜到了这个接口的实现类ActorLinker
+这个实现类中包含了大量的与对局中Actor自身可能包含的字段变量相关的字段变量，例如Position、Visible等
+由此可见这个实现类的确就是Actor本身的类的类型
+
+现在实例的类型变成了TinyValueList<PoolObjHandle<ActorLinker>>
+
+我们之前就已经拿到过实例的首地址了，也就是HeroActors里面存放的指针
+这个实例里包含了一个【protected internal T[] Item_Backends;】（通过继承AbstractBaseTinyList获取的该字段变量）
+还记得它里面存放了什么吗？是一对的PoolObjHandle（托管版的ActorLinker）
+我们如果想取出里面的托管版ActorLinker，就必须获取到Item_Backends基于TinyValueList<PoolObjHandle<ActorLinker>>实例首地址的偏移量
+
+这里需要注意：泛型定义模板是没有固定内存布局的（具体内存布局取决于它具体被填入了什么类型）
+       dump.cs解析字段变量偏移时是依据图纸的实例产物的，而泛型模板本身没有实例产物（有实例产物的是特定类型泛型的class图纸，而不是那个最初的未指定特定类型的泛型模板class图纸）
+       因此dump解析不出泛型模板的字段偏移，如AbstractBaseTinyList<T>中的字段变量的偏移全部都被dump记作0x0了
+       但是，因为dump解析方法偏移时依据图纸本身，而非图纸的实例化产物，因此泛型模板class图纸虽然无实例化产物，但其内的方法依旧可以被dump正确的解析出偏移（例如AbstractBaseTinyList<T>的方法都被解析出了偏移）
+而TinyValueList<>恰巧就是一个泛型模板，因此dump.cs并没有标注出其内Item_Backends的偏移量
+因此我们必须得手动解析出当TinyValueList<>的泛型为PoolObjHandle时的实例的内部的Item_Backends基于该实例的首地址的偏移量
+
+要想计算偏移量，我们首先要知道C语言中实例的标准结构长什么样
+但是实例的标准长相有很多种，我们具体需要知道哪一种呢？
+王者是基于IL2CPP的，因此我们需要知道IL2CPP实例的标准C语言实例结构
+
+此处补充：在Unity IL2CPP游戏中，所有的类(class)和结构体(struct)在编译后都会被翻译为C语言结构体(struct)
+
+在C#中，但凡是用class定义的类（如 class ActorManager 、class TinyValueList等），在底层都继承自Il2CppObject的C结构体（不需要开发者手动写这个继承，它是默认自动继承的，查看dump.cs也可确认这一点，没有任何类手动写了继承Il2CppObject，但对照游戏运行时的具体内存可以确认所有类实际都进行了这种继承。前面我们已经求出了一些类的内存偏移链，你可在游戏中跳转到对应的内存位置进行查看和确认）
+那么Il2CppObject长什么样呢？很简单，直接查阅官方文档即可得知，大致长相如下
+
+// 所有 C# class 的最顶层基类头部
+struct Il2CppObject {
+    Il2CppClass *klass;   // +0x00 (8字节)：指向“类图纸”的指针（存着方法表、静态字段等）
+    MonitorData *monitor; // +0x08 (8字节)：多线程同步锁指针
+};
+这里说明一下两个参数的作用：1.【Il2CppClass *klass】用来标记本实例基于哪个class生成
+2.【MonitorData *monitor】是一个多线程同步锁指针，意味着任何继承自该Il2CppObject的类都可以被当做互斥锁来使用，以防止多线程同时执行某一串代码造成各种异常，一旦出现抢锁，IL2CPP就会生成一个MonitorData结构包（包含抢锁的具体情况），并把该包的指针赋值给【MonitorData *monitor】，具体实例如下
+lock (someObj)
+{
+    // 同一时间只允许一个线程进入这里
+}
+
+
+如果你现在直接去王者的对应内存位置（前面我们已经求出了一些类的内存偏移链，你可在游戏中直接跳转过去），就会发现对应区域的内存存储的内容似乎与这个标准模板有所不同
+没错，王者对这个Il2CppObject进行了底层优化，那王者如何进行的优化呢？
+查看对应内存区域可以发现，原来是删掉了【MonitorData *monitor】，那王者为什么要删掉【MonitorData *monitor】呢？
+原因很简单，因为游戏的核心逻辑大多是单线程，极少直接将对象作为互斥锁使用，既如此，若每个对象都有这么一个互斥锁的功能，但实际却压根用不上，岂不是很浪费性能，故此，王者将它删掉了
+
+故此，因为Item_Backends到TinyValueList<PoolObjHandle<ActorLinker>>实例首地址之间只间隔了一个【Il2CppClass *klass】，而【Il2CppClass *klass】的大小是8字节
+因此Item_Backends基于TinyValueList<PoolObjHandle<ActorLinker>>实例首地址的偏移量应当是8字节
+
+Item_Backends数组中存放的是所有Actor的托管版本身（即PoolObjHandle<ActorLinker>实例本身）
+你可能会疑惑于为什么这里存放的是Actor的托管版本身，而不是一个指向Actor的托管版本身的指针？
+这是因为PoolObjHandle是struct（结构体），是值类型，因此它的实例属于值类型实例，故而存放它的地方存放的是它本身
+这一点与class（类）有所不同，class是引用类型，因此它的实例属于引用类型实例，故而存放它的地方存放的是一个指向它的指针
+
+我们此处要提取出Item_Backends数组中存放的所有的Actor托管版本身，要想取出Item_Backends数组中存放的所有的Actor托管版本身，我们首先得先知道C语言中数组的底层结构长什么样，它内部到底是怎么存放数据的？
+原生的C语言数组底层结构非常简单，里面只存放了元素（注意：如果是引用类型，存放的就是指针；如果是值类型，存放的就是值本身，例如前面提到的struct PoolObjHandle的PoolObjHandle<ActorLinker>值类型实例本身），并且一个连一个，中间没有任何间隔
+但是IL2CPP中所使用的数组，实际上是一个引用类型实例（【class Il2CppArray】实例），并且该实例内部并没有存储数组的元素，元素是位于该实例内存区域的紧后边的，并且正如前文所提到的在IL2CPP中所有用class定义的类都会继承Il2CppObject一样，此处的Il2CppArray也同样会继承Il2CppObject（不过因为王者修改了Il2CppObject，所以此处Il2CppArray实际继承的是王者修改后的Il2CppObject）
+该Il2CppArray的大致代码如下（采用C++，注意在C++中并没有引用类型和值类型的区别，任何内容都可以被当做‘值’直接存储和复制，也可以通过指针（*）或引用（&）被当做‘引用’来操作。不过在C#中是有明确的值类型和引用类型的划分的）
+typedef struct Il2CppArray : public Il2CppObject
+{
+    /* bounds is NULL for szarrays (此处是数组的维度信息。若为一维零基数组则此字段恒为 NULL) */
+    Il2CppArrayBounds *bounds;    // +0x10 (8字节)
+    /* total number of elements of the array (数组分配的总容量，也就是元素数量) */
+    il2cpp_array_size_t max_length; // +0x18 (8字节)
+} Il2CppArray;
+正如前面所提到的Il2CppArray内部并没有任何字段变量用于存储元素，真正的元素位置该Il2CppArray实例的内存结束位置的紧后边
+举个例子，假设A元素大小16字节，你要创建一个能装下10个A元素的数组，IL2CPP并不是只申请32字节(sizeof(Il2CppArray)),而是直接申请一整块连续的192字节大小的内存区域(32字节+10 * 16=192字节)，该内存区域前部分是Il2CppArray，其余部分直接平铺那10个A元素
+
+基于此我们可以初步推断出Item_Backends数组的第一个元素基于Item_Backends内存的首地址偏移为24字节（【Il2CppClass *klass】+【Il2CppArrayBounds *bounds】+【il2cpp_array_size_t max_length】）
+我们可以到游戏对应内存区域验证一下（按照前面的教程，一步一步推，你就知道应该跳到游戏的哪个内存地址了）
+然后我们就发现，我们的推测和游戏的实际内存内容对不上，我们查了8字节（Item_Backends数组的第一个元素基于Item_Backends内存的首地址偏移为32字节）
+游戏里为什么会多出8字节呢？
+仔细查阅游戏对应内存区域的内容，内容大致如下：
+******************************************************
+Item_Backends 首地址: 0x7637856793C0 (当前 Size: 10)
+========================================
+【数组头部区域: +0x00 ~ +0x1F (共32字节)】
++0x00 | Raw1: 0x00007637882ACED0 | Ptr: 0x7637882ACED0 | 低32位: 2284506832 (0x882ACED0) | 高32位: 30263
++0x08 | Raw2: 0x0000000000000000 | Ptr: 0x0 | 低32位: 0 (0x0) | 高32位: 0
++0x10 | Raw3: 0x000000000000000A | Ptr: 0xA | 低32位: 10 (0xA) | 高32位: 0
++0x18 | Raw4: 0x000000000000329F | Ptr: 0x329F | 低32位: 12959 (0x329F) | 高32位: 0
+========================================
+【数据区起点验证: +0x20 ~ +0x58 (前4个元素)】
+Elem[0] (+0x20) -> LinkerPtr: 0x76372D1F4000 | Seq(+0x8): 0x32A5 | Pad(+0xC): 0x0
+Elem[1] (+0x30) -> LinkerPtr: 0x76372E8FB000 | Seq(+0x8): 0x32A0 | Pad(+0xC): 0x0
+Elem[2] (+0x40) -> LinkerPtr: 0x763725A3A000 | Seq(+0x8): 0x32A6 | Pad(+0xC): 0x0
+Elem[3] (+0x50) -> LinkerPtr: 0x76372D42C000 | Seq(+0x8): 0x32A1 | Pad(+0xC): 0x0
+******************************************************
+依据前面已经得出的Il2CppObject和Il2CppArray的结构，我们不难分析出：
+Raw1为【Il2CppClass *klass】
+Raw2为【Il2CppArrayBounds *bounds】
+Raw3为【il2cpp_array_size_t max_length】
+Raw4暂待
+Raw4之后则紧跟着数据区（存放着一堆元素）
+
+那么Raw4究竟是什么呢？
+还记得PoolObjHandle里面的内容吗？它包含一个_handleSeq字段变量，依据变量名，我们不难推断出它是用于记录它所属的PoolObjHandle实例被分配的句柄编号
+再回看前面四个Elem（即四个PoolObjHandle）的Seq，你会发现它们的大小全都位于Raw4的值（0x329F）附近，由此可以推断出Raw4存储的就是数组被分配的句柄编号，因为编号是在对象被创建时分配的，而数组和其内PoolObjHandle实例被创建的时间非常接近，故而它们的句柄编号也非常接近
+而这个句柄编号刚好8字节，这就是我们前面缺失的那8字节
+
+这里你可能疑惑，我是如何知道的_handleSeq字段变量基于PoolObjHandle实例首地址的偏移量的，很简单，前文有提到过如何手动解析这种泛型模板在被填入具体类型后生成的特定泛型实例的内存结构
+如果你忘记了，可以重新查看前文，或者跟着我一起往下走，后面会重新一步一步带着你做的
+
+故此，我们最终确认Item_Backends数组的第一个元素基于Item_Backends内存的首地址偏移为32字节（【Il2CppClass *klass】+【Il2CppArrayBounds *bounds】+【il2cpp_array_size_t max_length】+【8字节大小的当前Il2CppArray被分配的句柄编号】）
+
+
+接下来我们需要依次取出Il2CppArray后边存放的所有元素，要想正确依次取出里面的所有元素，我们需要知道每个元素的大小，也就是PoolObjHandle实例的大小
+PoolObjHandle实例内部包含两个字段变量：1.【private UInt32 _handleSeq】 2.【private T _handleObj】
+首先_handleSeq的类型为UInt32，此类型固定为4字节，然后是_handleObj，当它的泛型被指定为ActorLinker时，因为ActorLinker是引用数据类型，故此_handleObj存放的就是指针，固定为8字节
+故此PoolObjHandle实例的实际占用大小为12字节，但是注意：数据在内存中虽然是以1字节为单位进行存储，但是ARM64处理器在读取内存时是以8字节为单位进行读取的，若此处真的以12字节的方式存入内存中，那么读取和存储就对不上了（读取出来的8KB中有4KB可能存储的是别项内容）
+故此，C/C++在编译时会自动进行内存对齐，填入4字节的空白，让PoolObjHandle实例占用16字节大小（刚好是8的倍数）
+
+如果此时你去到游戏对应的内存区域，就会发现PoolObjHandle实例的确占用了16字节大小，但里面的内容结构似乎和dump.cs不太一样
+这是C#在编译时对结构体（注意PoolObjHandle不是class实例，而是struct实例）内部字段变量进行了自动重新排序
+在C#中普通的struct内部的字段变量默认采用LayoutKind.Auto（自动排序布局），而非强制按开发者编写的代码中的原顺序进行排序，dump.cs体现的是王者荣耀的开发人员编写的源代码中的原本的字段变量顺序，而游戏运行内存中体现的则是C#结构体内部字段变量在编译时被自动重排后的顺序
+你可能会为此处C#为什么要进行重排，或者说它为什么要把_handleObj放到_handleSeq前面？
+原因很简单，还记得刚才提到过的自动内存对齐吗？
+如果_handleSeq放在前面，二者中间就必须塞入4字节的空白填充，而如果_handleSeq放在后面，那么这4字节的空白填充就位于二者后面（_handleSeq后面），而非二者中间
+想一想，在各种场景下，综合来看，编译器是按照开发人员编写的源代码中的原本的字段变量顺序进行排序并安放对应4字节空白（此时4字节空白可能位于结构体内存区域的中间）更好一些，还是尽可能将需要塞入4字节空白的字段变量尽可能放到结构体内存区域的后面更好一些？
+答案很简单，举个按照开发人员编写的源代码中的原本的字段变量顺序进行排序的例子，如下：
+--------------------------------------
++0x00 : [  A (4字节)  ]
++0x04 : [  空白 Padding (4字节)  ]  <-- 强行插在中间的废字节，被浪费掉了！
++0x08 : [        B (8字节指针)        ]  <-- 为了满足8字节对齐，被迫跳过0x04
++0x10 : [  C (4字节)  ]
++0x14 : [  空白 Padding (4字节)  ]  <-- 末尾补齐到8的倍数
+--------------------------------------
+总大小：24 字节（浪费了 8 字节）
+你可以很清楚的看到如果我们尽可能将需要塞入4字节空白的字段变量尽可能放到结构体内存区域的后面，那么实际上我们完全不用填入任何4字节空白，可以直接省掉8KB的内存空间，效果如下：
+--------------------------------------
++0x00 : [        B (8字节指针)        ]  <-- 直接从0x00开始，天然8字节对齐
++0x08 : [  A (4字节)  ]                  <-- 紧跟在0x08，天然满足4字节对齐
++0x0C : [  C (4字节)  ]                  <-- 紧跟在0x0C，天然满足4字节对齐
+--------------------------------------
+总大小：16 字节（0 字节浪费！）
+
+故而C#此处进行了重排，将_handleObj放到了_handleSeq前面
+
+到此，我们已经可以依次取出Il2CppArray后边存放的所有PoolObjHandle实例了
+依据刚才分析出的PoolObjHandle实例内部的字段变量结构布局以及我们解析出的各字段变量的大小，我们从各PoolObjHandle实例的首地址进行偏移，就可以得到各存放ActorLinker实例指针的内存地址了，取出该内存地址里存放的ActorLinker实例指针，它就是ActorLinker实例的首地址
+
+因为ActorLinker是非泛型模板，它可以被实例化，故而dump能直接解析出ActorLinker实例内部各字段变量基于ActorLinker的首地址的偏移量（此处不需要我们在手动计算偏移量了）
+以ActorLinker实例内部的【public Vector3 position】字段变量为例子，dump解析出的它的基于ActorLinker实例首地址的偏移量为0x4c4（注意：不同游戏版本或运行环境中偏移量不同），那么我们直接用ActorLinker实例首地址加上0x4c4就得出了position字段变量的地址，前往此地址即可取出Actor的position的Vector3结构体（注意：因为Vector3是struct，所以position字段变量存储的不是指向Vector3实例的指针，而是存储的Vector3实例本身），依据前面所学结合dump.cs中显示的Vector3结构体的内部构造，你可以很轻易的分别取出Actor的xyz
+按照前面所学，你还可以取出Actor实例中存储的其它内容，并且你还可以尝试找一找其它类型实例（王者是一款大型游戏，其内实例多的数不过来，或许你可以在此教程的基础上进一步探究它？）
+
+至此大功告成...了吗？
+
+我前面多次提到你可以去游戏对应的内存区域查看，我想你在前往游戏对应的内存区域时一定查看了我提供的'查找各英雄所在位置的x坐标.lua'，也就是下面这份文件：
+
+-------------------------------------------------------------------------------
+local OFFSET_GET_ACTOR   = 0x6F9D47C
+local OFFSET_METHOD_INFO = 0xDED2C18
+
+local function readPtr(addr)
+    if not addr or addr == 0 then return 0 end
+    local res = gg.getValues({{address = addr, flags = gg.TYPE_QWORD}})
+    return res[1].value & 0x0000FFFFFFFFFFFF
+end
+
+local function readDword(addr)
+    if not addr or addr == 0 then return 0 end
+    local res = gg.getValues({{address = addr, flags = gg.TYPE_DWORD}})
+    return res[1].value & 0xFFFFFFFF
+end
+
+local function readInt(addr)
+    if not addr or addr == 0 then return 0 end
+    local res = gg.getValues({{address = addr, flags = gg.TYPE_DWORD}})
+    return res[1].value
+end
+
+local function readUInt(addr)
+    if not addr or addr == 0 then return 0 end
+    local res = gg.getValues({{address = addr, flags = gg.TYPE_DWORD}})
+    return res[1].value & 0xFFFFFFFF
+end
+
+local function readFloat(addr)
+    if not addr or addr == 0 then return 0.0 end
+    local res = gg.getValues({{address = addr, flags = gg.TYPE_FLOAT}})
+    return res[1].value
+end
+
+local function getRealIl2CppBase()
+    local allRanges = gg.getRangesList()
+    for _, r in ipairs(allRanges) do
+        local name = r.internalName or r.name or ""
+        if r.state == "Xa" and name:find("libil2cpp%.so") then
+            if readDword(r.start + OFFSET_GET_ACTOR) == 0xD10103FF then
+                return r.start
+            end
+        end
+    end
+    return 0
+end
+
+local function verifyOffsets()
+    local log = {}
+    local function addLog(str) table.insert(log, str) end
+
+    local base = getRealIl2CppBase()
+    if base == 0 then
+        local err = "未找到有效 Base"
+        gg.copyText(err, false)
+        gg.alert(err)
+        return
+    end
+
+    local p1 = readPtr(base + OFFSET_METHOD_INFO)
+    local p2 = readPtr(p1 + 0x20)
+    local p3 = readPtr(p2 + 0xC0)
+    local p4 = readPtr(p3 + 0x10)
+    local p5 = readPtr(p4 + 0xB8)
+    local actorManager = readPtr(p5 + 0x0)
+    local heroActors   = readPtr(actorManager + 0x18)
+    local itemBackends = readPtr(heroActors + 0x08)
+    local size         = readInt(heroActors + 0x10)
+
+    addLog(string.format("Base:          0x%X", base))
+    addLog(string.format("ActorManager:  0x%X", actorManager))
+    addLog(string.format("HeroActors:    0x%X", heroActors))
+    addLog(string.format("Item_Backends: 0x%X | 英雄总数: %d\n", itemBackends, size))
+
+    local saveList = {}
+
+    for i = 0, size - 1 do
+        local elemAddr    = itemBackends + 0x20 + (i * 0x10)
+        local actorLinker = readPtr(elemAddr + 0x0)
+        local handleSeq   = readUInt(elemAddr + 0x8)
+
+        if actorLinker ~= 0 then
+            local objId   = readUInt(actorLinker + 0x4AC)
+            local posX    = readFloat(actorLinker + 0x4C4)
+            local posY    = readFloat(actorLinker + 0x4C8)
+            local posZ    = readFloat(actorLinker + 0x4CC)
+            local valComp = readPtr(actorLinker + 0x3B8)
+
+            addLog(string.format(
+                "[%d] Linker: 0x%X | Seq: 0x%X | ObjID: %d | Pos: (%.2f, %.2f, %.2f) | ValComp: 0x%X",
+                i, actorLinker, handleSeq, objId, posX, posY, posZ, valComp
+            ))
+
+            table.insert(saveList, {
+                address = actorLinker + 0x4C4,
+                flags = gg.TYPE_FLOAT,
+                name = string.format("Hero[%d]_X (ID:%d)", i, objId)
+            })
+        else
+            addLog(string.format("[%d] 空指针 (0x0)", i))
+        end
+    end
+
+    if #saveList > 0 then
+        gg.addListItems(saveList)
+        addLog("\n验证完成！所有英雄 X 坐标已加入 GG 保存列表（完整结果已复制到剪贴板）。")
+    end
+
+    local out = table.concat(log, "\n")
+    gg.copyText(out, false)
+    gg.alert(out)
+end
+
+verifyOffsets()
+-------------------------------------------------------------------------------
+
+让我猜猜你为什么会查看这份文件？
+是不是因为你前往了你自己计算出的游戏对应的内存区域的内存地址处，结果发现那里怎么是一团乱码？（准确来讲你应该是看到了一堆意义不明但明显在告诉你‘你来错地方了’的16进制码）
+然后你搞不懂你自己算出来的内存地址为什么是错误的，于是你决定看看我是如何计算出正确的内存地址的，以此作为比对，来确定你自己究竟在哪里出问题了，故而你才会来查看这份'查找各英雄所在位置的x坐标.lua'（因为该lua既然能取出各英雄所在位置的x坐标，那么说明该lua一定进行了内存地址相关的计算，并且计算流程和结果全部正确）
+
+聪明的你一定已经搞懂了问题所在，但如果你依旧存有疑惑，那么不妨继续看看接下来的教程的剩余部分，待看完后在退出教程也不迟哦~
+
+你肯定知道如何计算某内容（如实例、字段变量等）在实际内存中的绝对内存地址（VA）
+答案很简单：基址+固定偏移链
+你确信你按照‘前文所讲’所计算出的固定偏移链是正确的，但疑惑于为什么最终计算出的绝对内存地址却是错误的
+原因很简单：因为你在计算中所使用的基址是错误的
+
+在阅读此教程之前，你应当已经在网络上搜索了大量逆向教程，但结果如何呢？
+让我猜猜：互联网上的教程应该都是在教你如何进行动态调试吧？（例如：利用GG修改器动态扫描游戏内存并通过CPU调试（这里的CPU调试指的是诸如CE修改器的‘谁访问了此内存地址’之类的功能）来确定某内容（如实例、字段变量等）的固定偏移链）
+        他们从不教你如何进行静态解析吧？并且就连教你动态调试时也仅仅只是告诉你操作步骤，从不告诉你原理吧？
+        若我猜的没错，互联网上的那些教程对当下的大型游戏完全无效吧？
+        以本文提到的王者为例子，你应当尝试过使用GG修改器扫描王者荣耀的内存，结果如何呢？是不是游戏闪退了？这是因为王者荣耀带有反动态调试保护导致的
+        当下逆向难度可以比作高等数学难度
+        而互联网上的教程全是教你十以内加减法的，并且它们甚至连十以内加减法的原理都不告诉你，只告诉你答案（例如：只告诉你7+2=9，却不告诉你为什么7+2=9，下次碰到1+8=？，你照样不会，并且现实中你甚至碰不到1+8=？，你能碰到的全是诸如【已知函数 f(x) = x³ - 3x² + 2，求该函数在区间 [-1, 3] 上的最大值与最小值。】的这种高等数学）
+        甚至于连一篇正经像样的有关‘如何确定某内容（如实例、字段变量等）在内存中对应的基址’的教程都没有
+
+但无所谓，我将会教你如何确定某内容（如实例、字段变量等）在内存中对应的基址并纠正所有你对于基址这一概念所存在的误区
+
+首先，你认为什么是基址？或者说互联网上的那些教程告诉你的基址是什么？
+你可能会说：基址就是整个游戏的基础地址，一个在每次游戏重启后其具体所在的绝对内存地址都会发生变动的地址，所有游戏里的内容（如实例、字段变量等）都基于它来进行加载并与它保持一个固定的偏移量
+如果你这么认为，那就大错特错了
+首先最明显的错误点就是‘基址是整个游戏的基础地址’，这句话代表整个游戏的所有内容（如实例、字段变量等）共用同一个基址
+但这显然是错误的，实际上，基址是‘内容所属模块的模块加载基址’，如前文所有提到的内容（例如class ActorManager等）均隶属于王者荣耀的libil2cpp.so模块，因此前文所有提到的内容（例如class ActorManager等）的基址均是libil2cpp.so模块的模块加载基址
+
+必须注意：模块加载基址指的并不是模块本身起始部分的内容被加载到的位置的内存地址，而是模块内各内容加载进内存时相对的0刻度线
+        这里的'模块加载基址'的具体概念不太好用一句话表述清楚，为了方便你理解，这里我举两个例子：
+        1.商业游戏在运行时模块本身起始部分的内容（如libil2cpp.so的ELF头）可能被单独扔到A处（如0x7800000000），而它的代码段可能被加载到B处（如0x7100000000），此时模块本身起始部分的内容根本不位于B处（如0x7100000000），但模块里的各种内容（如实例、字段变量等）可能都把B处视作为模块加载基址（也就是0刻度线），并依据B处（如0x7100000000）的绝对内存地址进行计算得到各种内容的绝对内存地址
+        2.你可以想象一张图纸，图纸的开头就是0刻度线（模块加载基址），开发者完全可以将模块本身起始部分的内容放在0刻度线后方并且距离0刻度线有一段距离的地方，例如图纸的 0x10000 处(也就是相对于图纸首地址偏移0x10000处)，此时模块本身起始部分的内容被加载到的位置的内存地址是图纸的 0x10000 处(也就是相对于图纸首地址偏移0x10000处)的绝对内存地址，但模块里的各种内容（如实例、字段变量等）都把0刻度线处（也就是相对于图纸首地址偏移0x0处）的绝对内存地址视作为模块加载基址，并依据0刻度线处（也就是相对于图纸首地址偏移0x0处）的绝对内存地址来进行计算得到各种内容的绝对内存地址
+
+这里不得不提一下，互联网上的很多教程将‘基址’和‘由基址通过固定偏移量计算出来的静态全局指针(指向诸如ActorManager全局静态单例之类的全局静态内容的指针，这里需要注意class图纸和struct图纸一样属于全局静态内容)的绝对内存地址’混为一谈，将‘由基址通过固定偏移量计算出来的静态全局指针’视作基址。但这显然是错误的，就像依据高二(1)班的位置能推导出高二(2)班的位置，但你不能将高二(2)班的位置视作为高二(1)班的位置，一个是基址，一个是依据基址推出来的静态全局指针的内存地址，二者完全不是一个东西
+
+既然已经知晓了基址的具体概念，那么我们具体要怎么做才能得到基址呢？
+由刚才所讲的内容进行分析，我们不难发现单纯的寻找模块所属区域的首地址是不行的（模块所属区域的首地址和模块本身起始部分的内容被加载到的位置的内存地址和模块加载基址是三个完全不同的概念）
+聪明的你结合前面的【必须注意】里的两个例子一定已经想到了正确的寻找模块加载基址的方法了
+那就是：先通过特征码定位某一已知相对于基址的偏移量的内容的绝对内存地址，然后用该绝对内存地址减去该内容相对于基址的偏移量就能直接得出模块加载基址
+注意:最好选择逆向偏移一次后直接就是基址的内容来进行特征码定位，最好不要选择具备多级偏移链的内容来进行特征码定位，因为多级偏移链中很可能包含指针，而指针具备单向不可溯源性，你无法单纯从逻辑分析上计算出究竟是哪个内存区域里存储了指向‘此处’的指针，因此无法逆推出‘此处’的上一级位置的内存地址
+
+
+至此，恭喜你，一切完毕，大功告成！
+现在你终于算是初步迈入了逆向领域的大门，快去游戏里试试刚刚所学的知识吧！
+
+-----------------------------------------------------------
+
+致所有逆向学习者：
+    逆向之路，道阻且长，我们这些非科班出身的人，无人传授我们这些高级知识，互联网上全是些浅显无用的内容，我曾也像你们一样迷茫，此篇教程惟愿做一缕星火，照亮迷惘，助后人能有所学、有所成，愿他日天下人皆有求索之路！
+    逆向路漫漫，惟愿与君共勉！
+
+
+
+.       *        .            *       .      *
+      *        .      .       *    .       .        .
+   .      *        .     .       |       .     *        .
+       .      .        *     \   |   /      .       .
+   *       .     .        . --== * ==-- .      *     .
+       .      *     .        /   |   \     .      .
+   .       .      .     *        |      .       *       .
+       *       .      .       .     *       .       .
+   .        .      *      .      .       .      *       .
+==============================================================
+        /* 满天星光汇聚之处 · 愿作那一缕引路微光 */

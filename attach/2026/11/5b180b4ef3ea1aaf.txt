@@ -1,0 +1,14 @@
+libil2cpp.so (真实 Xa 基址) + 0xDED2C18     // 1. 全局 MethodInfo* 指针
+  └── + 0x20                                // 2. 泛型类基础元数据
+        └── + 0xC0                          // 3. 运行时泛型上下文表 RGCTX
+              └── + 0x10                    // 4. Singleton<ActorManager> 类图纸
+                    └── + 0xB8              // 5. static_fields
+                          └── + 0x0         // 6. ActorManager 实例指针
+                                └── + 0x18  // 7. HeroActors (TinyValueList) 指针
+                                      ├── + 0x10  --> [读 4 字节 int] 英雄总数 (Size)
+                                      └── + 0x08  --> Item_Backends (底层数组首地址)
+                                            └── + 0x20 + (i * 0x10) + 0x0  --> [读 8 字节指针] 第 i 个 ActorLinker 实例地址
+                                                  ├── + 0x4C4  --> [读 12 字节 float[3]] 英雄 X, Y, Z 坐标
+                                                  ├── + 0x4AC  --> [读 4 字节 uint32] ObjID
+                                                  ├── + 0x548  --> ActorMeta (阵营、英雄ID等)
+                                                  └── + 0x3B8  --> ValueComponent 指针 (血量/属性)
