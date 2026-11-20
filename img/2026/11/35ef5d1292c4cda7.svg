@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 570" width="1200" height="570" role="img" aria-label="A sandboxed caller is refused when it requests the network itself, and served when it asks the nsattributedstringagent service to render HTML that points at the same URL">
+  <defs>
+    <style>
+      .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+      .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-variant-ligatures: none; }
+      .title { font-size: 30px; font-weight: 300; letter-spacing: 2px; fill: #E0E0E0; }
+      .collabel { font-size: 14px; font-weight: 400; letter-spacing: 2px; fill: #E0E0E0; }
+      .colsub { font-size: 12px; font-weight: 300; letter-spacing: 1px; fill: #6B7684; }
+      .boxtext { font-size: 15px; font-weight: 400; fill: #C9D1D9; }
+      .annot { font-size: 12px; font-weight: 300; letter-spacing: 1px; fill: #6B7684; }
+    </style>
+    <marker id="aBlue" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#8ADCFB" fill-opacity="0.55"/>
+    </marker>
+    <marker id="aTeal" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#88C0B4" fill-opacity="0.55"/>
+    </marker>
+    <marker id="aPink" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#EF81B0" fill-opacity="0.55"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="570" rx="20" fill="#0D1117"/>
+
+  <text class="sans title" x="60" y="72">Two Paths Out Of The Same App</text>
+
+  <!-- caller -->
+  <text class="sans collabel" x="70" y="150">CALLER</text>
+  <text class="sans colsub" x="70" y="170">my process</text>
+  <rect x="60" y="188" width="280" height="320" rx="14" fill="#8ADCFB" fill-opacity="0.06" stroke="#8ADCFB" stroke-opacity="0.45" stroke-width="1.5"/>
+  <rect x="84" y="222" width="232" height="52" rx="10" fill="#8ADCFB" fill-opacity="0.03" stroke="#8ADCFB" stroke-opacity="0.18" stroke-width="1.5"/>
+  <text class="mono boxtext" x="100" y="254">no network entitlement</text>
+  <rect x="84" y="290" width="232" height="52" rx="10" fill="#8ADCFB" fill-opacity="0.03" stroke="#8ADCFB" stroke-opacity="0.18" stroke-width="1.5"/>
+  <text class="mono boxtext" x="100" y="322">ATS enforced</text>
+  <rect x="84" y="396" width="232" height="52" rx="10" fill="#8ADCFB" fill-opacity="0.07" stroke="#8ADCFB" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text class="mono boxtext" x="100" y="428">NSXPCConnection</text>
+
+  <!-- service -->
+  <text class="sans collabel" x="470" y="330">SERVICE</text>
+  <text class="sans colsub" x="470" y="350">its own process</text>
+  <rect x="460" y="368" width="320" height="160" rx="14" fill="#E0E0E0" fill-opacity="0.06" stroke="#E0E0E0" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text class="mono boxtext" x="484" y="404">nsattributedstringagent</text>
+  <rect x="484" y="424" width="272" height="42" rx="10" fill="#E0E0E0" fill-opacity="0.03" stroke="#E0E0E0" stroke-opacity="0.18" stroke-width="1.5"/>
+  <text class="mono boxtext" x="500" y="451">WebKit renders HTML</text>
+  <rect x="484" y="476" width="200" height="30" rx="7" fill="#88C0B4" fill-opacity="0.16" stroke="#88C0B4" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text class="mono" x="498" y="496" font-size="11" letter-spacing="1" fill="#88C0B4">nsurlsessiond allowed</text>
+
+  <!-- network -->
+  <text class="sans collabel" x="950" y="150">NETWORK</text>
+  <rect x="940" y="188" width="200" height="340" rx="14" fill="#E0E0E0" fill-opacity="0.03" stroke="#E0E0E0" stroke-opacity="0.18" stroke-width="1.5"/>
+  <text class="mono boxtext" x="964" y="246">http://</text>
+  <text class="mono boxtext" x="964" y="282">https://</text>
+
+  <!-- blocked path -->
+  <text class="mono annot" x="372" y="226">NSURLSession</text>
+  <line x1="340" y1="248" x2="648" y2="248" stroke="#EF81B0" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#aPink)"/>
+  <line x1="672" y1="236" x2="696" y2="260" stroke="#EF81B0" stroke-width="2" stroke-opacity="0.55" stroke-linecap="round"/>
+  <line x1="696" y1="236" x2="672" y2="260" stroke="#EF81B0" stroke-width="2" stroke-opacity="0.55" stroke-linecap="round"/>
+  <text class="sans annot" x="716" y="252" fill="#EF81B0">refused</text>
+
+  <!-- request path -->
+  <text class="mono annot" x="352" y="400">renderHTML</text>
+  <line x1="340" y1="422" x2="452" y2="422" stroke="#8ADCFB" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#aBlue)"/>
+  <text class="mono annot" x="804" y="400">GET</text>
+  <line x1="788" y1="422" x2="932" y2="422" stroke="#88C0B4" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#aTeal)"/>
+
+  <!-- reply path -->
+  <text class="mono annot" x="812" y="474">bytes</text>
+  <line x1="938" y1="492" x2="786" y2="492" stroke="#88C0B4" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#aTeal)"/>
+  <text class="mono annot" x="352" y="518">NSTextAttachment</text>
+  <line x1="458" y1="492" x2="346" y2="492" stroke="#88C0B4" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#aTeal)"/>
+</svg>
