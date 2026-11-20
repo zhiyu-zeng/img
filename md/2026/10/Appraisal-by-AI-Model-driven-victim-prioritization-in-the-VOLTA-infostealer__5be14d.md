@@ -5,7 +5,7 @@ source_host: blog.talosintelligence.com
 clip_date: 2026-10-31T20:19:17+08:00
 trace_id: cf7ca6e1-52b2-4322-9c22-81cbc4a3bad0
 content_hash: f581686e5ded40ae7c4c346be3be1031626ce60afe5fb9090a0c5ffaf5a9c500
-status: summarized
+status: synced
 tags:
   - 恶意样本
   - AI应用
@@ -17,7 +17,7 @@ images_status:
   total: 6
   succeeded: 6
   failed_urls: []
-notion_page_id: null
+notion_page_id: 41e75244-d011-8137-868e-f41338bdfff7
 ioc: null
 ---
 
