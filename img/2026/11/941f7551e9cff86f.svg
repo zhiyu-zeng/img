@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1086" viewBox="0 0 1560 1086" role="img" aria-labelledby="title desc">
+<title id="title">Android SO：保护前后实测对照</title>
+<desc id="desc">六组实际配对观测值。每格上行为未保护、下行为保护版本。AI 重建正确率与原始二进制运行时等价性分开统计。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif} .metric{font-size:22px;font-variant-numeric:tabular-nums}.small{font-size:18px}</style>
+<rect width="1560" height="1086" fill="#ffffff"/>
+<text x="40" y="48" font-size="31" fill="#172b4d" text-anchor="start" font-weight="600">Android SO：保护前后实测对照</text>
+<text x="40" y="82" font-size="19" fill="#475569" text-anchor="start" font-weight="normal">3 组新秘密 × 静态／动态两轨；同一个函数族，不是 6 个不同 App；有效配对 5/6</text>
+<text x="40" y="118" font-size="18" fill="#64748b" text-anchor="start" font-weight="normal">每格上行：未保护</text>
+<text x="295" y="118" font-size="18" fill="#245ca4" text-anchor="start" font-weight="normal">下行：虚拟化保护</text>
+<text x="1520" y="118" font-size="18" fill="#475569" text-anchor="end" font-weight="normal">gpt-5.6-sol · high</text>
+<rect x="40" y="152" width="1480" height="76" rx="12" fill="#203d61"/>
+<text x="105.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">秘密／轨道</text>
+<text x="265.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">AI 重建正确数</text>
+<text x="265.0" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">correct / total</text>
+<text x="435.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">会话时长</text>
+<text x="435.0" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">秒</text>
+<text x="580.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">工具调用</text>
+<text x="580.0" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">次</text>
+<text x="772.5" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">累计 tokens</text>
+<text x="772.5" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">input + output</text>
+<text x="957.5" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">token 倍数</text>
+<text x="957.5" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">虚拟化保护 ÷ 未保护</text>
+<text x="1140.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">未缓存输入</text>
+<text x="1140.0" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">input − cached</text>
+<text x="1390.0" y="183" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="600">运行时等价性</text>
+<text x="1390.0" y="210" font-size="15" fill="#d8e4f0" text-anchor="middle" font-weight="normal">原始 SO vs oracle</text>
+<rect x="40" y="228" width="1480" height="94" fill="#fff4e8"/>
+<path d="M40 322H1520" stroke="#dce5ef"/>
+<text x="105.0" y="262" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 0</text>
+<text x="105.0" y="296" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">S · 静态</text>
+<text x="265.0" y="262" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="262" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">45.0</text>
+<text x="580.0" y="262" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">4</text>
+<text x="772.5" y="262" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">54,724</text>
+<text x="1140.0" y="262" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">12,679</text>
+<text x="1390.0" y="262" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="297" font-size="22" fill="#b54727" text-anchor="middle" font-weight="normal">6,057/8,592*</text>
+<text x="435.0" y="297" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">496.7</text>
+<text x="580.0" y="297" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">48</text>
+<text x="772.5" y="297" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">2,545,504</text>
+<text x="1140.0" y="297" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">111,540</text>
+<text x="1390.0" y="297" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="262" font-size="24" fill="#b54727" text-anchor="middle" font-weight="600">N/A</text>
+<text x="957.5" y="296" font-size="14" fill="#b54727" text-anchor="middle" font-weight="600">轨道违规／不计</text>
+<rect x="40" y="322" width="1480" height="94" fill="#ffffff"/>
+<path d="M40 416H1520" stroke="#dce5ef"/>
+<text x="105.0" y="356" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 0</text>
+<text x="105.0" y="390" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">D · 动态</text>
+<text x="265.0" y="356" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="356" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">67.2</text>
+<text x="580.0" y="356" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8</text>
+<text x="772.5" y="356" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">123,950</text>
+<text x="1140.0" y="356" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">12,572</text>
+<text x="1390.0" y="356" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="391" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="391" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">550.4</text>
+<text x="580.0" y="391" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">58</text>
+<text x="772.5" y="391" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">5,309,354</text>
+<text x="1140.0" y="391" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">162,968</text>
+<text x="1390.0" y="391" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="375" font-size="24" fill="#245ca4" text-anchor="middle" font-weight="600">42.8×</text>
+<rect x="40" y="416" width="1480" height="94" fill="#f2f6fb"/>
+<path d="M40 510H1520" stroke="#dce5ef"/>
+<text x="105.0" y="450" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 1</text>
+<text x="105.0" y="484" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">S · 静态</text>
+<text x="265.0" y="450" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="450" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">36.1</text>
+<text x="580.0" y="450" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">4</text>
+<text x="772.5" y="450" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">54,344</text>
+<text x="1140.0" y="450" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">16,892</text>
+<text x="1390.0" y="450" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="485" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="485" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">678.9</text>
+<text x="580.0" y="485" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">57</text>
+<text x="772.5" y="485" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">4,464,072</text>
+<text x="1140.0" y="485" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">145,304</text>
+<text x="1390.0" y="485" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="469" font-size="24" fill="#245ca4" text-anchor="middle" font-weight="600">82.1×</text>
+<rect x="40" y="510" width="1480" height="94" fill="#ffffff"/>
+<path d="M40 604H1520" stroke="#dce5ef"/>
+<text x="105.0" y="544" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 1</text>
+<text x="105.0" y="578" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">D · 动态</text>
+<text x="265.0" y="544" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="544" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">53.6</text>
+<text x="580.0" y="544" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">4</text>
+<text x="772.5" y="544" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">55,126</text>
+<text x="1140.0" y="544" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">11,394</text>
+<text x="1390.0" y="544" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="579" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="579" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">443.2</text>
+<text x="580.0" y="579" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">40</text>
+<text x="772.5" y="579" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">2,737,362</text>
+<text x="1140.0" y="579" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">142,663</text>
+<text x="1390.0" y="579" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="563" font-size="24" fill="#245ca4" text-anchor="middle" font-weight="600">49.7×</text>
+<rect x="40" y="604" width="1480" height="94" fill="#f2f6fb"/>
+<path d="M40 698H1520" stroke="#dce5ef"/>
+<text x="105.0" y="638" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 2</text>
+<text x="105.0" y="672" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">S · 静态</text>
+<text x="265.0" y="638" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="638" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">39.8</text>
+<text x="580.0" y="638" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">5</text>
+<text x="772.5" y="638" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">74,594</text>
+<text x="1140.0" y="638" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">13,535</text>
+<text x="1390.0" y="638" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="673" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="673" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">487.2</text>
+<text x="580.0" y="673" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">33</text>
+<text x="772.5" y="673" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">2,234,561</text>
+<text x="1140.0" y="673" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">117,126</text>
+<text x="1390.0" y="673" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="657" font-size="24" fill="#245ca4" text-anchor="middle" font-weight="600">30.0×</text>
+<rect x="40" y="698" width="1480" height="94" fill="#ffffff"/>
+<path d="M40 792H1520" stroke="#dce5ef"/>
+<text x="105.0" y="732" font-size="21" fill="#172b4d" text-anchor="middle" font-weight="600">秘密 2</text>
+<text x="105.0" y="766" font-size="18" fill="#475569" text-anchor="middle" font-weight="normal">D · 动态</text>
+<text x="265.0" y="732" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="435.0" y="732" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">30.1</text>
+<text x="580.0" y="732" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">4</text>
+<text x="772.5" y="732" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">54,247</text>
+<text x="1140.0" y="732" font-size="22" fill="#64748b" text-anchor="middle" font-weight="normal">11,305</text>
+<text x="1390.0" y="732" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="265.0" y="767" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">5,697/8,592</text>
+<text x="435.0" y="767" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">330.2</text>
+<text x="580.0" y="767" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">25</text>
+<text x="772.5" y="767" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">681,749</text>
+<text x="1140.0" y="767" font-size="22" fill="#245ca4" text-anchor="middle" font-weight="normal">44,651</text>
+<text x="1390.0" y="767" font-size="22" fill="#18745b" text-anchor="middle" font-weight="normal">8,592/8,592</text>
+<text x="957.5" y="751" font-size="24" fill="#245ca4" text-anchor="middle" font-weight="600">12.6×</text>
+<rect x="40" y="152" width="1480" height="640" rx="12" fill="none" stroke="#cbd8e7"/>
+<text x="40" y="828" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">tokens 为 CLI 累计 input_tokens + output_tokens；input 已含 cached，不再加 cached 或 reasoning 字段。</text>
+<text x="40" y="857" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">未缓存输入单列；token 倍数 = 虚拟化保护 累计 tokens ÷ 未保护 累计 tokens；缺失统计显示 N/A。</text>
+<text x="40" y="886" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">运行时等价性是原始未保护／保护 SO 的预检，不是 AI 重建正确率；会话时长也不是首次恢复时间。</text>
+<text x="40" y="915" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">实际美元费用：N/A（订阅认证未提供逐轮账单）；额外 6 轮未保护控制不混入主 18 轮成功率。</text>
+<text x="40" y="944" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">* 轨道违规行保留原始得分与消耗，仅作越轨证据；不计有效静态恢复率或配对 token 倍数。</text>
+<text x="40" y="973" font-size="18" fill="#475569" text-anchor="start" font-weight="normal">秘密 0 / S_static：静态轨实际执行目标 VM 程序，排除比较</text>
+<text x="40" y="1010" font-size="16" fill="#64748b" text-anchor="start" font-weight="normal">同秘密、同轨道配对；18 次方案对照 + 6 次未保护基线；2026-10-30</text>
+</svg>
